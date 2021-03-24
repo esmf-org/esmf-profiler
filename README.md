@@ -8,7 +8,32 @@ https://www.efficios.com/files/babeltrace/babeltrace2-2.0.4.tar.bz2
 ### Linux gcc 9.3
 
 ```bash
+cd /path/to/babeltrace2-2.0.4
 ./configure --prefix=/home/rocky/bt2/INSTALL/2.0.4 --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
 make -j4
+make install
+```
+
+### Cheyenne
+
+```
+module load gnu/9.1.0 python/3.7.9
+```
+
+SWIG is needed for the build process and is not in the default Cheyenne PATH.
+Download: http://prdownloads.sourceforge.net/swig/swig-4.0.2.tar.gz
+```bash
+./configure --prefix=/glade/u/home/dunlap/bt/INSTALL/swig-4.0.2
+make
+make install
+
+export PATH=/glade/u/home/dunlap/bt/INSTALL/swig-4.0.2/bin:$PATH
+```
+
+Install babeltrace2
+```bash
+cd /path/to/babeltrace2-2.0.4
+./configure --prefix=/glade/u/home/dunlap/bt/INSTALL/babeltrace2-2.0.4 --enable-python-bindings --enable-python-plugins --disable-debug-info
+make -j6
 make install
 ```
