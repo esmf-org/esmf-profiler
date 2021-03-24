@@ -5,6 +5,8 @@
 Download:
 https://www.efficios.com/files/babeltrace/babeltrace2-2.0.4.tar.bz2
 
+**Note: Babeltrace2 appears to require the GNU compiler - there are failures with Intel.**
+
 ### Linux gcc 9.3
 
 ```bash
