@@ -14,6 +14,10 @@ cd /path/to/babeltrace2-2.0.4
 ./configure --prefix=/home/rocky/bt2/INSTALL/2.0.4 --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
 make -j4
 make install
+
+# set up PYTHONPATH so that the bt2 module is available
+export PYTHONPATH=/home/rocky/bt2/INSTALL/2.0.4/lib/python3.5/site-packages
+
 ```
 
 ### Cheyenne
@@ -38,4 +42,7 @@ cd /path/to/babeltrace2-2.0.4
 ./configure --prefix=/glade/u/home/dunlap/bt/INSTALL/babeltrace2-2.0.4 --enable-python-bindings --enable-python-plugins --disable-debug-info
 make -j6
 make install
+
+# set LD_LIBRARY_PATH so Python3 can find the dynamic library
+export LD_LIBRARY_PATH=/glade/u/home/dunlap/bt/INSTALL/babeltrace2-2.0.4/lib:$LD_LIBRARY_PATH
 ```
