@@ -15,12 +15,15 @@ https://www.efficios.com/files/babeltrace/babeltrace2-2.0.4.tar.bz2
 
 ```bash
 cd /path/to/babeltrace2-2.0.4
-./configure --prefix=/home/rocky/bt2/INSTALL/2.0.4 --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+./configure --prefix=/path/to/babeltrace2/INSTALL/2.0.4 --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
 make -j4
 make install
 
 # set up PYTHONPATH so that the bt2 module is available
-export PYTHONPATH=/home/rocky/bt2/INSTALL/2.0.4/lib/python3.5/site-packages
+export PYTHONPATH=/path/to/babeltrace2/INSTALL/2.0.4/lib/python3.5/site-packages
+
+# if installed in non-standard place, you need to set LD_LIBRARY_PATH:
+export LD_LIBRARY_PATH=/path/to/babeltrace2/INSTALL/2.0.4/lib
 
 ```
 
