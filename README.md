@@ -2,6 +2,10 @@
 
 ## Babeltrace2
 
+Prereqs:
+- glibc-2.0  (Ubuntu: `sudo apt-get install libglib2.0`)
+- swig (Ubuntu: `sudo apt-get install swig`)
+
 Download:
 https://www.efficios.com/files/babeltrace/babeltrace2-2.0.4.tar.bz2
 
