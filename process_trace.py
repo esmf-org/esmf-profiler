@@ -8,19 +8,19 @@ import regiontree
 #import json
 #import os
 
-class TimingSummary:
-
-    def __init__(self):
-        self._csv_data = {}
-
-    def add_summary(self, pet, rows):
-        self._csv_data[pet] = rows
+#class TimingSummary:
+#
+#    def __init__(self):
+#        self._csv_data = {}
+#
+#    def add_summary(self, pet, rows):
+#        self._csv_data[pet] = rows
 
 
 @bt2.plugin_component_class
 class SinglePETSink(bt2._UserSinkComponent):
 
-    def __init__(self, config, params, obj: TimingSummary):
+    def __init__(self, config, params, obj):
         self._port = self._add_input_port("in")
         self._region_map = {}
         #self._region_stats = {}
@@ -30,6 +30,7 @@ class SinglePETSink(bt2._UserSinkComponent):
         self._root_region = regiontree.RegionNode()
         self._root_region.name = "ROOT"
         self._root_region.local_id = 0
+        self._debug_out = obj
         #self._cur_region = self._root_region
         print("SinglePETSink for stream: {}".format(params["stream"]))
         #params["addme"].append(self)
@@ -81,10 +82,14 @@ class SinglePETSink(bt2._UserSinkComponent):
         #        wr.writerow([k, self._region_map[k]])
 
 
-        print("\n\nRESULT OF STREAM: " + str(self._pet))
-        print("==============================================")
-        pprint.pprint(self._region_map)
+        #print("\n\nRESULT OF STREAM: " + str(self._pet))
+        #print("==============================================")
+        #pprint.pprint(self._region_map)
 
+        print("FINISHED STREAM: " + str(self._pet))
+        
+        self._debug_out[self._pet] = self._root_region
+        
         #if not os.path.exists("data"):
         #    os.makedirs("data")
 
@@ -94,7 +99,8 @@ class SinglePETSink(bt2._UserSinkComponent):
 
         #print("wrote data/timing_summary.json")
 
-    #def _debug_print(self):
+    #def _debug_out(self):
+        #return pprint.pformat(self._region_map)
         #print("\n============\n")
         #pprint.pprint(self._region_map)
         #print("\n============\n")
@@ -113,9 +119,12 @@ def process_trace(tracepath: str):
                          "source",
                          params={"inputs":[tracepath]})
 
+    debug_info = {}
+    sinks = {}
     for idx, op in enumerate(source.output_ports):
-        sink = g.add_component(SinglePETSink, "sink" + str(idx), params={"stream": str(op)})
+        sink = g.add_component(SinglePETSink, "sink" + str(idx), params={"stream": str(op)}, obj=debug_info)
         g.connect_ports(source.output_ports[op], sink.input_ports["in"])
+        sinks[idx] = sink
 
     #muxer = g.add_component(utils_plugin.filter_component_classes["muxer"],
     #                           "filter")
@@ -145,9 +154,12 @@ def process_trace(tracepath: str):
     g.run()
     #t1 = time.time()
     #total = t1-t0
-
-    #print out
-    #sinks[0]._debug_print()
+    
+    #pprint.pprint(debug_info)
+    return debug_info
+    
+    #temp debug output
+    #return sinks[0]._debug_out()
 
     #print("Total time: " + str(total))
 
