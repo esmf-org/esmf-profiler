@@ -2,6 +2,8 @@
 
 ## Install Babeltrace2
 
+### Build Babeltrace2 from source
+
 Prereqs:
 - glibc-2.0  (Ubuntu: `sudo apt-get install libglib2.0`)
 - swig (Ubuntu: `sudo apt-get install swig`)
