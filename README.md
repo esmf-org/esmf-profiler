@@ -1,6 +1,6 @@
 # esmf-profiler
 
-## Babeltrace2
+## Install Babeltrace2
 
 Prereqs:
 - glibc-2.0  (Ubuntu: `sudo apt-get install libglib2.0`)
@@ -52,4 +52,9 @@ make install
 
 # set LD_LIBRARY_PATH so Python3 can find the dynamic library
 export LD_LIBRARY_PATH=/glade/u/home/dunlap/bt/INSTALL/babeltrace2-2.0.4/lib:$LD_LIBRARY_PATH
+```
+
+## Run Unit Tests
+```
+python3 -m unittest process-trace
 ```
