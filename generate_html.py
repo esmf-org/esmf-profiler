@@ -8,7 +8,7 @@ import regiontree
 def gen(tracename, tracedir):
 
     # temporarily get debug output to put into the HTML
-    timing_trees = process_trace(tracedir)
+    region_summary = process_trace(tracedir)
 
     jenv = jinja2.Environment(
         loader=jinja2.FileSystemLoader('templates'),
@@ -17,7 +17,7 @@ def gen(tracename, tracedir):
     )
 
     template = jenv.get_template("index.html.jinja")
-    out = template.render(tracename=tracename, now=datetime.now(), timing_trees=timing_trees)
+    out = template.render(tracename=tracename, now=datetime.now(), region_summary=region_summary)
     
     #print("Output:\n\n{}\n\n".format(out))
 
@@ -33,6 +33,6 @@ def gen(tracename, tracedir):
         
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python3 generate-html.py <tracename> <tracedir>\n")
+        print("Usage: python3 generate_html.py <tracename> <tracedir>\n")
     else:
         gen(sys.argv[1], sys.argv[2])

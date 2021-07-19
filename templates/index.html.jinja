@@ -155,18 +155,21 @@
 
       </div>
 
-{%- macro print_row(rn, prefix) %}
-      {% if not rn.name == "ROOT" %}
+{%- macro print_row(rs, prefix) %}
+      {%- for region_name, child in rs.children.items() %}
+      {% if region_name != "ROOT" %}
       <tr>
-          <td>{{rn.pet}}</td>
-	  <td>{{prefix ~ rn.name}}</td>
-	  <td>{{ (rn.total/1000/1000) | round(2)}}</td>
-	  <td>{{ (rn.min/1000/1000)   | round(2)}}</td>
-	  <td>{{ (rn.max/1000/1000)   | round(2)}}</td>
+          <td>{{prefix ~ region_name}}</td>
+	  <td>{{child.pet_count}}</td>
+	  <td>{{child.count_each}}</td>
+	  <td>{{ ((child.total_sum / child.pet_count) / (1000*1000*1000)) | round(4) }}</td>
+	  <td>{{ (child.total_min / (1000*1000*1000)) | round(4) }}</td>
+	  <td>{{child.total_min_pet}}</td>
+	  <td>{{ (child.total_max / (1000*1000*1000)) | round(4) }}</td>
+	  <td>{{child.total_max_pet}}</td>
       </tr>
       {%- endif %}
-      {%- for name, child in rn.children.items() %}
-      {{ print_row(child, prefix ~ "&nbsp;&nbsp;&nbsp;") }}
+      {{ print_row(child, prefix ~ "&nbsp;&nbsp;&nbsp;") }}      
       {%- endfor %}
 {%- endmacro %}
 
@@ -175,16 +178,17 @@
       <table>
 	<th>
 	  <tr>
-	    <td>PET</td>
 	    <td>Region</td>
-	    <td>Total</td>
-	    <td>Min</td>
-	    <td>Max</td>
+	    <td>PETs</td>
+	    <td>Count</td>
+	    <td>Mean (s)</td>
+	    <td>Min (s)</td>
+	    <td>Min PET</td>
+	    <td>Max (s)</td>
+	    <td>Max PET</td>
 	  </tr>
 	 </th>
-      {% for pet, tt in timing_trees.items() %}
-      {{ print_row(tt, "") }}
-      {% endfor %}
+      {{ print_row(region_summary, "") }}
       </table>
 
 
