@@ -109,6 +109,7 @@ class MultiPETTimingSummary(bt2._UserSinkComponent):
             if msg.event.name == 'region_profile':
                 pet = msg.event.packet.context_field["pet"]
                 root = self._region_roots.setdefault(pet, regiontree.RegionNode(0))
+                root.pet = pet
 
                 e = msg.event
                 node = regiontree.RegionNode(e.payload_field["id"])
@@ -135,6 +136,9 @@ class MultiPETTimingSummary(bt2._UserSinkComponent):
         for pet, root in self._region_roots.items():
             self._region_summary.merge(root)
 
+        print("Region Summary")
+        pprint.pprint(self._region_summary)
+
         self._generate_html()
 
     def _generate_html(self):
@@ -152,8 +156,18 @@ class MultiPETTimingSummary(bt2._UserSinkComponent):
 
         with open("{}/{}".format(self._output_path, "index.html"), "w") as fh:
             fh.write(html)
-
         print("Generated file: {}/index.html".format(self._output_path))
+
+
+        template = jenv.get_template("loadbalance.html.jinja")
+        html = template.render(name=self._name,
+                               now=datetime.now(),
+                               region_summary=self._region_summary)
+
+        with open("{}/{}".format(self._output_path, "loadbalance.html"), "w") as fh:
+            fh.write(html)
+        print("Generated file: {}/loadbalance.html".format(self._output_path))
+
 
 #
 # Open and read a trace in CTF format output

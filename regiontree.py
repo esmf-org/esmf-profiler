@@ -1,5 +1,6 @@
 import unittest
 import sys
+import collections
 
 class RegionNodeTestCase(unittest.TestCase):
     #def setUp(self):
@@ -247,6 +248,12 @@ class RegionSummary:
     @property
     def children(self):
         return self._children
+
+    @property
+    def contributing_nodes(self):
+        #return self._region_nodes
+        return collections.OrderedDict(sorted(self._region_nodes.items()))
+
 
     def _merge_children(self, other:RegionNode):
         for c in other.children:
