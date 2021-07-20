@@ -185,11 +185,12 @@ class RegionSummary:
         self._pet_count = 0
         self._count_each = -1
         self._counts_match = True
-        self._total_sum = 0       #sum of all totals
-        self._total_min = sys.maxsize     #min of all totals
-        self._total_min_pet = -1  #PET with min total
-        self._total_max = 0       #max of all totals
-        self._total_max_pet = -1  #PET with max total
+        self._total_sum = 0       # sum of all totals
+        self._total_min = sys.maxsize     # min of all totals
+        self._total_min_pet = -1  # PET with min total
+        self._total_max = 0       # max of all totals
+        self._total_max_pet = -1  # PET with max total
+        self._region_nodes = {}   # map of contributing region nodes (key = PET)
 
     @property
     def pet_count(self):
@@ -266,6 +267,8 @@ class RegionSummary:
         if self._total_max < other.max:
             self._total_max = other.max
             self._total_max_pet = other.pet
+
+        self._region_nodes[other.pet] = other
 
         self._merge_children(other)
 
