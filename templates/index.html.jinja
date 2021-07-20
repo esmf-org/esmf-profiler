@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>ESMF Profile: {{tracename}}</title>
+        <title>ESMF Profile: {{name}}</title>
 
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -49,7 +49,7 @@
 
     <body>
       <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">ESMF Profile: {{tracename}}  (Generated: {{now}})</a>
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">ESMF Profile: {{name}}  (Generated: {{now}})</a>
 
 	<!--
 	    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
@@ -154,7 +154,7 @@
         -->
 
       </div>
-
+{#
 {%- macro print_row(rs, prefix) %}
       {%- for region_name, child in rs.children.items() %}
       {% if region_name != "ROOT" %}
@@ -190,9 +190,9 @@
 	 </th>
       {{ print_row(region_summary, "") }}
       </table>
+#}
 
-
-      <div id="abc"></div>
+      <div id="summary_timing_table"></div>
 
 <!--	
       <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
@@ -234,38 +234,68 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
         <script src="https://getbootstrap.com/docs/4.4/examples/dashboard/dashboard.js"></script>
 
-	<!---
+{%- macro print_json(rs) %}
+      {%- for region_name, child in rs.children.items() %}
+      {
+         "id": "{{region_name}}",
+         "region": "{{region_name}}",
+         "pets": "{{child.pet_count}}",
+         "count": "{{ child.count_each if child.counts_match else "MULTIPLE"}}",
+         "mean": "{{ "{0:0.5f}".format(child.total_mean_s) }}",
+         "min": "{{ "{0:0.5f}".format(child.total_min_s) }}",
+         "minpet":"{{child.total_min_pet}}",
+         "max": "{{ "{0:0.5f}".format(child.total_max_s) }}",
+         "maxpet":"{{child.total_max_pet}}",
+         "open": "true"
+         {%- if child.children|length > 0 %}
+         , "data": [
+         {{ print_json(child) }}
+         ]
+         {%- endif %}
+      }
+      {%- if not loop.last %}
+      ,
+      {%- endif %}
+      {%- endfor %}
+{%- endmacro %}
+
+
 	<script>
+
+	  var data = [
+	  {{ print_json(region_summary.children["Unknown"]) }}
+	  ];
+
 	  webix.ui({
-	      id:"timingsum",
-	      view:"treetable",
-	      container:"abc",
-	      select:"row",
-	      clipboard:"selection",
+	      id: "timingsum",
+	      view: "treetable",
+	      container: "summary_timing_table",
+	      select: "row",
+	      clipboard: "selection",
 	      columns:[
-		  { id:"region",	header:"Region",	width:250, template:"{common.treetable()} #region#" },
-		  { id:"total",	header:"Total",	    width:200},
-		  { id:"min",	    header:"Min",	    width:200},
-		  { id:"max",	    header:"Max",	    width:200}
+		  { id:"region",	header:"Region",	width:250, template:"{common.treetable()} #region#"},
+		  { id:"pets",	    header:"PETs"},
+		  { id:"count",	    header:"Count"},
+		  { id:"mean",      header:"Mean (s)", sort:"int"},
+		  { id:"min",	    header:"Min (s)", sort:"int"},
+		  { id:"minpet",    header:"Min PET"},
+		  { id:"max",	    header:"Max (s)", sort:"int"},
+		  { id:"maxpet",    header:"Max PET"}
 	      ],
-	      autoheight:true,
-	      autowidth:true,
-	      on:{
-		  onAfterSelect:function(selection, preserve){
+	      autoheight: true,
+	      autowidth: true,
+	      //on:{
+		  //onAfterSelect:function(selection, preserve){
 		      //var text = $$("timingsum").getSelectedId(true).join();
-		      webix.message("Selected: "+selection)
-		  }
-	      },
-	      data: [
-		  { "id":"31", "region":"Top", "total":"100", "min":"50", max:"200", "open":true, "data":
-		    [
-			{ "id":"22", "region":"Next", "total":"100", "min":"50", max:"200", "open":true }
-		    ]
-		  }
-	      ]
+		  //    webix.message("Selected: "+selection)
+		  //}
+	      //},
+          data:data
 	  });
 	</script>
-	-->
+
+
+
 
 
     </body>

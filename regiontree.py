@@ -70,8 +70,8 @@ class RegionNodeTestCase(unittest.TestCase):
 
 class RegionNode:
 
-    def __init__(self):
-        self._local_id = -1
+    def __init__(self, id):
+        self._local_id = id
         self._pet = -1
         self._count = -1
         self._total = -1
@@ -175,6 +175,8 @@ class RegionNode:
     def children(self):
         return self._children
 
+def nano_to_sec(nanos):
+    return nanos / (1000*1000*1000)
 
 class RegionSummary:
 
@@ -206,8 +208,24 @@ class RegionSummary:
         return self._total_sum
 
     @property
+    def total_sum_s(self):
+        return nano_to_sec(self._total_sum())
+
+    @property
+    def total_mean(self):
+        return self._total_sum / self._pet_count
+
+    @property
+    def total_mean_s(self):
+        return nano_to_sec(self.total_mean)
+
+    @property
     def total_min(self):
         return self._total_min
+
+    @property
+    def total_min_s(self):
+        return nano_to_sec(self._total_min)
 
     @property
     def total_min_pet(self):
@@ -216,6 +234,10 @@ class RegionSummary:
     @property
     def total_max(self):
         return self._total_max
+
+    @property
+    def total_max_s(self):
+        return nano_to_sec(self._total_max)
 
     @property
     def total_max_pet(self):
