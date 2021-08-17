@@ -1,5 +1,8 @@
 # esmf-profiler
 
+## Install Jinja2 into your Python environment
+https://jinja.palletsprojects.com/en/3.0.x/intro/#installation
+
 ## Install Babeltrace2
 
 ### Build Babeltrace2 from source
