@@ -58,5 +58,5 @@ export LD_LIBRARY_PATH=/glade/u/home/dunlap/bt/INSTALL/babeltrace2-2.0.4/lib:$LD
 
 ## Run Unit Tests
 ```
-python3 -m unittest process-trace
+python3 -m unittest process_trace
 ```
