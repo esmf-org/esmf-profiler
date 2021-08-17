@@ -5,6 +5,11 @@ https://jinja.palletsprojects.com/en/3.0.x/intro/#installation
 
 ## Install Babeltrace2
 
+### Use a Package Manager
+There are some package managers that install Babeltrace2.  
+https://babeltrace.org/#bt2-get
+However, you need to make sure the Python bindings are included.
+
 ### Build Babeltrace2 from source
 
 Prereqs:
