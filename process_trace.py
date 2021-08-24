@@ -2,7 +2,7 @@ import os.path
 import bt2
 import pprint
 import unittest
-import regiontree
+import timing_tree
 import jinja2
 from datetime import datetime
 
@@ -11,9 +11,9 @@ class MultiPETTimingSummary(bt2._UserSinkComponent):
 
     def __init__(self, config, params, obj):
         self._port = self._add_input_port("in")
-        self._region_maps = {}   # per-PET maps of region id to region name
-        self._region_roots = {}  # per-PET region timing trees
-        self._region_summary = regiontree.RegionSummary()
+        self._single_pet_maps = {}   # per-PET maps of region id to region name
+        self._single_pet_roots = {}  # per-PET region timing trees
+        self._multi_pet_summary = timing_tree.MultiPETTimingNode()
         self._stream_count = 0
         self._tmp_count = 0
 
@@ -47,23 +47,28 @@ class MultiPETTimingSummary(bt2._UserSinkComponent):
                 pet = msg.event.packet.context_field["pet"]
                 regid = msg.event.payload_field["id"]
                 regname = msg.event.payload_field["name"]
-                self._region_maps.setdefault(pet, {})[regid] = regname
+                self._single_pet_maps.setdefault(pet, {})[regid] = regname
 
+
+            # a region_profile is a single node in a single PET timing tree
+            # the tree is reconstructed by adding nodes to the appropriate
+            # place in the tree based on the parentid
             elif msg.event.name == 'region_profile':
                 pet = msg.event.packet.context_field["pet"]
-                root = self._region_roots.setdefault(pet, regiontree.RegionNode(0))
+                root = self._single_pet_roots.setdefault(pet, timing_tree.SinglePETTimingNode(0))
                 root.pet = pet
 
                 e = msg.event
-                node = regiontree.RegionNode(e.payload_field["id"])
+                node = timing_tree.SinglePETTimingNode(e.payload_field["id"])
                 node.pet = pet
                 node.count = e.payload_field["count"]
                 node.total = e.payload_field["total"]
                 node.max = e.payload_field["max"]
                 node.min = e.payload_field["min"]
                 node.mean = e.payload_field["mean"]
-                node.name = self._region_maps[pet].get(node.local_id, "Unknown")
+                node.name = self._single_pet_maps[pet].get(node.local_id, "Unknown")
 
+                # add the node to the right place in the tree based on the parentid
                 if not root.add_to_tree(node, e.payload_field["parentid"]):
                     raise Exception("Error adding timed region tree: " + str(node.local_id))
 
@@ -80,11 +85,11 @@ class MultiPETTimingSummary(bt2._UserSinkComponent):
     def _finish(self):
 
         print("ENTER _finish")
-        for pet, root in self._region_roots.items():
-            self._region_summary.merge(root)
+        for pet, root in self._single_pet_roots.items():
+            self._multi_pet_summary.merge(root)
 
         print("Region Summary")
-        pprint.pprint(self._region_summary)
+        pprint.pprint(self._multi_pet_summary)
 
         self._generate_html()
 
@@ -102,7 +107,7 @@ class MultiPETTimingSummary(bt2._UserSinkComponent):
         template = jenv.get_template("index.html.jinja")
         html = template.render(name=self._name,
                                now=datetime.now(),
-                               region_summary=self._region_summary)
+                               region_summary=self._multi_pet_summary)
 
         with open("{}/{}".format(self._output_path, "index.html"), "w") as fh:
             fh.write(html)
@@ -112,7 +117,7 @@ class MultiPETTimingSummary(bt2._UserSinkComponent):
         template = jenv.get_template("loadbalance.html.jinja")
         html = template.render(name=self._name,
                                now=datetime.now(),
-                               region_summary=self._region_summary)
+                               region_summary=self._multi_pet_summary)
 
         with open("{}/{}".format(self._output_path, "loadbalance.html"), "w") as fh:
             fh.write(html)
