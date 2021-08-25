@@ -1,6 +1,6 @@
 from abc import ABC, abstractclassmethod, abstractmethod, abstractproperty
 import abc
-from typing import Any, cast
+from typing import Any, List, cast
 import bt2
 import json
 
@@ -193,7 +193,6 @@ class TraceEvent(abc.ABC):
     @staticmethod
     def Of(msg: bt2._EventMessageConst):
         event_type = msg.event.name
-        print(event_type)
         __map = {
             "define_region": lambda msg: DefineRegion(msg),
             "regionid_enter": lambda msg: RegionIdEnter(msg),
@@ -257,17 +256,28 @@ class DefineRegion(TraceEvent):
 
 
 class Trace:
+    def __init__(self, msgs: List[TraceEvent]):
+        self._msgs = msgs
+
+    def __iter__(self):
+        yield from self._msgs
+
+    def filter(self, instance_name):
+        return filter(lambda x: isinstance(x, instance_name), self._msgs)
+
     @staticmethod
     def from_directory(dir: str):
-        return [
+        msgs = [
             TraceEvent.Of(msg)
             for msg in bt2.TraceCollectionMessageIterator("./test-traces")
             if type(msg) is bt2._EventMessageConst
         ]
+        return Trace(list(msgs))
 
 
 def main():
     trace = Trace.from_directory("./test-traces")
+    trace = trace.filter(RegionProfile)
     for msg in trace:
         print(msg)
 
