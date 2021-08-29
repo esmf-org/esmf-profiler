@@ -1,3 +1,7 @@
+temp/
+
+#Python
+
 # general things to ignore
 build/
 dist/
@@ -25,3 +29,7 @@ htmlcov/
 
 # pycharm files
 .idea/
+
+#JS
+
+node_modules/
