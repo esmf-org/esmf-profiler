@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <title>ESMF Profiler</title>
+  </head>
+  <body>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <style>
+      .highcharts-figure,
+      .highcharts-data-table table {
+        min-width: 310px;
+        max-width: 800px;
+        margin: 1em auto;
+      }
+
+      #container {
+        height: 400px;
+      }
+
+      .highcharts-data-table table {
+        font-family: Verdana, sans-serif;
+        border-collapse: collapse;
+        border: 1px solid #ebebeb;
+        margin: 10px auto;
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+      }
+      .highcharts-data-table caption {
+        padding: 1em 0;
+        font-size: 1.2em;
+        color: #555;
+      }
+      .highcharts-data-table th {
+        font-weight: 600;
+        padding: 0.5em;
+      }
+      .highcharts-data-table td,
+      .highcharts-data-table th,
+      .highcharts-data-table caption {
+        padding: 0.5em;
+      }
+      .highcharts-data-table thead tr,
+      .highcharts-data-table tr:nth-child(even) {
+        background: #f8f8f8;
+      }
+      .highcharts-data-table tr:hover {
+        background: #f1f7ff;
+      }
+    </style>
+    <figure class="highcharts-figure">
+      <div id="container"></div>
+      <p class="highcharts-description">
+        ESMF Profiler is an alpha version web based GUI for viewing execution
+        times of [INSERT WORD HERE]
+      </p>
+    </figure>
+    <script>
+      Highcharts.chart("container", {
+        chart: {
+          type: "column", // column / bar
+        },
+        title: {
+          text: "ESMF Profiler", // graph title
+        },
+        xAxis: {
+          categories: ["ESM", "ABC"], // single bar label
+        },
+        yAxis: {
+          min: 0,
+          allowDecimals: false,
+          title: {
+            text: "Execution Times (in nanoseconds)",
+          },
+        },
+        legend: {
+          reversed: true,
+        },
+        plotOptions: {
+          series: {
+            stacking: "normal",
+          },
+        },
+        series: [
+          {
+            name: "OCN",
+            data: [0.8344, 2],
+          },
+          {
+            name: "MED",
+            data: [0.8203, 1.5],
+          },
+          {
+            name: "ATM",
+            data: [0.6387],
+          },
+          {
+            name: "ATM-TO-MED",
+            data: [0.5975],
+          },
+        ],
+      });
+    </script>
+  </body>
+</html>
