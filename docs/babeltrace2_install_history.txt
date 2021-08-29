@@ -1,0 +1,340 @@
+    1  sudo aptcache search open-ssh
+    2  apt
+    3  sudo apt update
+    4  sudo apt update && sudo apt upgrade -y
+    5  sudo apt install open-ssh
+    6  sudo aptcache
+    7  sudo apt-cache search openssh
+    8  sudo apt install openssh
+    9  sudo apt install openssh | grep openssh
+   10  sudo apt-cache search openssh | grep ssh
+   11  sudo apt install openssh*
+   12  sudo apt-cache search vs-code
+   13  sudo apt-cache search vscode
+   14  sudo apt update && sudo apt upgrade -y
+   15  cd ~/
+   16  ls
+   17  cd ls -lah
+   18  ls -lah
+   19  cd .ssh
+   20  mkdir .ssh
+   21  ls
+   22  ls -lah
+   23  cd .ssh
+   24  ls
+   25  touch authorized_keys
+   26  chmod 700 ~/.ssh
+   27  chmod 600 authorized_keys 
+   28  nano authorized_keys 
+   29  exit
+   30  sudo apt update && sudo apt upgrade -y
+   31  ls
+   32  mkdir Sandbox
+   33  cd Sandbox/
+   34  ls
+   35  git clone 
+   36  git clone https://github.com/esmf-org/esmf-profiler.git
+   37  cd Sandbox/
+   38  ls
+   39  cd esmf-profiler/
+   40  ls
+   41  code -r .
+   42  sudo apt-cache search bt2
+   43  apt-add-repository ppa:lttng/ppa
+   44  apt
+   45  apt edit-sources
+   46  sudo apt edit-sources
+   47  sudo apt-get install software-properties-common
+   48  sudo apt update
+   49  apt-add-repository ppa:lttng/ppa
+   50  sudo apt-add-repository ppa:lttng/ppa
+   51  sudo apt update && sudo install babeltrace2
+   52  wget https://www.efficios.com/files/babeltrace/babeltrace2-2.0.3.tar.bz2
+   53  ls
+   54  mkdir temp
+   55  mv *bz2 temp
+   56  cd temp
+   57  ls
+   58  untar -xvfz babeltrace2-2.0.3.tar.bz2 
+   59  tar -jxvf babeltrace2-2.0.3.tar.bz2 
+   60  ls
+   61  cd babeltrace2-2.0.3/
+   62  ls
+   63  ./configure
+   64  sudo apt install build-essential -y
+   65  sudo apt-cache search glibc
+   66  ./configure
+   67  sudo apt-cache search pkg-config
+   68  sudo apt install pkg-config
+   69  ./configure
+   70  sudo apt-cache search bison
+   71  sudo apt install bison
+   72  ./configure
+   73  sudo apt-cache search flex
+   74  sudo apt-cache search flex | grep flex
+   75  sudo apt install flex
+   76  ./configure
+   77  sudo find / -name 'glib-2.0.pc'
+   78  sudo apt-cache search glib-*
+   79  sudo apt-cache search glib-2
+   80  sudo apt install gir1.2-glib-2.0
+   81  find / -name "*glib*"
+   82  sudo find / -name "*glib*"
+   83  sudo find / -name "*glib-2*"
+   84  ./configure
+   85  set PKG_CONFIG_PATH=/usr/share
+   86  ./configure
+   87  sudo apt-get install glib2.0
+   88  ./configure
+   89  sudo apt install elfutils
+   90  ./configure
+   91  sudo apt install libdw
+   92  duo apt-cache search libdw
+   93  sudu apt-cache search libdw
+   94  sudo apt-cache search libdw
+   95  sudo apt install libdw*
+   96  sudo apt update
+   97  apt
+   98  apt edit-sources 
+   99  sudo apt edit-sources 
+  100  ls /etc/apt/sources.list
+  101  ls /etc/apt/sources.list.d
+  102  rm /etc/apt/sources.list.d/lttng-ubuntu-ppa-impish.list 
+  103  sudo rm /etc/apt/sources.list.d/lttng-ubuntu-ppa-impish.list 
+  104  sudo apt update
+  105  sudo apt upgrade -y
+  106  ./configure
+  107  ./configure --disable-debug-info
+  108  make
+  109  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+  110  sudo apt-get install swig
+  111  sudo apt-get install libglib2.0
+  112  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+  113  sudo apt install python3
+  114  python
+  115  ls
+  116  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+  117  pip install python-config
+  118  python3 -m pip install python-config
+  119  pip3 install python-config
+  120  python -m pip3 install python-config
+  121  sudo apt-cache search pip | grep python
+  122  sudo apt install python3-pip
+  123  python3 -m pip install python-config
+  124  pip3
+  125  pip3 install python-config
+  126  pip3 install setuptools
+  127  pip3 install virtualenv
+  128  python3 -m virtualenv
+  129  pip3 install python-config
+  130  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+  131  sudo apt-cache search python-config
+  132  sudo apt install python-config
+  133  sudo apt install python3-dev
+  134  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+  135  make
+  136  make install
+  137  sudo make install
+  138  babeltrace2 
+  139  find / -name libbabeltrace2.so.0
+  140  babeltrace2 
+  141  echo $PATH
+  142  cp /home/rlong/Sandbox/esmf-profiler/temp/babeltrace2-2.0.3/src/lib/.libs/libbabeltrace2.so.0 /usr/local/bin
+  143  sudo cp /home/rlong/Sandbox/esmf-profiler/temp/babeltrace2-2.0.3/src/lib/.libs/libbabeltrace2.so.0 /usr/local/bin
+  144  babeltrace2 
+  145  sudo cp /home/rlong/Sandbox/esmf-profiler/temp/babeltrace2-2.0.3/src/lib/.libs/libbabeltrace2.so.0 .
+  146  babeltrace2 
+  147  ls
+  148  cd ..
+  149  ls
+  150  rm -rf *
+  151  cd ..
+  152  git clone https://git.efficios.com/babeltrace.git -b stable-2.0
+  153  cd babeltrace/
+  154  ./bootstrap
+  155  sudo apt-get install autoconf
+  156  ./bootstrap
+  157  sudo apt install aclocal
+  158  sudo apt-cache search aclocal
+  159  apt install autoconf libtool
+  160  apt install autoconf libtoolsudo 
+  161  sudo nstall autoconf libtool
+  162  sudo apt install autoconf libtool
+  163  ./bootstrap
+  164  sudo apt install automake
+  165  ./bootstrap
+  166  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+  167  sudo apt install asciidoc
+  168  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+  169  sudo apt install xmlto
+  170  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no
+  171  make -j4
+  172  make install
+  173  sudo make install
+  174  find / -name "babeltrace2"
+  175  sudo find / -name "babeltrace2"
+  176  babeltrace2
+  177  find / -name libbabeltrace2.so.0
+  178  echo $PATH
+  179  vim ~/.bashrc
+  180  source ~/.bashr c
+  181  source ~/.bashrc
+  182  babeltrace2 
+  183  apt-add-repository ppa:lttng/ppa
+  184  sudo apt-add-repository ppa:lttng/ppa
+  185  sudo apt-get update
+  186  sudo apt-get install babeltrace2
+  187  sudls
+  188  ls
+  189  sudo make
+  190  sudo make install
+  191  make
+  192  make isntall
+  193  make install
+  194  babeltrace2
+  195  history
+  196  find / -name libbabeltrace2.so.0
+  197  file /home/rlong/Sandbox/babeltrace/src/lib/.libs/libbabeltrace2.so.0
+  198  file /usr/local/lib/libbabeltrace2.so.0
+  199  find / -name libbabeltrace2.so.0.0.0
+  200  file /usr/local/lib/libbabeltrace2.so.0.0.0
+  201  echo $PATH
+  202  history
+  203  history | grep configure
+  204  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no --prefix /''
+  205  pwd
+  206  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no --prefix=/home/rlong/opt
+  207  make
+  208  make install
+  209  babeltrace2
+  210  sudo apt remove babeltrace2
+  211  apt list
+  212  apt list --installed
+  213  apt list --installed | grep babel
+  214  apt list --installed | grep trace
+  215  which babeltrace2
+  216  file /usr/local/bin/babeltrace2
+  217  rm -rf /usr/local/bin/babeltrace2
+  218  sudo rm -rf /usr/local/bin/babeltrace2
+  219  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no --prefix=/home/rlong/opt
+  220  make -j4
+  221  make  install
+  222  babeltrace2
+  223  ls
+  224  git status
+  225  rm *cache
+  226  rm -rf *cache
+  227  ls
+  228  ./bootstrap 
+  229  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no --prefix=/home/rlong/opt
+  230  make install
+  231  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no --prefix=/home/rlong/opt/2.0.4
+  232  make -j4\
+  233  make -j4
+  234  make install
+  235  libtool --finish /usr/local/lib
+  236  cd ..
+  237  ls
+  238  cd ..
+  239  ls
+  240  rm -rf opt
+  241  ls
+  242  cd Sandbox/
+  243  ls
+  244  cd babeltrace/
+  245  ls
+  246  rm -rf *cache
+  247  cat config
+  248  cat config.log
+  249  ls -lah
+  250  history
+  251  ./configure --enable-python-bindings --enable-python-plugins --disable-debug-info --enable-compile-warnings=no --prefix=/home/rlong/opt/2.0.4
+  252  make
+  253  make clean
+  254  make all
+  255  make install
+  256  ls
+  257  sudo make install
+  258  babeltrace2
+  259  make install
+  260  babeltrace2
+  261  sudo find / -name babeltrace2
+  262  /home/rlong/opt/2.0.4/bin/babeltrace2
+  263  ls
+  264  cd ..
+  265  ls
+  266  mkdir traces
+  267  cp esmf* traces
+  268  ls
+  269  mv traces esmf-profiler/
+  270  lsd
+  271  ls
+  272  cd traces
+  273  cd babeltrace/
+  274  ls
+  275  ls -lah
+  276  cd ..
+  277  ls
+  278  mkdir traces
+  279  mv esmf_stream_* traces
+  280  mv traces esmf-profiler/
+  281  cp -r traces esmf-profiler/
+  282  ls
+  283  cd esmf-profiler/
+  284  ls
+  285  find / -name babeltrace2
+  286  ln
+  287  ln --help | head
+  288  sudo ln -s /home/rlong/opt/2.0.4/bin/babeltrace2 /usr/bin/babeltrace2
+  289  babeltrace2
+  290  ls
+  291  babeltrace2 traces/esmf_stream_0000
+  292  babeltrace2 convert traces/esmf_stream_0000
+  293  ls
+  294  cd traces
+  295  ls
+  296  babeltrace2 convert esmf_stream_0000
+  297  ls
+  298  cd ..
+  299  ls
+  300  cd test-traces/
+  301  ls
+  302  cd atm-ocn/
+  303  ls
+  304  babeltrace esmf_stream_0000
+  305  babeltrace2 esmf_stream_0000
+  306  babeltrace2 --convert esmf_stream_0000
+  307  babeltrace2 convert esmf_stream_0000
+  308  babeltrace2-convert esmf_stream_0000
+  309  ls
+  310  babeltrace2 esmf_stream_0001
+  311  babeltrace2
+  312  babeltrace2 convert esmf_stream_0000
+  313  babeltrace2 run esmf_stream_0000
+  314  babeltrace2 run 
+  315  babeltrace2
+  316  babeltrace2 --debug esmf_stream_0000
+  317  ls
+  318  babeltrace2 esmf_stream_0002
+  319  cd ..
+  320  ls
+  321  cd ..
+  322  ls
+  323  python3 -m unittest process_trace
+  324  vim process_trace.py 
+  325  ls
+  326  cd ..
+  327  ls
+  328  babeltrace2 traces
+  329  babeltrace2 ./traces
+  330  cd traces
+  331  ls
+  332  cd ..
+  333  ls
+  334  cd esmf-profiler/
+  335  ls
+  336  cd test-traces/
+  337  ls
+  338  babeltrace2 ./atm-ocn/
+  339  babeltrace2 ./atm-ocn/ > output.txt
+  340  history > history.txt
