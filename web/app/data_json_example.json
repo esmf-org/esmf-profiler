@@ -1,0 +1,25 @@
+{
+  "root": {
+    "id": "abcd",
+    "region": 0,
+    "pets": 8,
+    "mean": 4.9307,
+    "min": 0,
+    "max": 0,
+    "min_pet": 0,
+    "max_pet": 0,
+    "children": [
+      {
+        "id": "abcd",
+        "region": 0,
+        "pets": 8,
+        "mean": 4.9307,
+        "min": 0,
+        "max": 0,
+        "min_pet": 0,
+        "max_pet": 0,
+        "children": ["etc", "etc", "etc"]
+      }
+    ]
+  }
+}
