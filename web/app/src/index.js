@@ -1,6 +1,8 @@
 import Highcharts from 'highcharts';
+import StackedChart from './charts'
+import "./style.scss";
 
-Highcharts.chart("container", {
+const chartConfig = {
     chart: {
         type: "column", // column / bar
     },
@@ -43,6 +45,8 @@ Highcharts.chart("container", {
             data: [0.5975],
         },
     ],
-});
+};
 
+const chart = new StackedChart("container2", chartConfig)
+chart.render()
 
