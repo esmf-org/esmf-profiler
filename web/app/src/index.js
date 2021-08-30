@@ -1,32 +1,7 @@
-import Highcharts from 'highcharts';
 import StackedChart from './charts'
 import "./style.scss";
 
 const chartConfig = {
-    chart: {
-        type: "column", // column / bar
-    },
-    title: {
-        text: "ESMF Profiler", // graph title
-    },
-    xAxis: {
-        categories: ["ESM", "ABC"], // single bar label
-    },
-    yAxis: {
-        min: 0,
-        allowDecimals: false,
-        title: {
-            text: "Execution Times (in nanoseconds)",
-        },
-    },
-    legend: {
-        reversed: true,
-    },
-    plotOptions: {
-        series: {
-            stacking: "normal",
-        },
-    },
     series: [
         {
             name: "OCN",
