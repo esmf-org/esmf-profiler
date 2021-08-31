@@ -1,5 +1,9 @@
-import StackedChart from './charts'
+import Stacked from './charts/Stacked'
+import Comparison from './charts/Comparison'
+import BasicBar from './charts/BasicBar'
+
 import "./style.scss";
+import DrillDown from './charts/DrillDown';
 
 const chartConfig = {
     series: [
@@ -22,6 +26,12 @@ const chartConfig = {
     ],
 };
 
-const chart = new StackedChart("container2", chartConfig)
-chart.render()
+const chart1 = new Stacked("container2", chartConfig)
+chart1.render()
+const chart2 = new Comparison("container", {})
+chart2.render()
+const chart3 = new BasicBar("basic-bar-container", {})
+chart3.render()
+const chart4 = new DrillDown("drill-down-container", {})
+chart4.render()
 

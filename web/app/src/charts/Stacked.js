@@ -27,7 +27,7 @@ const defaultConfig = {
     },
 };
 
-export default class StackedChart {
+export default class Stacked {
     constructor(container, chartObject) {
         this.containerNameString = container;
 
