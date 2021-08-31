@@ -11,8 +11,7 @@
   "author": "ryan.long@noaa.gov",
   "license": "ISC",
   "dependencies": {
-    "highcharts": "^9.2.2",
-    "webpack-cli": "^4.8.0"
+    "highcharts": "^9.2.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
