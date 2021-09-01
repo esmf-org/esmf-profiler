@@ -2,11 +2,11 @@
   "name": "esmf_profiler_gui",
   "version": "1.0.0",
   "description": "ESMF Profiler Graphical User Interface",
-  "main": "index.js",
+  "main": "index",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "start": "webpack-dev-server --mode development"
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --mode development --stats-error-details"
   },
   "author": "ryan.long@noaa.gov",
   "license": "ISC",
@@ -14,6 +14,10 @@
     "highcharts": "^9.2.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/webpack-dev-server": "^4.0.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.2.0",
@@ -22,7 +26,11 @@
     "sass-loader": "^12.1.0",
     "style-loader": "^3.2.1",
     "svg-inline-loader": "^0.8.2",
+    "ts-loader": "^9.2.5",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2",
     "webpack": "^5.51.1",
-    "webpack-dev-server": "^4.0.0"
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.1.0"
   }
 }
