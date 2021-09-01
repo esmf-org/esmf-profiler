@@ -148,8 +148,14 @@ var countries = [
     color: "rgb(215, 0, 38)",
   },
 ];
-function getData(data: any): any {
-  return data.map(function (country: any[], i: string | number) {
+
+interface CountrySpec {
+  name: string;
+  y: number;
+  color: string;
+}
+function getData(data: (string | number)[][]): CountrySpec[] {
+  return data.map(function (country: any[], i: number) {
     return {
       name: country[0],
       y: country[1],
@@ -252,9 +258,11 @@ let defaultConfig = {
 export default class Comparison {
   containerNameString: any;
   chartConfig: any;
+  chart: Highcharts.Chart;
 
   constructor(container: string, chartObject: {}) {
     this.containerNameString = container;
+    this.chart = null;
 
     this.chartConfig = {
       ...defaultConfig,
@@ -263,12 +271,12 @@ export default class Comparison {
   }
 
   render() {
-    let chart = Highcharts.chart(this.containerNameString, this.chartConfig);
-    this.initButtons(chart);
+    this.chart = Highcharts.chart(this.containerNameString, this.chartConfig);
+    this.initButtons(this.chart);
   }
 
-  initButtons(chart: any) {
-    let years = [2016, 2012, 2008, 2004, 2000];
+  initButtons(chart: Highcharts.Chart) {
+    const years = [2016, 2012, 2008, 2004, 2000];
     years.forEach(function (year) {
       var btn = document.getElementById(year.toString());
 
@@ -296,12 +304,14 @@ export default class Comparison {
             },
             series: [
               {
-                name: year - 4,
+                name: (year - 4).toString(),
                 data: dataPrev[year].slice(),
+                type: undefined,
               },
               {
-                name: year,
+                name: year.toString(),
                 data: getData(data[year]).slice(),
+                type: undefined,
               },
             ],
           },

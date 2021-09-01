@@ -4,6 +4,7 @@ import BasicBar from "./charts/BasicBar";
 
 import "./style.scss";
 import DrillDown from "./charts/DrillDown";
+import { chart } from "highcharts";
 
 const chartConfig = {
   series: [
@@ -34,3 +35,7 @@ const chart3 = new BasicBar("basic-bar-container", {});
 chart3.render();
 const chart4 = new DrillDown("drill-down-container", {});
 chart4.render();
+
+const chart5 = new BasicBar("container", {}).render();
+chart5.render();
+console.log(chart5.chartConfig);
