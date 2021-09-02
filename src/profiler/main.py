@@ -1,21 +1,22 @@
-import os
-from profiler.trace import RegionProfile, RegionSummary, Trace
+from typing import List, cast
+from profiler.trace import RegionProfile, RegionProfiles, Trace
 
 
 def main():
-    print(os.getcwd())
     trace = Trace.from_directory("./tests/fixtures")
-    trace = list(trace.filter(lambda x: isinstance(x, RegionProfile)))
-    summary = RegionSummary(trace)
-    print(summary.pet_count())
-    print(summary.count_each())
-    exit()
-    for msg in trace:
-        print(str(msg))
-        print(msg.get("id"))
-        print(msg.get("parentid"))
-        print(msg.get("par"))
-        exit()
+    trace = cast(
+        List[RegionProfile], list(trace.filter(lambda x: isinstance(x, RegionProfile)))
+    )
+    profiles = RegionProfiles(trace)._create_tree()
+    for item in profiles:
+        print(item)
+
+    # summary = RegionSummary(trace)
+    # print(summary.pet_count())
+    # print(summary.count_each())
+    # for msg in trace:
+
+    #     print(msg)
 
 
 if __name__ == "__main__":
