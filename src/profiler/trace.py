@@ -3,6 +3,7 @@ from typing import Generator, List
 import bt2
 import textwrap
 from statistics import mean
+import json
 
 
 class TraceEvent(ABC):
@@ -13,8 +14,18 @@ class TraceEvent(ABC):
         return f"<{self.__class__.__name__} {textwrap.shorten(str(self.payload()), width=50)}>"
 
     def __str__(self):
-        payload = str(dict(zip(self.payload().keys(), self.payload().values())))
-        return f"{self.__class__.__name__}[PET_{self.pet()}]{payload}"
+        """__str__ returns JSON rep of object
+
+        Though already a valid string, passing through 'json.dumps' ensures
+        it's valid JSON
+
+        Returns:
+            str:
+        """
+        return self.toJson()
+
+    def toJson(self):
+        return json.dumps(self, cls=TraceEventEncoder)
 
     @abstractproperty
     def keys(self):
@@ -23,8 +34,13 @@ class TraceEvent(ABC):
         )
 
     def get(self, key):
-        if str(key).lower() in self.keys():
-            return self.payload()[str(key).lower()]
+        try:
+            if str(key).lower() in self.keys():
+                return self.payload()[str(key).lower()]
+        except KeyError:
+            if key in dir(self):
+                return getattr(self, key)()
+
         raise AttributeError(f"Key '{key}' does not exist on {self.__class__.__name__}")
 
     def payload(self):
@@ -32,11 +48,6 @@ class TraceEvent(ABC):
 
     def pet(self):
         return self._msg.event.packet.context_field["pet"]
-
-    def merge(self, event: List["TraceEvent"]):
-        raise NotImplementedError(
-            f"method 'merge' does not exist on {self.__class__.__name__}"
-        )
 
     @staticmethod
     def Of(msg: bt2._EventMessageConst):
@@ -50,6 +61,20 @@ class TraceEvent(ABC):
         }
 
         return __map[event_type](msg)
+
+
+class TraceEventEncoder(json.JSONEncoder):
+    casting = [bt2._UnsignedIntegerFieldConst, bt2._DoublePrecisionRealFieldConst]
+
+    def default(self, obj):
+        if type(obj) in self.casting:
+            return str(obj)
+        if isinstance(obj, TraceEvent):
+            result = {}
+            for key in obj.keys():
+                result[key] = obj.get(key)
+            return result
+        return json.JSONEncoder.default(self, obj)
 
 
 class Comp(TraceEvent):
@@ -75,6 +100,10 @@ class RegionIdExit(TraceEvent):
 
 
 class RegionProfile(TraceEvent):
+    def __init__(self, msg):
+        super().__init__(msg)
+        self._children = []
+
     def keys(self):
         return [
             "id",
@@ -85,8 +114,38 @@ class RegionProfile(TraceEvent):
             "max",
             "min",
             "mean",
-            "stdev",
+            "pet",
+            "children",
         ]
+
+    def children(self):
+        return self._children
+
+
+class RegionProfiles:
+    def __init__(self, profiles: List[RegionProfile]):
+        self._profiles = profiles
+
+    def __iter__(self):
+        yield from self._profiles
+
+    def _create_tree(self):
+        parentIds = set(
+            [
+                profile.get("parentId")
+                for profile in self._profiles
+                if profile.get("parentId") != 0
+            ]
+        )
+        results = []
+        for parentId in parentIds:
+            parent = list(filter(lambda x: x.get("ID") == parentId, self._profiles))[0]
+            children = list(
+                filter(lambda x: x.get("parentID") == parentId, self._profiles)
+            )
+            parent._children = children
+            results.append(parent)
+        return RegionProfiles(results)
 
 
 class RegionSummary:
