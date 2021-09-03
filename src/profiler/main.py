@@ -1,3 +1,4 @@
+import json
 from typing import List, cast
 from profiler.trace import RegionProfile, RegionProfiles, Trace
 
@@ -8,8 +9,15 @@ def main():
         List[RegionProfile], list(trace.filter(lambda x: isinstance(x, RegionProfile)))
     )
     profiles = RegionProfiles(trace)._create_tree()
-    for item in profiles:
-        print(item)
+    print(profiles.keys())
+    # print(profiles.values())
+    obj = dict(
+        zip(
+            profiles.keys(),
+            [profile.toJson().replace("\\", "") for profile in profiles.values()],
+        )
+    )
+    print(json.dumps(obj))
 
     # summary = RegionSummary(trace)
     # print(summary.pet_count())

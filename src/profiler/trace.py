@@ -1,5 +1,5 @@
 from abc import ABC, abstractproperty
-from typing import Generator, List
+from typing import Any, Generator, List
 import bt2
 import textwrap
 from statistics import mean
@@ -14,14 +14,6 @@ class TraceEvent(ABC):
         return f"<{self.__class__.__name__} {textwrap.shorten(str(self.payload()), width=50)}>"
 
     def __str__(self):
-        """__str__ returns JSON rep of object
-
-        Though already a valid string, passing through 'json.dumps' ensures
-        it's valid JSON
-
-        Returns:
-            str:
-        """
         return self.toJson()
 
     def toJson(self):
@@ -77,6 +69,16 @@ class TraceEventEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
+class RegionProfilesEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, RegionProfiles):
+            results = []
+            for item in obj:
+                results.append(item.toJson())
+            return results
+        return json.JSONEncoder.default(self, obj)
+
+
 class Comp(TraceEvent):
     def keys(self):
         return [
@@ -129,23 +131,54 @@ class RegionProfiles:
     def __iter__(self):
         yield from self._profiles
 
+    def __str__(self):
+        return self.toJson()
+
+    def toJson(self):
+        return json.dumps(self, cls=RegionProfilesEncoder)
+
     def _create_tree(self):
-        parentIds = set(
-            [
-                profile.get("parentId")
-                for profile in self._profiles
-                if profile.get("parentId") != 0
-            ]
-        )
+        parentIds = self._filter_unique_values("parentId", [0])
+        petIds = self._filter_unique_values("pet")
+        petTree = self._build_pet_tree(petIds)
+        results = {}
+        for key, nodes in petTree.items():
+            results[str(key)] = self._build_tree(parentIds, nodes, "id", "parentId")
+        return results
+
+    def _build_pet_tree(self, petIds):
+        results = {}
+        for petId in petIds:
+            results[petId] = list(
+                filter(lambda x: x.get("pet") == petId, self._profiles)
+            )
+        return results
+
+    def _build_tree(
+        self, rootIds, profiles: List[RegionProfile], parentIdKey, childIdKey
+    ):
         results = []
-        for parentId in parentIds:
-            parent = list(filter(lambda x: x.get("ID") == parentId, self._profiles))[0]
+        for rootId in rootIds:
+            parent = list(filter(lambda x: x.get(parentIdKey) == rootId, profiles))[0]
             children = list(
-                filter(lambda x: x.get("parentID") == parentId, self._profiles)
+                filter(
+                    lambda x: x.get(childIdKey) == rootId
+                    and x.get("pet") == parent.get("pet"),
+                    profiles,
+                )
             )
             parent._children = children
             results.append(parent)
         return RegionProfiles(results)
+
+    def _filter_unique_values(self, key: str, skip_values: List[Any] = []):
+        return set(
+            [
+                profile.get(key)
+                for profile in self._profiles
+                if profile.get(key) not in skip_values
+            ]
+        )
 
 
 class RegionSummary:
