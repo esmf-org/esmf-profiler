@@ -159,16 +159,24 @@ class RegionProfiles:
     ):
         results = []
         for rootId in rootIds:
-            parent = list(filter(lambda x: x.get(parentIdKey) == rootId, profiles))[0]
-            children = list(
-                filter(
-                    lambda x: x.get(childIdKey) == rootId
-                    and x.get("pet") == parent.get("pet"),
-                    profiles,
+            parentList = list(filter(lambda x: x.get(parentIdKey) == rootId, profiles))
+            parent = None
+            if len(parentList):
+                parent = parentList[0]
+                children = list(
+                    filter(
+                        lambda x: x.get(childIdKey) == rootId
+                        and isinstance(parent, TraceEvent)
+                        and x.get("pet") == parent.get("pet"),
+                        profiles,
+                    )
                 )
-            )
-            parent._children = children
-            results.append(parent)
+
+                parent._children = children
+                yield parent
+            else:
+                print(f"Could not find parent for key {parentIdKey}")
+                continue
         return RegionProfiles(results)
 
     def _filter_unique_values(self, key: str, skip_values: List[Any] = []):
@@ -248,11 +256,8 @@ class Trace:
 
     @staticmethod
     # TODO handle errors
-    def from_directory(dir: str):
-        return Trace(
-            (
-                TraceEvent.Of(msg)
-                for msg in bt2.TraceCollectionMessageIterator(dir)
-                if type(msg) is bt2._EventMessageConst
-            )
-        )
+    def from_directory(_path: str, include: List[str], exclude: List[str]):
+        for msg in bt2.TraceCollectionMessageIterator(_path):
+            if type(msg) is bt2._EventMessageConst:
+                if msg.event.name in include or msg.event.name not in exclude:
+                    yield TraceEvent.Of(msg)
