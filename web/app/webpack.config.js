@@ -30,6 +30,14 @@ module.exports = {
         ],
       },
       {
+        test: /\.json5$/i,
+        loader: 'json5-loader',
+        options: {
+          esModule: true,
+        },
+        type: 'javascript/auto',
+      },
+      {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
