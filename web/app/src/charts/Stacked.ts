@@ -8,13 +8,13 @@ const defaultConfig = {
     text: "Default Title", // graph title
   },
   xAxis: {
-    categories: ["ESM", "ABC"], // single bar label
+    categories: ["Category_1", "Category_2"], // single bar label
   },
   yAxis: {
     min: 0,
     allowDecimals: false,
     title: {
-      text: "Execution Times (in nanoseconds)",
+      text: "Default Title",
     },
   },
   legend: {
@@ -25,21 +25,39 @@ const defaultConfig = {
       stacking: "normal",
     },
   },
+  series: [
+    {
+      name: "SubCategory 1",
+      data: [1.8344, 2],
+    },
+    {
+      name: "SubCategory 2",
+      data: [2.8203, 1.5],
+    },
+    {
+      name: "SubCategory 3",
+      data: [6.6387],
+    },
+    {
+      name: "SubCategory 4",
+      data: [7.5975],
+    },
+  ],
 };
 
 export default class Stacked {
   containerNameString: string;
-  chartConfig: {};
+  chartConfig: object;
   constructor(container: string, chartObject: {}) {
     this.containerNameString = container;
-
     this.chartConfig = {
       ...defaultConfig,
       ...chartObject,
     };
   }
 
-  render() {
+  render(): Stacked {
     Highcharts.chart(this.containerNameString, this.chartConfig);
+    return this;
   }
 }
