@@ -19,16 +19,23 @@ RegionDefinition = namedtuple("RegionDefinition", "name pet id")
 mapping = []
 
 
-def region_definitions(mapping, trace):
-    if not len(mapping):
-        mapping = [
-            RegionDefinition(x.get("name"), x.get("pet"), x.get("id"))
-            for x in filter(lambda x: x.type == "define_region", trace)
-        ]
+class Lookup:
+    def __init__(self, trace):
+        self._trace = trace
+        self._data = []
 
+    def find(self, petId, _id):
+        return list(filter(lambda x: x.pet == petId and x.id == _id, self.data))[0].name
 
-def get_name(petId, _id, haystack):
-    return list(filter(lambda x: x.pet == petId and x.id == _id, haystack))[0].name  # type: ignore
+    @property
+    @print_execution_time
+    def data(self):
+        if not len(self._data):
+            self._data = [
+                RegionDefinition(x.get("name"), x.get("pet"), x.get("id"))
+                for x in filter(lambda x: x.type == "define_region", self._trace)  # type: ignore
+            ]
+        return self._data
 
 
 @print_execution_time
@@ -41,13 +48,13 @@ def main():
         logger.info("creating trace")
 
         trace = Trace.from_path("./tests/fixtures/test-traces", include, exclude)
+        lookup = Lookup(trace)
 
         region_profiles = filter(lambda x: x.type == "region_profile", trace)
-        define_regions = [
-            RegionDefinition(x.get("name"), x.get("pet"), x.get("id"))
-            for x in filter(lambda x: x.type == "define_region", trace)
-        ]
-        print(get_name(1, 24, define_regions))
+
+        print(lookup.find(1, 24))
+        print(lookup.find(1, 24))
+        print(lookup.find(1, 24))
 
         # for region in define_regions:
         #     print(region)
