@@ -48,6 +48,10 @@ class TraceEvent(ABC):
     def pet(self):
         return self._msg.event.packet.context_field["pet"]
 
+    @property
+    def nodename(self):
+        return self._msg.event.packet.context_field["nodename"]
+
     @staticmethod
     def Of(msg: bt2._EventMessageConst):
         """Of Convnience constructor
@@ -71,7 +75,7 @@ class TraceEvent(ABC):
 
 
 class TraceEventEncoder(json.JSONEncoder):
-    casting = [bt2._UnsignedIntegerFieldConst, bt2._DoublePrecisionRealFieldConst]
+    casting = [bt2._UnsignedIntegerFieldConst, bt2._DoublePrecisionRealFieldConst, bt2._StringFieldConst]
 
     def default(self, obj):
         if type(obj) in self.casting:
@@ -127,6 +131,7 @@ class RegionProfile(TraceEvent):
             "min",
             "mean",
             "pet",
+            "nodename",
         ]
 
 
@@ -174,16 +179,16 @@ class RegionProfiles:
 
     def _get_level(self, profiles: List[Node], level: int = 1):
         results = {}
-        parentIds = self._filter_unique_values("parentId", [])
-        print([x for x in parentIds])
-        results = filter(lambda x: x.id in parentIds, profiles)
-        for x in profiles:
-            if x.petId not in results.keys():
-                results[x.petId] = {}
+        # parentIds = self._filter_unique_values("parentId", [])
+        # print([x for x in parentIds])
+        # results = filter(lambda x: x.id in parentIds, profiles)
+        # for x in profiles:
+        #     if x.petId not in results.keys():
+        #         results[x.petId] = {}
 
-            if x.parentId not in results[x.petId].keys():
-                results[x.petId][x.parentId] = []
-            bisect.insort(results[x.petId][x.parentId], x.id)
+        #     if x.parentId not in results[x.petId].keys():
+        #         results[x.petId][x.parentId] = []
+        #     bisect.insort(results[x.petId][x.parentId], x.id)
 
         return results
 
