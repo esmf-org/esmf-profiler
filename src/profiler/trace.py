@@ -5,8 +5,11 @@ from abc import ABC, abstractproperty
 from collections import namedtuple
 from statistics import mean
 from typing import Any, Dict, Generator, List
+import logging
 
 import bt2
+
+log = logging.getLogger(__name__)
 
 
 class TraceEvent(ABC):
@@ -29,8 +32,9 @@ class TraceEvent(ABC):
         )
 
     def get(self, key):
+        log.debug(f"Getting value from key: {key}")
         try:
-            if str(key).lower() in self.keys():
+            if str(key).lower() in self.keys:
                 return self.payload[str(key).lower()]
         except KeyError:
             if key in dir(self):
@@ -158,7 +162,6 @@ class RegionProfiles:
         return json.dumps(self, cls=RegionProfilesEncoder)
 
     def _create_tree(self, level: int = 1):
-
         profiles = [
             Node(
                 int(profile.get("pet")),
@@ -308,6 +311,9 @@ class Trace:
     @staticmethod
     # TODO handle errors
     def from_path(_path: str, include: List[str], exclude: List[str]):
+        log.debug(
+            f"fetching traces from path: {_path} include=[{include}] exclude=[{exclude}]"
+        )
         hasInclude = len(include)
         hasExclude = len(exclude)
         results = []
