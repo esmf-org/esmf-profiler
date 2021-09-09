@@ -6,7 +6,6 @@
 """
 
 import cProfile
-from collections import namedtuple
 import json
 import logging
 import pstats
@@ -23,14 +22,11 @@ _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
 logging.basicConfig(level=logging.DEBUG, format=_format)
 
 
-
-mapping = []
-
-
 @print_execution_time
 def main():
     """main
 
+    HIGH PRI
     TODO pytest for mission critical
     TODO remove the write to file or put as option
     TODO I doubt the algo for levels/depth is right.. worked on a small scale, need to test for bigger
@@ -39,10 +35,14 @@ def main():
     TODO pipe out huge JSON and see how browser chokes (team req)
     TODO prob gonna need CLI sooner than later
 
+    LOW PRI
+    TODO get the Ids for the DTO and the source matching (ie petId shouldn't be converted to petid or pet)
     TODO Go over region summary.  Not implemented, but will need to be.  Boilerplate is there, needs testing.
     """
 
     with cProfile.Profile() as pr:
+        _path = "./tests/fixtures/test-traces-large"
+
         include = ["region_profile", "define_region"]
         assert (
             "define_region" in include
@@ -50,7 +50,7 @@ def main():
         exclude = []
 
         logger.info("creating trace")
-        trace = Trace.from_path("./tests/fixtures/test-traces-large", include, exclude)
+        trace = Trace.from_path(_path, include, exclude)
         logger.debug("complete")
 
         logger.info("filtering region profiles")
@@ -80,6 +80,7 @@ def main():
             _file.write(json.dumps(result))
         logger.debug(f"complete")
 
+        # TODO for revisiting RegionSummary
         # summary = RegionSummary(cast(List[TraceEvent], trace))
         # print(summary.pet_count())
         # print(summary.count_each())

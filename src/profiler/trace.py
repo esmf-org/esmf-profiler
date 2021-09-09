@@ -223,7 +223,12 @@ class RegionProfiles:
 
         logger.debug("determining log levels")
         levels = self._determine_levels(profiles)
+        logger.debug("complete")
+
+        logger.debug("filtering nodes by level")
         nodes = list(filter(lambda x: x.get("id") in levels[1], self._profiles))
+        logger.debug("complete")
+
         return self._build_pet_tree([], nodes)
 
     @print_execution_time
@@ -254,7 +259,7 @@ class RegionProfiles:
 
     def _build_pet_tree(self, petIds, profiles: List[RegionProfile], accum: Dict = {}):
         logging.debug(f"remaining PETIDS:{len(petIds)} EVENTS:{len(profiles)}")
-        if len(petIds) <20:
+        if len(petIds) < 20:
             logging.debug(f"PETIDS REMAINING: {str(petIds)}")
         if len(petIds) > 0 and len(profiles) > 0:
             petId = list(petIds)[0]
