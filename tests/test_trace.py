@@ -1,8 +1,8 @@
-from profiler.trace import Trace, RegionSummary, RegionProfile
+from profiler.trace import Trace
 
 
 def testTrace_whenInstantiatedFromDirectory_IsCorrect():
-    trace = Trace.from_directory("./tests/fixtures")
+    trace = Trace.from_path("./tests/fixtures", [], [])
     assert trace.__class__.__name__ == "Trace"
 
     _trace = trace
@@ -19,7 +19,7 @@ def testTrace_whenInstantiatedFromDirectory_IsCorrect():
     # summary = RegionSummary(trace)
     # print(summary.pet_count())
     # print(summary.count_each())
-    
+
     for msg in trace:
         print(str(msg))
         print(msg.get("id"))
