@@ -50,6 +50,9 @@ def main():
 
     with cProfile.Profile() as pr:
         include = ["region_profile", "define_region"]
+        assert (
+            "define_region" in include
+        )  # Until i have time to figure out something better
         exclude = []
 
         logger.info("creating trace")
