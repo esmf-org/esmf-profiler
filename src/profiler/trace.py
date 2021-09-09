@@ -8,13 +8,13 @@ from typing import Any, Dict, Generator, List
 import logging
 
 import bt2
-from main import Lookup
+from profiler.lookup import Lookup
 
 from profiler.utils import print_execution_time
 
 logger = logging.getLogger(__name__)
 _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-logging.basicConfig(level=logging.INFO, format=_format)
+logging.basicConfig(level=logging.DEBUG, format=_format)
 
 
 class TraceEvent(ABC):

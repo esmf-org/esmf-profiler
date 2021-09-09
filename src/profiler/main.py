@@ -12,6 +12,7 @@ import logging
 import pstats
 import io
 from pstats import SortKey
+from profiler.lookup import Lookup
 
 from profiler.utils import print_execution_time
 
@@ -19,40 +20,33 @@ from profiler.trace import RegionProfiles, Trace
 
 logger = logging.getLogger(__name__)
 _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-logging.basicConfig(level=logging.INFO, format=_format)
+logging.basicConfig(level=logging.DEBUG, format=_format)
 
 
-RegionDefinition = namedtuple("RegionDefinition", "name pet id")
+
 mapping = []
-
-
-class Lookup:
-    def __init__(self, trace):
-        self._trace = trace
-        self._data = []
-
-    def find(self, petId, _id):
-        return list(filter(lambda x: x.pet == petId and x.id == _id, self.data))[0].name
-
-    @property
-    @print_execution_time
-    def data(self):
-        if not len(self._data):
-            self._data = [
-                RegionDefinition(x.get("name"), x.get("pet"), x.get("id"))
-                for x in filter(lambda x: x.type == "define_region", self._trace)  # type: ignore
-            ]
-        return self._data
 
 
 @print_execution_time
 def main():
+    """main
+
+    TODO pytest for mission critical
+    TODO remove the write to file or put as option
+    TODO I doubt the algo for levels/depth is right.. worked on a small scale, need to test for bigger
+    TODO filters api (team req)
+    TODO depth api (team req)
+    TODO pipe out huge JSON and see how browser chokes (team req)
+    TODO prob gonna need CLI sooner than later
+
+    TODO Go over region summary.  Not implemented, but will need to be.  Boilerplate is there, needs testing.
+    """
 
     with cProfile.Profile() as pr:
         include = ["region_profile", "define_region"]
         assert (
             "define_region" in include
-        )  # Until i have time to figure out something better
+        )  # TODO Until i have time to figure out something better
         exclude = []
 
         logger.info("creating trace")
