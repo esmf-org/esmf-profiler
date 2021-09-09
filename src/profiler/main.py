@@ -1,3 +1,10 @@
+""" Main point of execution
+
+    Notes:
+
+    * Remove any 'print_execution_time' calls before going to prod
+"""
+
 import cProfile
 from collections import namedtuple
 import json
@@ -46,33 +53,35 @@ def main():
         exclude = []
 
         logger.info("creating trace")
+        trace = Trace.from_path("./tests/fixtures/test-traces-large", include, exclude)
+        logger.debug("complete")
 
-        trace = Trace.from_path("./tests/fixtures/test-traces", include, exclude)
-        lookup = Lookup(trace)
-
+        logger.info("filtering region profiles")
         region_profiles = filter(lambda x: x.type == "region_profile", trace)
+        logger.debug("complete")
 
+        logger.info("creating lookup table for region profiles")
+        lookup = Lookup(trace)
+        logger.debug("complete")
+
+        logger.debug(f"performing 1 verification lookups")
         print(lookup.find(1, 24))
-        print(lookup.find(1, 24))
-        print(lookup.find(1, 24))
+        logger.debug("complete")
 
-        # for region in define_regions:
-        #     print(region)
-        # for item in define_regions:
-        #     print(item)
-        exit()
-        print(list(define_regions)[0])
-        print("*" * 10)
-        print(list(region_profiles))
-        exit(0)
+        logger.info(f"creating tree from list of region profiles")
+        profiles = RegionProfiles(list(region_profiles), lookup)._create_tree()
+        logger.debug(f"complete; {len(profiles)} processed")
 
-        logger.info("creating tree")
-
-        profiles = RegionProfiles(list(trace))._create_tree()
+        logger.info(f"merging profiles to JSON")
         result = []
         for profile in profiles:
             result.append(profile.toJson())
-        print(json.dumps(result))
+        logger.debug("complete")
+
+        logger.info(f"writing results to file")
+        with open("results.json", "w") as _file:
+            _file.write(json.dumps(result))
+        logger.debug(f"complete")
 
         # summary = RegionSummary(cast(List[TraceEvent], trace))
         # print(summary.pet_count())

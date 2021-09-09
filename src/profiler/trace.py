@@ -8,8 +8,13 @@ from typing import Any, Dict, Generator, List
 import logging
 
 import bt2
+from main import Lookup
+
+from profiler.utils import print_execution_time
 
 logger = logging.getLogger(__name__)
+_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
+logging.basicConfig(level=logging.INFO, format=_format)
 
 
 class TraceEvent(ABC):
@@ -32,7 +37,6 @@ class TraceEvent(ABC):
         )
 
     @property
-    @abstractmethod
     def keys(self):
         raise NotImplementedError(
             f"{self.__class__.__name__} requires a 'keys' property"
@@ -41,7 +45,7 @@ class TraceEvent(ABC):
     def get(self, key):
         logger.debug(f"Getting value from key: {key}")
         try:
-            if str(key).lower() in self.keys():
+            if str(key).lower() in self.keys:
                 return self.payload[str(key).lower()]
         except KeyError:
             if key in dir(self):
@@ -154,6 +158,7 @@ class DefineRegion(TraceEvent):
     def type(self):
         return "define_region"
 
+    @property
     def keys(self):
         return [
             "nodename",
@@ -192,8 +197,9 @@ Node = namedtuple("Node", ["petId", "id", "parentId"])
 
 
 class RegionProfiles:
-    def __init__(self, profiles: List[RegionProfile]):
+    def __init__(self, profiles: List[RegionProfile], lookup: Lookup):
         self._profiles = profiles
+        self._lookup = lookup
 
     def __iter__(self):
         yield from self._profiles
@@ -204,6 +210,7 @@ class RegionProfiles:
     def toJson(self):
         return json.dumps(self, cls=RegionProfilesEncoder)
 
+    @print_execution_time
     def _create_tree(self, level: int = 1):
         logger.debug(f"generating tree with level: {level}")
         profiles = [
@@ -220,6 +227,7 @@ class RegionProfiles:
         nodes = list(filter(lambda x: x.get("id") in levels[1], self._profiles))
         return self._build_pet_tree([], nodes)
 
+    @print_execution_time
     def _determine_levels(self, profiles: List[Node]):
         parentIds = list(self._filter_unique_values("parentId", []))
         levels = {}
@@ -279,6 +287,7 @@ class RegionProfiles:
     #             continue
     #     return RegionProfiles(results)
 
+    @print_execution_time
     def _filter_unique_values(self, key: str, skip_values: List[Any] = []):
         return set(
             [
