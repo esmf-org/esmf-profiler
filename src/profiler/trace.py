@@ -43,7 +43,6 @@ class TraceEvent(ABC):
         )
 
     def get(self, key):
-        logger.debug(f"Getting value from key: {key}")
         try:
             if str(key).lower() in self.keys:
                 return self.payload[str(key).lower()]
@@ -254,6 +253,9 @@ class RegionProfiles:
         return results
 
     def _build_pet_tree(self, petIds, profiles: List[RegionProfile], accum: Dict = {}):
+        logging.debug(f"remaining PETIDS:{len(petIds)} EVENTS:{len(profiles)}")
+        if len(petIds) <20:
+            logging.debug(f"PETIDS REMAINING: {str(petIds)}")
         if len(petIds) > 0 and len(profiles) > 0:
             petId = list(petIds)[0]
             filtered = list(filter(lambda x: x.get("pet") == petId, profiles))
