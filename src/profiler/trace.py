@@ -1,4 +1,4 @@
-import bisect
+import functools
 import json
 import textwrap
 from abc import ABC, abstractproperty
@@ -38,17 +38,15 @@ class TraceEvent(ABC):
 
         raise AttributeError(f"Key '{key}' does not exist on {self.__class__.__name__}")
 
-    # @functools.cached_property
-    @property
+    @functools.cached_property
     def payload(self):
         return self._msg.event.payload_field
 
-    # @functools.cached_property
-    @property
+    @functools.cached_property
     def pet(self):
         return self._msg.event.packet.context_field["pet"]
 
-    @property
+    @functools.cached_property
     def nodename(self):
         return self._msg.event.packet.context_field["nodename"]
 
@@ -75,7 +73,11 @@ class TraceEvent(ABC):
 
 
 class TraceEventEncoder(json.JSONEncoder):
-    casting = [bt2._UnsignedIntegerFieldConst, bt2._DoublePrecisionRealFieldConst, bt2._StringFieldConst]
+    casting = [
+        bt2._UnsignedIntegerFieldConst,
+        bt2._DoublePrecisionRealFieldConst,
+        bt2._StringFieldConst,
+    ]
 
     def default(self, obj):
         if type(obj) in self.casting:
@@ -99,6 +101,7 @@ class RegionProfilesEncoder(json.JSONEncoder):
 
 
 class Comp(TraceEvent):
+    @property
     def keys(self):
         return [
             "vmid",
@@ -111,16 +114,19 @@ class Comp(TraceEvent):
 
 
 class RegionIdEnter(TraceEvent):
+    @property
     def keys(self):
         return ["regionid"]
 
 
 class RegionIdExit(TraceEvent):
+    @property
     def keys(self):
         return ["regionid"]
 
 
 class RegionProfile(TraceEvent):
+    @property
     def keys(self):
         return [
             "id",
@@ -153,8 +159,6 @@ class RegionProfiles:
 
     def _create_tree(self, level: int = 1):
 
-        # for x in self._profiles:
-        #     print(f"{x.get('pet')},", f"{x.get('id')},", x.get("parentId"))
         profiles = [
             Node(
                 int(profile.get("pet")),
@@ -303,7 +307,7 @@ class Trace:
 
     @staticmethod
     # TODO handle errors
-    def from_directory(_path: str, include: List[str], exclude: List[str]):
+    def from_path(_path: str, include: List[str], exclude: List[str]):
         hasInclude = len(include)
         hasExclude = len(exclude)
         results = []
