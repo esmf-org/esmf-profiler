@@ -157,6 +157,7 @@ class DefineRegion(TraceEvent):
     def keys(self):
         return [
             "nodename",
+            "name",
             "pet",
             "id",
             "type",
@@ -341,12 +342,16 @@ class Trace:
 
     @staticmethod
     # TODO handle errors
+    # TODO gathering and mapping regions names with define_region should be cached (functools lib)
     def from_path(_path: str, include: List[str], exclude: List[str]):
+        # TODO good cache option
+        requiredInclude = ["define_region"]  # any events we need for every run
         logger.debug(
             f"fetching traces from path: {_path} include=[{include}] exclude=[{exclude}]"
         )
         hasInclude = len(include)
         hasExclude = len(exclude)
+        include = include + requiredInclude  # Yuck, refactor, see TODO's
         results = []
         for msg in bt2.TraceCollectionMessageIterator(_path):
             if type(msg) is bt2._EventMessageConst:
