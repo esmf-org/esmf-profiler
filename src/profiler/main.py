@@ -1,9 +1,12 @@
-from collections import Counter
-import pickle
 import cProfile
+import datetime
 import io
+import json
 import pstats
+import time
+from pstats import SortKey
 from typing import List, cast
+
 from profiler.trace import (
     RegionProfile,
     RegionProfiles,
@@ -11,12 +14,6 @@ from profiler.trace import (
     Trace,
     TraceEvent,
 )
-import datetime
-import json
-from pstats import SortKey
-
-
-import time
 
 
 def st_time(func):
@@ -50,7 +47,7 @@ def main():
         trace = cast(
             List[RegionProfile],
             list(
-                Trace.from_directory("./tests/fixtures/test-traces", include, exclude)
+                Trace.from_path("./tests/fixtures/test-traces-large", include, exclude)
             ),
         )
 
@@ -59,27 +56,10 @@ def main():
         for profile in profiles:
             result.append(profile.toJson())
         print(json.dumps(result))
-        for item in profiles:
-            print(item)
 
-        exit()
-        for k, v in profiles.items():
-            print(k, dict(v))
-
-        log("tree created")
-        exit()
-        # print(profiles.values())
-        obj = dict(
-            zip(
-                profiles.keys(),
-                [profile.toJson().replace("\\", "") for profile in profiles.values()],
-            )
-        )
-        log("creating summary")
-
-        summary = RegionSummary(cast(List[TraceEvent], trace))
-        print(summary.pet_count())
-        print(summary.count_each())
+        # summary = RegionSummary(cast(List[TraceEvent], trace))
+        # print(summary.pet_count())
+        # print(summary.count_each())
 
         s = io.StringIO()
         sortby = SortKey.TIME
