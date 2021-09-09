@@ -1,7 +1,7 @@
 import functools
 import json
 import textwrap
-from abc import ABC, abstractproperty
+from abc import ABC, abstractmethod, abstractproperty
 from collections import namedtuple
 from statistics import mean
 from typing import Any, Dict, Generator, List
@@ -9,7 +9,7 @@ import logging
 
 import bt2
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TraceEvent(ABC):
@@ -26,15 +26,22 @@ class TraceEvent(ABC):
         return json.dumps(self, cls=TraceEventEncoder)
 
     @abstractproperty
+    def type(self):
+        raise NotImplementedError(
+            f"{self.__class__.__name__} requires a 'type' property"
+        )
+
+    @property
+    @abstractmethod
     def keys(self):
         raise NotImplementedError(
             f"{self.__class__.__name__} requires a 'keys' property"
         )
 
     def get(self, key):
-        log.debug(f"Getting value from key: {key}")
+        logger.debug(f"Getting value from key: {key}")
         try:
-            if str(key).lower() in self.keys:
+            if str(key).lower() in self.keys():
                 return self.payload[str(key).lower()]
         except KeyError:
             if key in dir(self):
@@ -81,6 +88,7 @@ class TraceEventEncoder(json.JSONEncoder):
         bt2._UnsignedIntegerFieldConst,
         bt2._DoublePrecisionRealFieldConst,
         bt2._StringFieldConst,
+        bt2._UnsignedEnumerationFieldConst,
     ]
 
     def default(self, obj):
@@ -106,6 +114,10 @@ class RegionProfilesEncoder(json.JSONEncoder):
 
 class Comp(TraceEvent):
     @property
+    def type(self):
+        return "comp"
+
+    @property
     def keys(self):
         return [
             "vmid",
@@ -119,17 +131,47 @@ class Comp(TraceEvent):
 
 class RegionIdEnter(TraceEvent):
     @property
+    def type(self):
+        return "regionid_enter"
+
+    @property
     def keys(self):
         return ["regionid"]
 
 
 class RegionIdExit(TraceEvent):
     @property
+    def type(self):
+        return "regionid_exit"
+
+    @property
     def keys(self):
         return ["regionid"]
 
 
+class DefineRegion(TraceEvent):
+    @property
+    def type(self):
+        return "define_region"
+
+    def keys(self):
+        return [
+            "nodename",
+            "pet",
+            "id",
+            "type",
+            "vmid",
+            "baseid",
+            "method",
+            "phase",
+        ]
+
+
 class RegionProfile(TraceEvent):
+    @property
+    def type(self):
+        return "region_profile"
+
     @property
     def keys(self):
         return [
@@ -162,6 +204,7 @@ class RegionProfiles:
         return json.dumps(self, cls=RegionProfilesEncoder)
 
     def _create_tree(self, level: int = 1):
+        logger.debug(f"generating tree with level: {level}")
         profiles = [
             Node(
                 int(profile.get("pet")),
@@ -171,8 +214,10 @@ class RegionProfiles:
             for profile in self._profiles
         ]
 
+        logger.debug("determining log levels")
         levels = self._determine_levels(profiles)
-        return list(filter(lambda x: x.get("id") in levels[1], self._profiles))
+        nodes = list(filter(lambda x: x.get("id") in levels[1], self._profiles))
+        return self._build_pet_tree([], nodes)
 
     def _determine_levels(self, profiles: List[Node]):
         parentIds = list(self._filter_unique_values("parentId", []))
@@ -284,20 +329,6 @@ class RegionSummary:
         return dict(zip(self._totals(), self._pet_ids()))[self.max()]
 
 
-class DefineRegion(TraceEvent):
-    def keys(self):
-        return [
-            "nodename",
-            "pet",
-            "id",
-            "type",
-            "vmid",
-            "baseid",
-            "method",
-            "phase",
-        ]
-
-
 class Trace:
     def __init__(self, msgs: Generator[TraceEvent, None, None]):
         self._msgs = msgs
@@ -311,7 +342,7 @@ class Trace:
     @staticmethod
     # TODO handle errors
     def from_path(_path: str, include: List[str], exclude: List[str]):
-        log.debug(
+        logger.debug(
             f"fetching traces from path: {_path} include=[{include}] exclude=[{exclude}]"
         )
         hasInclude = len(include)
@@ -319,8 +350,8 @@ class Trace:
         results = []
         for msg in bt2.TraceCollectionMessageIterator(_path):
             if type(msg) is bt2._EventMessageConst:
-                event = msg.event.name
 
+                event = msg.event.name
                 if (
                     (hasInclude and event in include)
                     or (hasExclude and event not in exclude)
