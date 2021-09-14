@@ -55,8 +55,13 @@ def main():
 
         logger.info("creating lookup table for region profiles")
         lookup = Lookup(trace)
+        logger.debug("complete")
 
+        logger.info("creating lookup table for region profiles")
         region_profiles = list(filter(lambda x: isinstance(x, RegionProfile), trace))
+        logger.debug("complete")
+
+        logger.info("Looking up and appending names to Region Profiles")
         for item in region_profiles:
             attribs = {"name": lookup.find(item.get("pet"), item.get("id"))}
             item._attributes = attribs
@@ -64,9 +69,10 @@ def main():
 
         logger.info(f"creating tree from list of region profiles")
         tree = RegionProfiles(iter(region_profiles), lookup)._create_tree_json()
+        logger.debug("complete")
         print(tree)
-        exit()
 
+        # Uncomment for Profiling
         # s = io.StringIO()
         # sortby = SortKey.TIME
         # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
