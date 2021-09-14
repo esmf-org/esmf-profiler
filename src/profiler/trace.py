@@ -2,10 +2,10 @@ import functools
 
 import json
 import textwrap
-from abc import ABC, abstractmethod, abstractproperty
-from collections import defaultdict, namedtuple
+from abc import ABC, abstractproperty
+from collections import namedtuple
 from statistics import mean
-from typing import Any, Dict, Generator, Iterator, List
+from typing import Any, Generator, Iterator, List
 import logging
 
 import bt2
@@ -245,8 +245,11 @@ class RegionProfiles:
             )
         )
 
-        logger.debug("determining log levels")
-        return self._populate_tree_from_map(self._build_tree_map(profiles))
+        output = []
+        for petId in self.petIds:
+            _profiles = list(filter(lambda x: x.petId == petId, profiles))
+            output.append(self._populate_tree_from_map(self._build_tree_map(_profiles)))
+        return output
 
     def _create_tree_json(self):
         return json.dumps(
@@ -281,18 +284,6 @@ class RegionProfiles:
                 children = self._build_tree_from_root(nodes, node)
                 out.append({"node": node, "children": children})
         return out
-
-    def _build_pet_tree(self, petIds, profiles: List[RegionProfile], accum: Dict = {}):
-        logging.debug(f"remaining PETIDS:{len(petIds)} EVENTS:{len(profiles)}")
-        if len(petIds) < 20:
-            logging.debug(f"PETIDS REMAINING: {str(petIds)}")
-        if len(petIds) > 0 and len(profiles) > 0:
-            petId = list(petIds)[0]
-            filtered = list(filter(lambda x: x.get("pet") == petId, profiles))
-            accum[petId] = filtered
-            remainder = list([x for x in set(profiles) if x not in set(filtered)])
-            return self._build_pet_tree(list(petIds)[1:], remainder, accum)
-        return accum
 
     @staticmethod
     def _flatten(t):
