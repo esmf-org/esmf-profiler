@@ -13,9 +13,12 @@ class Lookup:
     def find(self, petId, _id):
         # TODO error handle for no results, empty array
         # TODO typehint
-        data = self.data # I think this is needed for caching... it was being called as method for some reason.
-        
-        return list(filter(lambda x: x.pet == petId and x.id == _id, data))[0].name
+        data = (
+            self.data
+        )  # I think this is needed for caching... it was being called as method for some reason.
+
+        value = list(filter(lambda x: x.pet == petId and x.id == _id, data))
+        return value[0].name if len(value) else ""
 
     @functools.cached_property  # Make sure this is being cached correctly
     def data(self):
