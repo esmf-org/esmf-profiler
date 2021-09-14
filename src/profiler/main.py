@@ -15,7 +15,7 @@ from profiler.lookup import Lookup
 
 from profiler.utils import print_execution_time
 
-from profiler.trace import RegionProfiles, Trace
+from profiler.trace import RegionProfile, RegionProfiles, Trace
 
 logger = logging.getLogger(__name__)
 _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
@@ -53,43 +53,25 @@ def main():
         trace = Trace.from_path(_path, include, exclude)
         logger.debug("complete")
 
-        logger.info("filtering region profiles")
-        region_profiles = filter(lambda x: x.type == "region_profile", trace)
-        logger.debug("complete")
-
         logger.info("creating lookup table for region profiles")
         lookup = Lookup(trace)
-        logger.debug("complete")
 
-        logger.debug(f"performing 1 verification lookups")
-        print(lookup.find(1, 24))
+        region_profiles = list(filter(lambda x: isinstance(x, RegionProfile), trace))
+        for item in region_profiles:
+            attribs = {"name": lookup.find(item.get("pet"), item.get("id"))}
+            item._attributes = attribs
         logger.debug("complete")
 
         logger.info(f"creating tree from list of region profiles")
-        profiles = RegionProfiles(list(region_profiles), lookup)._create_tree()
-        logger.debug(f"complete; {len(profiles)} processed")
+        tree = RegionProfiles(iter(region_profiles), lookup)._create_tree_json()
+        print(tree)
+        exit()
 
-        logger.info(f"merging profiles to JSON")
-        result = []
-        for profile in profiles:
-            result.append(profile.toJson())
-        logger.debug("complete")
-
-        logger.info(f"writing results to file")
-        with open("results.json", "w") as _file:
-            _file.write(json.dumps(result))
-        logger.debug(f"complete")
-
-        # TODO for revisiting RegionSummary
-        # summary = RegionSummary(cast(List[TraceEvent], trace))
-        # print(summary.pet_count())
-        # print(summary.count_each())
-
-        s = io.StringIO()
-        sortby = SortKey.TIME
-        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-        ps.print_stats()
-        print(s.getvalue())
+        # s = io.StringIO()
+        # sortby = SortKey.TIME
+        # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        # ps.print_stats()
+        # print(s.getvalue())
 
 
 if __name__ == "__main__":
