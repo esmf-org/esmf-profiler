@@ -79,7 +79,7 @@ class LoadBalance(Analysis):
 
         if self._rootRegionName is None or self._rootRegionName == "":
             # use the first level regions in the timing trees
-
+            pass
 
         else:
             # find the root by searching the tree?
