@@ -153,6 +153,8 @@ class LoadBalance(Analysis):
         # });
 
         root = multiPETTree.children["ROOT"]
+        #root = root.children["[NEMS Grid Comp] Run 1"]
+        #root = root.children["[EARTH grid component] RunPhase1"]
 
         xvals, yvals = root.load_balance()
         yvalsjson = [
@@ -384,17 +386,6 @@ class MultiPETTimingNode:
         pets = [*range(lowpet, highpet+1)]
 
         # y values { region -> [time_pet0, time_pet1, ....] }
-
-        #     series: [{
-        #         name: 'John',
-        #         data: [5, 3, 4, 7, 2]
-        #     }, {
-        #         name: 'Jane',
-        #         data: [2, 2, 3, 2, 1]
-        #     }, {
-        #         name: 'Joe',
-        #         data: [3, 4, 4, 2, 5]
-        #     }]
 
         child_regions = {}
         for name, child in self.children.items():

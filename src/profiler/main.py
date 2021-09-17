@@ -44,7 +44,7 @@ def main():
 
     with cProfile.Profile() as pr:
         _path = "./tests/fixtures/test-traces/atm-ocn-sequential"
-        #_path = "./tests/fixtures/test-traces-large"
+        #_path = "./tests/fixtures/test-traces-large-tmp"
 
         #include = ["region_profile", "define_region"]
         #assert (
