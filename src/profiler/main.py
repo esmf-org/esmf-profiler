@@ -17,7 +17,7 @@ from profiler.utils import print_execution_time
 
 from profiler.trace import RegionProfile, RegionProfiles, Trace
 
-from analyses import Analysis, LoadBalance
+from profiler.analyses import Analysis, LoadBalance
 
 logger = logging.getLogger(__name__)
 _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
@@ -43,7 +43,7 @@ def main():
     """
 
     with cProfile.Profile() as pr:
-        _path = "./tests/fixtures/test-traces/atm-ocn"
+        _path = "./tests/fixtures/test-traces/atm-ocn-sequential"
         #_path = "./tests/fixtures/test-traces-large"
 
         #include = ["region_profile", "define_region"]
