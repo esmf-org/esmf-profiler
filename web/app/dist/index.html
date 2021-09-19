@@ -1,19 +1,1095 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
-      crossorigin="anonymous"
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>ESMF Profiler</title>
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>SB Admin 2 - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link
+      href="vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+
+    <!-- Custom styles for this template-->
   </head>
-  <body>
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <ul
+        class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar"
+      >
+        <!-- Sidebar - Brand -->
+        <a
+          class="sidebar-brand d-flex align-items-center justify-content-center"
+          href="index.html"
+        >
+          <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-laugh-wink"></i>
+          </div>
+          <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0" />
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item active">
+          <a class="nav-link" href="index.html">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a
+          >
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
+
+        <!-- Heading -->
+        <div class="sidebar-heading">Interface</div>
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+          <a
+            class="nav-link collapsed"
+            href="#"
+            data-toggle="collapse"
+            data-target="#collapseTwo"
+            aria-expanded="true"
+            aria-controls="collapseTwo"
+          >
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Components</span>
+          </a>
+          <div
+            id="collapseTwo"
+            class="collapse"
+            aria-labelledby="headingTwo"
+            data-parent="#accordionSidebar"
+          >
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header">Custom Components:</h6>
+              <a class="collapse-item" href="buttons.html">Buttons</a>
+              <a class="collapse-item" href="cards.html">Cards</a>
+            </div>
+          </div>
+        </li>
+
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <li class="nav-item">
+          <a
+            class="nav-link collapsed"
+            href="#"
+            data-toggle="collapse"
+            data-target="#collapseUtilities"
+            aria-expanded="true"
+            aria-controls="collapseUtilities"
+          >
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>Utilities</span>
+          </a>
+          <div
+            id="collapseUtilities"
+            class="collapse"
+            aria-labelledby="headingUtilities"
+            data-parent="#accordionSidebar"
+          >
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header">Custom Utilities:</h6>
+              <a class="collapse-item" href="utilities-color.html">Colors</a>
+              <a class="collapse-item" href="utilities-border.html">Borders</a>
+              <a class="collapse-item" href="utilities-animation.html"
+                >Animations</a
+              >
+              <a class="collapse-item" href="utilities-other.html">Other</a>
+            </div>
+          </div>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
+
+        <!-- Heading -->
+        <div class="sidebar-heading">Addons</div>
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+          <a
+            class="nav-link collapsed"
+            href="#"
+            data-toggle="collapse"
+            data-target="#collapsePages"
+            aria-expanded="true"
+            aria-controls="collapsePages"
+          >
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Pages</span>
+          </a>
+          <div
+            id="collapsePages"
+            class="collapse"
+            aria-labelledby="headingPages"
+            data-parent="#accordionSidebar"
+          >
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header">Login Screens:</h6>
+              <a class="collapse-item" href="login.html">Login</a>
+              <a class="collapse-item" href="register.html">Register</a>
+              <a class="collapse-item" href="forgot-password.html"
+                >Forgot Password</a
+              >
+              <div class="collapse-divider"></div>
+              <h6 class="collapse-header">Other Pages:</h6>
+              <a class="collapse-item" href="404.html">404 Page</a>
+              <a class="collapse-item" href="blank.html">Blank Page</a>
+            </div>
+          </div>
+        </li>
+
+        <!-- Nav Item - Charts -->
+        <li class="nav-item">
+          <a class="nav-link" href="charts.html">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Charts</span></a
+          >
+        </li>
+
+        <!-- Nav Item - Tables -->
+        <li class="nav-item">
+          <a class="nav-link" href="tables.html">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Tables</span></a
+          >
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block" />
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+
+        <!-- Sidebar Message -->
+        <div class="sidebar-card d-none d-lg-flex">
+          <img
+            class="sidebar-card-illustration mb-2"
+            src="img/undraw_rocket.svg"
+            alt="..."
+          />
+          <p class="text-center mb-2">
+            <strong>SB Admin Pro</strong> is packed with premium features,
+            components, and more!
+          </p>
+          <a
+            class="btn btn-success btn-sm"
+            href="https://startbootstrap.com/theme/sb-admin-pro"
+            >Upgrade to Pro!</a
+          >
+        </div>
+      </ul>
+      <!-- End of Sidebar -->
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <nav
+            class="
+              navbar navbar-expand navbar-light
+              bg-white
+              topbar
+              mb-4
+              static-top
+              shadow
+            "
+          >
+            <!-- Sidebar Toggle (Topbar) -->
+            <button
+              id="sidebarToggleTop"
+              class="btn btn-link d-md-none rounded-circle mr-3"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Search -->
+            <form
+              class="
+                d-none d-sm-inline-block
+                form-inline
+                mr-auto
+                ml-md-3
+                my-2 my-md-0
+                mw-100
+                navbar-search
+              "
+            >
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control bg-light border-0 small"
+                  placeholder="Search for..."
+                  aria-label="Search"
+                  aria-describedby="basic-addon2"
+                />
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="button">
+                    <i class="fas fa-search fa-sm"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+              <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+              <li class="nav-item dropdown no-arrow d-sm-none">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="searchDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="fas fa-search fa-fw"></i>
+                </a>
+                <!-- Dropdown - Messages -->
+                <div
+                  class="
+                    dropdown-menu dropdown-menu-right
+                    p-3
+                    shadow
+                    animated--grow-in
+                  "
+                  aria-labelledby="searchDropdown"
+                >
+                  <form class="form-inline mr-auto w-100 navbar-search">
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control bg-light border-0 small"
+                        placeholder="Search for..."
+                        aria-label="Search"
+                        aria-describedby="basic-addon2"
+                      />
+                      <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                          <i class="fas fa-search fa-sm"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </li>
+
+              <!-- Nav Item - Alerts -->
+              <li class="nav-item dropdown no-arrow mx-1">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="alertsDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="fas fa-bell fa-fw"></i>
+                  <!-- Counter - Alerts -->
+                  <span class="badge badge-danger badge-counter">3+</span>
+                </a>
+                <!-- Dropdown - Alerts -->
+                <div
+                  class="
+                    dropdown-list dropdown-menu dropdown-menu-right
+                    shadow
+                    animated--grow-in
+                  "
+                  aria-labelledby="alertsDropdown"
+                >
+                  <h6 class="dropdown-header">Alerts Center</h6>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3">
+                      <div class="icon-circle bg-primary">
+                        <i class="fas fa-file-alt text-white"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="small text-gray-500">December 12, 2019</div>
+                      <span class="font-weight-bold"
+                        >A new monthly report is ready to download!</span
+                      >
+                    </div>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3">
+                      <div class="icon-circle bg-success">
+                        <i class="fas fa-donate text-white"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="small text-gray-500">December 7, 2019</div>
+                      $290.29 has been deposited into your account!
+                    </div>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3">
+                      <div class="icon-circle bg-warning">
+                        <i class="fas fa-exclamation-triangle text-white"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="small text-gray-500">December 2, 2019</div>
+                      Spending Alert: We've noticed unusually high spending for
+                      your account.
+                    </div>
+                  </a>
+                  <a
+                    class="dropdown-item text-center small text-gray-500"
+                    href="#"
+                    >Show All Alerts</a
+                  >
+                </div>
+              </li>
+
+              <!-- Nav Item - Messages -->
+              <li class="nav-item dropdown no-arrow mx-1">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="messagesDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="fas fa-envelope fa-fw"></i>
+                  <!-- Counter - Messages -->
+                  <span class="badge badge-danger badge-counter">7</span>
+                </a>
+                <!-- Dropdown - Messages -->
+                <div
+                  class="
+                    dropdown-list dropdown-menu dropdown-menu-right
+                    shadow
+                    animated--grow-in
+                  "
+                  aria-labelledby="messagesDropdown"
+                >
+                  <h6 class="dropdown-header">Message Center</h6>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="dropdown-list-image mr-3">
+                      <img
+                        class="rounded-circle"
+                        src="img/undraw_profile_1.svg"
+                        alt="..."
+                      />
+                      <div class="status-indicator bg-success"></div>
+                    </div>
+                    <div class="font-weight-bold">
+                      <div class="text-truncate">
+                        Hi there! I am wondering if you can help me with a
+                        problem I've been having.
+                      </div>
+                      <div class="small text-gray-500">Emily Fowler · 58m</div>
+                    </div>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="dropdown-list-image mr-3">
+                      <img
+                        class="rounded-circle"
+                        src="img/undraw_profile_2.svg"
+                        alt="..."
+                      />
+                      <div class="status-indicator"></div>
+                    </div>
+                    <div>
+                      <div class="text-truncate">
+                        I have the photos that you ordered last month, how would
+                        you like them sent to you?
+                      </div>
+                      <div class="small text-gray-500">Jae Chun · 1d</div>
+                    </div>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="dropdown-list-image mr-3">
+                      <img
+                        class="rounded-circle"
+                        src="img/undraw_profile_3.svg"
+                        alt="..."
+                      />
+                      <div class="status-indicator bg-warning"></div>
+                    </div>
+                    <div>
+                      <div class="text-truncate">
+                        Last month's report looks great, I am very happy with
+                        the progress so far, keep up the good work!
+                      </div>
+                      <div class="small text-gray-500">Morgan Alvarez · 2d</div>
+                    </div>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="dropdown-list-image mr-3">
+                      <img
+                        class="rounded-circle"
+                        src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
+                        alt="..."
+                      />
+                      <div class="status-indicator bg-success"></div>
+                    </div>
+                    <div>
+                      <div class="text-truncate">
+                        Am I a good boy? The reason I ask is because someone
+                        told me that people say this to all dogs, even if they
+                        aren't good...
+                      </div>
+                      <div class="small text-gray-500">
+                        Chicken the Dog · 2w
+                      </div>
+                    </div>
+                  </a>
+                  <a
+                    class="dropdown-item text-center small text-gray-500"
+                    href="#"
+                    >Read More Messages</a
+                  >
+                </div>
+              </li>
+
+              <div class="topbar-divider d-none d-sm-block"></div>
+
+              <!-- Nav Item - User Information -->
+              <li class="nav-item dropdown no-arrow">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span class="mr-2 d-none d-lg-inline text-gray-600 small"
+                    >Douglas McGee</span
+                  >
+                  <img
+                    class="img-profile rounded-circle"
+                    src="img/undraw_profile.svg"
+                  />
+                </a>
+                <!-- Dropdown - User Information -->
+                <div
+                  class="
+                    dropdown-menu dropdown-menu-right
+                    shadow
+                    animated--grow-in
+                  "
+                  aria-labelledby="userDropdown"
+                >
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Profile
+                  </a>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Settings
+                  </a>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Activity Log
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    data-toggle="modal"
+                    data-target="#logoutModal"
+                  >
+                    <i
+                      class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"
+                    ></i>
+                    Logout
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+              <a
+                href="#"
+                class="
+                  d-none d-sm-inline-block
+                  btn btn-sm btn-primary
+                  shadow-sm
+                "
+                ><i class="fas fa-download fa-sm text-white-50"></i> Generate
+                Report</a
+              >
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="
+                            text-xs
+                            font-weight-bold
+                            text-primary text-uppercase
+                            mb-1
+                          "
+                        >
+                          Earnings (Monthly)
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          $40,000
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="
+                            text-xs
+                            font-weight-bold
+                            text-success text-uppercase
+                            mb-1
+                          "
+                        >
+                          Earnings (Annual)
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          $215,000
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="
+                            text-xs
+                            font-weight-bold
+                            text-info text-uppercase
+                            mb-1
+                          "
+                        >
+                          Tasks
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                          <div class="col-auto">
+                            <div
+                              class="
+                                h5
+                                mb-0
+                                mr-3
+                                font-weight-bold
+                                text-gray-800
+                              "
+                            >
+                              50%
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="progress progress-sm mr-2">
+                              <div
+                                class="progress-bar bg-info"
+                                role="progressbar"
+                                style="width: 50%"
+                                aria-valuenow="50"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i
+                          class="fas fa-clipboard-list fa-2x text-gray-300"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pending Requests Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="
+                            text-xs
+                            font-weight-bold
+                            text-warning text-uppercase
+                            mb-1
+                          "
+                        >
+                          Pending Requests
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          18
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Row -->
+
+            <div class="row">
+              <!-- Area Chart -->
+              <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="
+                      card-header
+                      py-3
+                      d-flex
+                      flex-row
+                      align-items-center
+                      justify-content-between
+                    "
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Earnings Overview
+                    </h6>
+                    <div class="dropdown no-arrow">
+                      <a
+                        class="dropdown-toggle"
+                        href="#"
+                        role="button"
+                        id="dropdownMenuLink"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                      >
+                        <i
+                          class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"
+                        ></i>
+                      </a>
+                      <div
+                        class="
+                          dropdown-menu dropdown-menu-right
+                          shadow
+                          animated--fade-in
+                        "
+                        aria-labelledby="dropdownMenuLink"
+                      >
+                        <div class="dropdown-header">Dropdown Header:</div>
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#"
+                          >Something else here</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                    <div class="chart-area">
+                      <canvas id="myAreaChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pie Chart -->
+              <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="
+                      card-header
+                      py-3
+                      d-flex
+                      flex-row
+                      align-items-center
+                      justify-content-between
+                    "
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Revenue Sources
+                    </h6>
+                    <div class="dropdown no-arrow">
+                      <a
+                        class="dropdown-toggle"
+                        href="#"
+                        role="button"
+                        id="dropdownMenuLink"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                      >
+                        <i
+                          class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"
+                        ></i>
+                      </a>
+                      <div
+                        class="
+                          dropdown-menu dropdown-menu-right
+                          shadow
+                          animated--fade-in
+                        "
+                        aria-labelledby="dropdownMenuLink"
+                      >
+                        <div class="dropdown-header">Dropdown Header:</div>
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#"
+                          >Something else here</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                      <canvas id="myPieChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                      <span class="mr-2">
+                        <i class="fas fa-circle text-primary"></i> Direct
+                      </span>
+                      <span class="mr-2">
+                        <i class="fas fa-circle text-success"></i> Social
+                      </span>
+                      <span class="mr-2">
+                        <i class="fas fa-circle text-info"></i> Referral
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+              <!-- Content Column -->
+              <div class="col-lg-6 mb-4">
+                <!-- Project Card Example -->
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+                  </div>
+                  <div class="card-body">
+                    <h4 class="small font-weight-bold">
+                      Server Migration <span class="float-right">20%</span>
+                    </h4>
+                    <div class="progress mb-4">
+                      <div
+                        class="progress-bar bg-danger"
+                        role="progressbar"
+                        style="width: 20%"
+                        aria-valuenow="20"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                    <h4 class="small font-weight-bold">
+                      Sales Tracking <span class="float-right">40%</span>
+                    </h4>
+                    <div class="progress mb-4">
+                      <div
+                        class="progress-bar bg-warning"
+                        role="progressbar"
+                        style="width: 40%"
+                        aria-valuenow="40"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                    <h4 class="small font-weight-bold">
+                      Customer Database <span class="float-right">60%</span>
+                    </h4>
+                    <div class="progress mb-4">
+                      <div
+                        class="progress-bar"
+                        role="progressbar"
+                        style="width: 60%"
+                        aria-valuenow="60"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                    <h4 class="small font-weight-bold">
+                      Payout Details <span class="float-right">80%</span>
+                    </h4>
+                    <div class="progress mb-4">
+                      <div
+                        class="progress-bar bg-info"
+                        role="progressbar"
+                        style="width: 80%"
+                        aria-valuenow="80"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                    <h4 class="small font-weight-bold">
+                      Account Setup <span class="float-right">Complete!</span>
+                    </h4>
+                    <div class="progress">
+                      <div
+                        class="progress-bar bg-success"
+                        role="progressbar"
+                        style="width: 100%"
+                        aria-valuenow="100"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Color System -->
+                <div class="row">
+                  <div class="col-lg-6 mb-4">
+                    <div class="card bg-primary text-white shadow">
+                      <div class="card-body">
+                        Primary
+                        <div class="text-white-50 small">#4e73df</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 mb-4">
+                    <div class="card bg-success text-white shadow">
+                      <div class="card-body">
+                        Success
+                        <div class="text-white-50 small">#1cc88a</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 mb-4">
+                    <div class="card bg-info text-white shadow">
+                      <div class="card-body">
+                        Info
+                        <div class="text-white-50 small">#36b9cc</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 mb-4">
+                    <div class="card bg-warning text-white shadow">
+                      <div class="card-body">
+                        Warning
+                        <div class="text-white-50 small">#f6c23e</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 mb-4">
+                    <div class="card bg-danger text-white shadow">
+                      <div class="card-body">
+                        Danger
+                        <div class="text-white-50 small">#e74a3b</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 mb-4">
+                    <div class="card bg-secondary text-white shadow">
+                      <div class="card-body">
+                        Secondary
+                        <div class="text-white-50 small">#858796</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 mb-4">
+                    <div class="card bg-light text-black shadow">
+                      <div class="card-body">
+                        Light
+                        <div class="text-black-50 small">#f8f9fc</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 mb-4">
+                    <div class="card bg-dark text-white shadow">
+                      <div class="card-body">
+                        Dark
+                        <div class="text-white-50 small">#5a5c69</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 mb-4">
+                <!-- Illustrations -->
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Illustrations
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="text-center">
+                      <img
+                        class="img-fluid px-3 px-sm-4 mt-3 mb-4"
+                        style="width: 25rem"
+                        src="img/undraw_posting_photo.svg"
+                        alt="..."
+                      />
+                    </div>
+                    <p>
+                      Add some quality, svg illustrations to your project
+                      courtesy of
+                      <a
+                        target="_blank"
+                        rel="nofollow"
+                        href="https://undraw.co/"
+                        >unDraw</a
+                      >, a constantly updated collection of beautiful svg images
+                      that you can use completely free and without attribution!
+                    </p>
+                    <a target="_blank" rel="nofollow" href="https://undraw.co/"
+                      >Browse Illustrations on unDraw &rarr;</a
+                    >
+                  </div>
+                </div>
+
+                <!-- Approach -->
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Development Approach
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <p>
+                      SB Admin 2 makes extensive use of Bootstrap 4 utility
+                      classes in order to reduce CSS bloat and poor page
+                      performance. Custom CSS classes are used to create custom
+                      components and custom utility classes.
+                    </p>
+                    <p class="mb-0">
+                      Before working with this theme, you should become familiar
+                      with the Bootstrap framework, especially the utility
+                      classes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Your Website 2021</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div
+      class="modal fade"
+      id="logoutModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <button
+              class="close"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Select "Logout" below if you are ready to end your current session.
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <a class="btn btn-primary" href="login.html">Logout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="buttons">
       <button id="2000">2000</button>
       <button id="2004">2004</button>
@@ -22,6 +1098,7 @@
       <button id="2016" class="active">2016</button>
     </div>
     <div id="container"></div>
+
     <figure class="highcharts-figure">
       <div id="container2"></div>
       <p class="highcharts-description">
@@ -29,6 +1106,7 @@
         times of [INSERT WORD HERE]
       </p>
     </figure>
+
     <figure class="highcharts-figure">
       <div id="basic-bar-container"></div>
       <p class="highcharts-description">
@@ -46,2185 +1124,24 @@
         feature in Highcharts to easily switch between datasets.
       </p>
     </figure>
+
+    <!-- Bootstrap core JavaScript-->
     <script src="./main.js"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="./main.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/chart-area-demo.js"></script>
+    <script src="js/demo/chart-pie-demo.js"></script>
   </body>
 </html>
-
-<script>
-  const data = {
-    id: "1",
-    parentid: "0",
-    total: "0",
-    self: "18446744071735290152",
-    count: "0",
-    max: "0",
-    min: "18446744073709551615",
-    mean: "0.0",
-    pet: "0",
-    children: [
-      {
-        id: "2",
-        parentid: "1",
-        total: "1965575089",
-        self: "11770523",
-        count: "1",
-        max: "1965575089",
-        min: "1965575089",
-        mean: "1965575089.0",
-        pet: "0",
-        children: [
-          {
-            id: "3",
-            parentid: "2",
-            total: "509466",
-            self: "509466",
-            count: "1",
-            max: "509466",
-            min: "509466",
-            mean: "509466.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "4",
-            parentid: "2",
-            total: "533754",
-            self: "533754",
-            count: "1",
-            max: "533754",
-            min: "533754",
-            mean: "533754.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "5",
-            parentid: "2",
-            total: "190880",
-            self: "190880",
-            count: "1",
-            max: "190880",
-            min: "190880",
-            mean: "190880.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "6",
-            parentid: "2",
-            total: "186717",
-            self: "186717",
-            count: "1",
-            max: "186717",
-            min: "186717",
-            mean: "186717.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "3",
-            parentid: "2",
-            total: "512615",
-            self: "512615",
-            count: "1",
-            max: "512615",
-            min: "512615",
-            mean: "512615.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "7",
-            parentid: "2",
-            total: "24379",
-            self: "24379",
-            count: "1",
-            max: "24379",
-            min: "24379",
-            mean: "24379.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "3",
-            parentid: "2",
-            total: "520914",
-            self: "520914",
-            count: "1",
-            max: "520914",
-            min: "520914",
-            mean: "520914.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "4",
-            parentid: "2",
-            total: "531726",
-            self: "531726",
-            count: "1",
-            max: "531726",
-            min: "531726",
-            mean: "531726.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "8",
-            parentid: "2",
-            total: "1824924",
-            self: "1824924",
-            count: "1",
-            max: "1824924",
-            min: "1824924",
-            mean: "1824924.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "5",
-            parentid: "2",
-            total: "196375",
-            self: "196375",
-            count: "1",
-            max: "196375",
-            min: "196375",
-            mean: "196375.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "4",
-            parentid: "2",
-            total: "528417",
-            self: "528417",
-            count: "1",
-            max: "528417",
-            min: "528417",
-            mean: "528417.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "6",
-            parentid: "2",
-            total: "184677",
-            self: "184677",
-            count: "1",
-            max: "184677",
-            min: "184677",
-            mean: "184677.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "5",
-            parentid: "2",
-            total: "199253",
-            self: "199253",
-            count: "1",
-            max: "199253",
-            min: "199253",
-            mean: "199253.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "7",
-            parentid: "2",
-            total: "24000",
-            self: "24000",
-            count: "1",
-            max: "24000",
-            min: "24000",
-            mean: "24000.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "6",
-            parentid: "2",
-            total: "185811",
-            self: "185811",
-            count: "1",
-            max: "185811",
-            min: "185811",
-            mean: "185811.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "8",
-            parentid: "2",
-            total: "1795030",
-            self: "1795030",
-            count: "1",
-            max: "1795030",
-            min: "1795030",
-            mean: "1795030.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "7",
-            parentid: "2",
-            total: "23599",
-            self: "23599",
-            count: "1",
-            max: "23599",
-            min: "23599",
-            mean: "23599.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "8",
-            parentid: "2",
-            total: "1794839",
-            self: "1794839",
-            count: "1",
-            max: "1794839",
-            min: "1794839",
-            mean: "1794839.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "9",
-            parentid: "2",
-            total: "1698568",
-            self: "1698568",
-            count: "1",
-            max: "1698568",
-            min: "1698568",
-            mean: "1698568.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "10",
-            parentid: "2",
-            total: "1455210",
-            self: "1455210",
-            count: "1",
-            max: "1455210",
-            min: "1455210",
-            mean: "1455210.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "11",
-            parentid: "2",
-            total: "1029491",
-            self: "1029491",
-            count: "1",
-            max: "1029491",
-            min: "1029491",
-            mean: "1029491.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "3",
-            parentid: "2",
-            total: "517960",
-            self: "517960",
-            count: "1",
-            max: "517960",
-            min: "517960",
-            mean: "517960.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "12",
-            parentid: "2",
-            total: "22453",
-            self: "22453",
-            count: "1",
-            max: "22453",
-            min: "22453",
-            mean: "22453.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "9",
-            parentid: "2",
-            total: "1677284",
-            self: "1677284",
-            count: "1",
-            max: "1677284",
-            min: "1677284",
-            mean: "1677284.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "13",
-            parentid: "2",
-            total: "1395589",
-            self: "1395589",
-            count: "1",
-            max: "1395589",
-            min: "1395589",
-            mean: "1395589.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "10",
-            parentid: "2",
-            total: "1432347",
-            self: "1432347",
-            count: "1",
-            max: "1432347",
-            min: "1432347",
-            mean: "1432347.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "9",
-            parentid: "2",
-            total: "1689926",
-            self: "1689926",
-            count: "1",
-            max: "1689926",
-            min: "1689926",
-            mean: "1689926.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "4",
-            parentid: "2",
-            total: "528989",
-            self: "528989",
-            count: "1",
-            max: "528989",
-            min: "528989",
-            mean: "528989.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "14",
-            parentid: "2",
-            total: "1066436",
-            self: "1066436",
-            count: "1",
-            max: "1066436",
-            min: "1066436",
-            mean: "1066436.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "11",
-            parentid: "2",
-            total: "1026219",
-            self: "1026219",
-            count: "1",
-            max: "1026219",
-            min: "1026219",
-            mean: "1026219.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "10",
-            parentid: "2",
-            total: "1431173",
-            self: "1431173",
-            count: "1",
-            max: "1431173",
-            min: "1431173",
-            mean: "1431173.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "5",
-            parentid: "2",
-            total: "194859",
-            self: "194859",
-            count: "1",
-            max: "194859",
-            min: "194859",
-            mean: "194859.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "15",
-            parentid: "2",
-            total: "1449322",
-            self: "1449322",
-            count: "1",
-            max: "1449322",
-            min: "1449322",
-            mean: "1449322.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "12",
-            parentid: "2",
-            total: "22645",
-            self: "22645",
-            count: "1",
-            max: "22645",
-            min: "22645",
-            mean: "22645.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "11",
-            parentid: "2",
-            total: "1029121",
-            self: "1029121",
-            count: "1",
-            max: "1029121",
-            min: "1029121",
-            mean: "1029121.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "6",
-            parentid: "2",
-            total: "184992",
-            self: "184992",
-            count: "1",
-            max: "184992",
-            min: "184992",
-            mean: "184992.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "16",
-            parentid: "2",
-            total: "1067072",
-            self: "1067072",
-            count: "1",
-            max: "1067072",
-            min: "1067072",
-            mean: "1067072.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "13",
-            parentid: "2",
-            total: "1409908",
-            self: "1409908",
-            count: "1",
-            max: "1409908",
-            min: "1409908",
-            mean: "1409908.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "12",
-            parentid: "2",
-            total: "22282",
-            self: "22282",
-            count: "1",
-            max: "22282",
-            min: "22282",
-            mean: "22282.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "7",
-            parentid: "2",
-            total: "24252",
-            self: "24252",
-            count: "1",
-            max: "24252",
-            min: "24252",
-            mean: "24252.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "17",
-            parentid: "2",
-            total: "39911",
-            self: "39911",
-            count: "1",
-            max: "39911",
-            min: "39911",
-            mean: "39911.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "14",
-            parentid: "2",
-            total: "1062889",
-            self: "1062889",
-            count: "1",
-            max: "1062889",
-            min: "1062889",
-            mean: "1062889.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "13",
-            parentid: "2",
-            total: "1409627",
-            self: "1409627",
-            count: "1",
-            max: "1409627",
-            min: "1409627",
-            mean: "1409627.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "8",
-            parentid: "2",
-            total: "1799709",
-            self: "1799709",
-            count: "1",
-            max: "1799709",
-            min: "1799709",
-            mean: "1799709.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "18",
-            parentid: "2",
-            total: "1395608",
-            self: "1395608",
-            count: "1",
-            max: "1395608",
-            min: "1395608",
-            mean: "1395608.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "15",
-            parentid: "2",
-            total: "1446339",
-            self: "1446339",
-            count: "1",
-            max: "1446339",
-            min: "1446339",
-            mean: "1446339.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "14",
-            parentid: "2",
-            total: "1063117",
-            self: "1063117",
-            count: "1",
-            max: "1063117",
-            min: "1063117",
-            mean: "1063117.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "19",
-            parentid: "2",
-            total: "1089308",
-            self: "1089308",
-            count: "1",
-            max: "1089308",
-            min: "1089308",
-            mean: "1089308.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "16",
-            parentid: "2",
-            total: "1065078",
-            self: "1065078",
-            count: "1",
-            max: "1065078",
-            min: "1065078",
-            mean: "1065078.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "15",
-            parentid: "2",
-            total: "1448148",
-            self: "1448148",
-            count: "1",
-            max: "1448148",
-            min: "1448148",
-            mean: "1448148.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "20",
-            parentid: "2",
-            total: "21388",
-            self: "21388",
-            count: "1",
-            max: "21388",
-            min: "21388",
-            mean: "21388.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "17",
-            parentid: "2",
-            total: "38689",
-            self: "38689",
-            count: "1",
-            max: "38689",
-            min: "38689",
-            mean: "38689.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "16",
-            parentid: "2",
-            total: "1064759",
-            self: "1064759",
-            count: "1",
-            max: "1064759",
-            min: "1064759",
-            mean: "1064759.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "21",
-            parentid: "2",
-            total: "2274406",
-            self: "2274406",
-            count: "1",
-            max: "2274406",
-            min: "2274406",
-            mean: "2274406.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "18",
-            parentid: "2",
-            total: "1410341",
-            self: "1410341",
-            count: "1",
-            max: "1410341",
-            min: "1410341",
-            mean: "1410341.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "17",
-            parentid: "2",
-            total: "36173",
-            self: "36173",
-            count: "1",
-            max: "36173",
-            min: "36173",
-            mean: "36173.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "22",
-            parentid: "2",
-            total: "2406791",
-            self: "2406791",
-            count: "1",
-            max: "2406791",
-            min: "2406791",
-            mean: "2406791.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "19",
-            parentid: "2",
-            total: "1089773",
-            self: "1089773",
-            count: "1",
-            max: "1089773",
-            min: "1089773",
-            mean: "1089773.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "18",
-            parentid: "2",
-            total: "1411923",
-            self: "1411923",
-            count: "1",
-            max: "1411923",
-            min: "1411923",
-            mean: "1411923.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "23",
-            parentid: "2",
-            total: "2086967",
-            self: "2086967",
-            count: "1",
-            max: "2086967",
-            min: "2086967",
-            mean: "2086967.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "20",
-            parentid: "2",
-            total: "21409",
-            self: "21409",
-            count: "1",
-            max: "21409",
-            min: "21409",
-            mean: "21409.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "19",
-            parentid: "2",
-            total: "1086185",
-            self: "1086185",
-            count: "1",
-            max: "1086185",
-            min: "1086185",
-            mean: "1086185.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "24",
-            parentid: "2",
-            total: "1372320",
-            self: "1372320",
-            count: "1",
-            max: "1372320",
-            min: "1372320",
-            mean: "1372320.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "21",
-            parentid: "2",
-            total: "1805557",
-            self: "1805557",
-            count: "1",
-            max: "1805557",
-            min: "1805557",
-            mean: "1805557.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "20",
-            parentid: "2",
-            total: "21417",
-            self: "21417",
-            count: "1",
-            max: "21417",
-            min: "21417",
-            mean: "21417.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "9",
-            parentid: "2",
-            total: "1683969",
-            self: "1683969",
-            count: "1",
-            max: "1683969",
-            min: "1683969",
-            mean: "1683969.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "25",
-            parentid: "2",
-            total: "2011204",
-            self: "2011204",
-            count: "1",
-            max: "2011204",
-            min: "2011204",
-            mean: "2011204.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "22",
-            parentid: "2",
-            total: "2358221",
-            self: "2358221",
-            count: "1",
-            max: "2358221",
-            min: "2358221",
-            mean: "2358221.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "21",
-            parentid: "2",
-            total: "2211602",
-            self: "2211602",
-            count: "1",
-            max: "2211602",
-            min: "2211602",
-            mean: "2211602.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "10",
-            parentid: "2",
-            total: "1438428",
-            self: "1438428",
-            count: "1",
-            max: "1438428",
-            min: "1438428",
-            mean: "1438428.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "26",
-            parentid: "2",
-            total: "1391047",
-            self: "1391047",
-            count: "1",
-            max: "1391047",
-            min: "1391047",
-            mean: "1391047.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "23",
-            parentid: "2",
-            total: "2062057",
-            self: "2062057",
-            count: "1",
-            max: "2062057",
-            min: "2062057",
-            mean: "2062057.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "22",
-            parentid: "2",
-            total: "2407373",
-            self: "2407373",
-            count: "1",
-            max: "2407373",
-            min: "2407373",
-            mean: "2407373.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "11",
-            parentid: "2",
-            total: "1024566",
-            self: "1024566",
-            count: "1",
-            max: "1024566",
-            min: "1024566",
-            mean: "1024566.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "27",
-            parentid: "2",
-            total: "17528",
-            self: "17528",
-            count: "1",
-            max: "17528",
-            min: "17528",
-            mean: "17528.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "24",
-            parentid: "2",
-            total: "1377698",
-            self: "1377698",
-            count: "1",
-            max: "1377698",
-            min: "1377698",
-            mean: "1377698.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "23",
-            parentid: "2",
-            total: "2063820",
-            self: "2063820",
-            count: "1",
-            max: "2063820",
-            min: "2063820",
-            mean: "2063820.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "12",
-            parentid: "2",
-            total: "21333",
-            self: "21333",
-            count: "1",
-            max: "21333",
-            min: "21333",
-            mean: "21333.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "28",
-            parentid: "2",
-            total: "1880789",
-            self: "1880789",
-            count: "1",
-            max: "1880789",
-            min: "1880789",
-            mean: "1880789.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "25",
-            parentid: "2",
-            total: "2016069",
-            self: "2016069",
-            count: "1",
-            max: "2016069",
-            min: "2016069",
-            mean: "2016069.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "24",
-            parentid: "2",
-            total: "1376884",
-            self: "1376884",
-            count: "1",
-            max: "1376884",
-            min: "1376884",
-            mean: "1376884.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "13",
-            parentid: "2",
-            total: "1402413",
-            self: "1402413",
-            count: "1",
-            max: "1402413",
-            min: "1402413",
-            mean: "1402413.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "29",
-            parentid: "2",
-            total: "1216839",
-            self: "1216839",
-            count: "1",
-            max: "1216839",
-            min: "1216839",
-            mean: "1216839.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "26",
-            parentid: "2",
-            total: "1390539",
-            self: "1390539",
-            count: "1",
-            max: "1390539",
-            min: "1390539",
-            mean: "1390539.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "25",
-            parentid: "2",
-            total: "2015961",
-            self: "2015961",
-            count: "1",
-            max: "2015961",
-            min: "2015961",
-            mean: "2015961.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "14",
-            parentid: "2",
-            total: "1068512",
-            self: "1068512",
-            count: "1",
-            max: "1068512",
-            min: "1068512",
-            mean: "1068512.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "30",
-            parentid: "2",
-            total: "969753538",
-            self: "969753538",
-            count: "1",
-            max: "969753538",
-            min: "969753538",
-            mean: "969753538.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "27",
-            parentid: "2",
-            total: "16823",
-            self: "16823",
-            count: "1",
-            max: "16823",
-            min: "16823",
-            mean: "16823.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "26",
-            parentid: "2",
-            total: "1385518",
-            self: "1385518",
-            count: "1",
-            max: "1385518",
-            min: "1385518",
-            mean: "1385518.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "15",
-            parentid: "2",
-            total: "1448596",
-            self: "1448596",
-            count: "1",
-            max: "1448596",
-            min: "1448596",
-            mean: "1448596.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "31",
-            parentid: "2",
-            total: "953883153",
-            self: "953883153",
-            count: "1",
-            max: "953883153",
-            min: "953883153",
-            mean: "953883153.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "28",
-            parentid: "2",
-            total: "1890773",
-            self: "1890773",
-            count: "1",
-            max: "1890773",
-            min: "1890773",
-            mean: "1890773.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "27",
-            parentid: "2",
-            total: "16923",
-            self: "16923",
-            count: "1",
-            max: "16923",
-            min: "16923",
-            mean: "16923.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "16",
-            parentid: "2",
-            total: "1062004",
-            self: "1062004",
-            count: "1",
-            max: "1062004",
-            min: "1062004",
-            mean: "1062004.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "32",
-            parentid: "2",
-            total: "148960",
-            self: "148960",
-            count: "1",
-            max: "148960",
-            min: "148960",
-            mean: "148960.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "29",
-            parentid: "2",
-            total: "1210167",
-            self: "1210167",
-            count: "1",
-            max: "1210167",
-            min: "1210167",
-            mean: "1210167.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "28",
-            parentid: "2",
-            total: "1892627",
-            self: "1892627",
-            count: "1",
-            max: "1892627",
-            min: "1892627",
-            mean: "1892627.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "17",
-            parentid: "2",
-            total: "39284",
-            self: "39284",
-            count: "1",
-            max: "39284",
-            min: "39284",
-            mean: "39284.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "33",
-            parentid: "2",
-            total: "127339",
-            self: "127339",
-            count: "1",
-            max: "127339",
-            min: "127339",
-            mean: "127339.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "30",
-            parentid: "2",
-            total: "969758813",
-            self: "969758813",
-            count: "1",
-            max: "969758813",
-            min: "969758813",
-            mean: "969758813.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "29",
-            parentid: "2",
-            total: "1213608",
-            self: "1213608",
-            count: "1",
-            max: "1213608",
-            min: "1213608",
-            mean: "1213608.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "18",
-            parentid: "2",
-            total: "1406819",
-            self: "1406819",
-            count: "1",
-            max: "1406819",
-            min: "1406819",
-            mean: "1406819.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "34",
-            parentid: "2",
-            total: "26141",
-            self: "26141",
-            count: "1",
-            max: "26141",
-            min: "26141",
-            mean: "26141.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "31",
-            parentid: "2",
-            total: "953883112",
-            self: "953883112",
-            count: "1",
-            max: "953883112",
-            min: "953883112",
-            mean: "953883112.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "30",
-            parentid: "2",
-            total: "969759867",
-            self: "969759867",
-            count: "1",
-            max: "969759867",
-            min: "969759867",
-            mean: "969759867.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "19",
-            parentid: "2",
-            total: "1092903",
-            self: "1092903",
-            count: "1",
-            max: "1092903",
-            min: "1092903",
-            mean: "1092903.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "35",
-            parentid: "2",
-            total: "90751",
-            self: "90751",
-            count: "1",
-            max: "90751",
-            min: "90751",
-            mean: "90751.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "32",
-            parentid: "2",
-            total: "147234",
-            self: "147234",
-            count: "1",
-            max: "147234",
-            min: "147234",
-            mean: "147234.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "31",
-            parentid: "2",
-            total: "953883113",
-            self: "953883113",
-            count: "1",
-            max: "953883113",
-            min: "953883113",
-            mean: "953883113.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "20",
-            parentid: "2",
-            total: "22141",
-            self: "22141",
-            count: "1",
-            max: "22141",
-            min: "22141",
-            mean: "22141.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "36",
-            parentid: "2",
-            total: "116317",
-            self: "116317",
-            count: "1",
-            max: "116317",
-            min: "116317",
-            mean: "116317.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "33",
-            parentid: "2",
-            total: "118443",
-            self: "118443",
-            count: "1",
-            max: "118443",
-            min: "118443",
-            mean: "118443.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "32",
-            parentid: "2",
-            total: "148185",
-            self: "148185",
-            count: "1",
-            max: "148185",
-            min: "148185",
-            mean: "148185.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "21",
-            parentid: "2",
-            total: "1934401",
-            self: "1934401",
-            count: "1",
-            max: "1934401",
-            min: "1934401",
-            mean: "1934401.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "34",
-            parentid: "2",
-            total: "24536",
-            self: "24536",
-            count: "1",
-            max: "24536",
-            min: "24536",
-            mean: "24536.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "33",
-            parentid: "2",
-            total: "119304",
-            self: "119304",
-            count: "1",
-            max: "119304",
-            min: "119304",
-            mean: "119304.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "22",
-            parentid: "2",
-            total: "2366353",
-            self: "2366353",
-            count: "1",
-            max: "2366353",
-            min: "2366353",
-            mean: "2366353.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "35",
-            parentid: "2",
-            total: "88184",
-            self: "88184",
-            count: "1",
-            max: "88184",
-            min: "88184",
-            mean: "88184.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "34",
-            parentid: "2",
-            total: "24910",
-            self: "24910",
-            count: "1",
-            max: "24910",
-            min: "24910",
-            mean: "24910.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "23",
-            parentid: "2",
-            total: "2073414",
-            self: "2073414",
-            count: "1",
-            max: "2073414",
-            min: "2073414",
-            mean: "2073414.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "36",
-            parentid: "2",
-            total: "114058",
-            self: "114058",
-            count: "1",
-            max: "114058",
-            min: "114058",
-            mean: "114058.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "35",
-            parentid: "2",
-            total: "87867",
-            self: "87867",
-            count: "1",
-            max: "87867",
-            min: "87867",
-            mean: "87867.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "24",
-            parentid: "2",
-            total: "1367182",
-            self: "1367182",
-            count: "1",
-            max: "1367182",
-            min: "1367182",
-            mean: "1367182.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "36",
-            parentid: "2",
-            total: "114070",
-            self: "114070",
-            count: "1",
-            max: "114070",
-            min: "114070",
-            mean: "114070.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "25",
-            parentid: "2",
-            total: "2011181",
-            self: "2011181",
-            count: "1",
-            max: "2011181",
-            min: "2011181",
-            mean: "2011181.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "26",
-            parentid: "2",
-            total: "1386722",
-            self: "1386722",
-            count: "1",
-            max: "1386722",
-            min: "1386722",
-            mean: "1386722.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "27",
-            parentid: "2",
-            total: "16906",
-            self: "16906",
-            count: "1",
-            max: "16906",
-            min: "16906",
-            mean: "16906.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "28",
-            parentid: "2",
-            total: "1894875",
-            self: "1894875",
-            count: "1",
-            max: "1894875",
-            min: "1894875",
-            mean: "1894875.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "29",
-            parentid: "2",
-            total: "1211037",
-            self: "1211037",
-            count: "1",
-            max: "1211037",
-            min: "1211037",
-            mean: "1211037.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "30",
-            parentid: "2",
-            total: "969760808",
-            self: "969760808",
-            count: "1",
-            max: "969760808",
-            min: "969760808",
-            mean: "969760808.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "31",
-            parentid: "2",
-            total: "953883134",
-            self: "953883134",
-            count: "1",
-            max: "953883134",
-            min: "953883134",
-            mean: "953883134.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "32",
-            parentid: "2",
-            total: "148416",
-            self: "148416",
-            count: "1",
-            max: "148416",
-            min: "148416",
-            mean: "148416.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "33",
-            parentid: "2",
-            total: "119424",
-            self: "119424",
-            count: "1",
-            max: "119424",
-            min: "119424",
-            mean: "119424.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "34",
-            parentid: "2",
-            total: "24696",
-            self: "24696",
-            count: "1",
-            max: "24696",
-            min: "24696",
-            mean: "24696.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "35",
-            parentid: "2",
-            total: "87359",
-            self: "87359",
-            count: "1",
-            max: "87359",
-            min: "87359",
-            mean: "87359.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "36",
-            parentid: "2",
-            total: "113284",
-            self: "113284",
-            count: "1",
-            max: "113284",
-            min: "113284",
-            mean: "113284.0",
-            pet: "2",
-            children: [],
-          },
-        ],
-      },
-      {
-        id: "2",
-        parentid: "1",
-        total: "1965597000",
-        self: "12387372",
-        count: "1",
-        max: "1965597000",
-        min: "1965597000",
-        mean: "1965597000.0",
-        pet: "1",
-        children: [],
-      },
-      {
-        id: "2",
-        parentid: "1",
-        total: "1965597396",
-        self: "11909080",
-        count: "1",
-        max: "1965597396",
-        min: "1965597396",
-        mean: "1965597396.0",
-        pet: "3",
-        children: [],
-      },
-      {
-        id: "2",
-        parentid: "1",
-        total: "1965596437",
-        self: "12235516",
-        count: "1",
-        max: "1965596437",
-        min: "1965596437",
-        mean: "1965596437.0",
-        pet: "2",
-        children: [],
-      },
-      {
-        id: "37",
-        parentid: "1",
-        total: "8078678",
-        self: "553796",
-        count: "1",
-        max: "8078678",
-        min: "8078678",
-        mean: "8078678.0",
-        pet: "0",
-        children: [
-          {
-            id: "38",
-            parentid: "37",
-            total: "2717936",
-            self: "2717936",
-            count: "4",
-            max: "878333",
-            min: "589602",
-            mean: "679484.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "39",
-            parentid: "37",
-            total: "1523138",
-            self: "1523138",
-            count: "4",
-            max: "410766",
-            min: "347687",
-            mean: "380784.5",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "40",
-            parentid: "37",
-            total: "2300314",
-            self: "2300314",
-            count: "4",
-            max: "595049",
-            min: "559330",
-            mean: "575078.5",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "41",
-            parentid: "37",
-            total: "983494",
-            self: "983494",
-            count: "4",
-            max: "256140",
-            min: "229283",
-            mean: "245873.5",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "38",
-            parentid: "37",
-            total: "2791793",
-            self: "2791793",
-            count: "4",
-            max: "884190",
-            min: "608701",
-            mean: "697948.25",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "39",
-            parentid: "37",
-            total: "1493586",
-            self: "1493586",
-            count: "4",
-            max: "395056",
-            min: "345642",
-            mean: "373396.5",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "38",
-            parentid: "37",
-            total: "2747452",
-            self: "2747452",
-            count: "4",
-            max: "881305",
-            min: "599293",
-            mean: "686863.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "40",
-            parentid: "37",
-            total: "2276155",
-            self: "2276155",
-            count: "4",
-            max: "594296",
-            min: "556219",
-            mean: "569038.75",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "39",
-            parentid: "37",
-            total: "1518104",
-            self: "1518104",
-            count: "4",
-            max: "401184",
-            min: "351930",
-            mean: "379526.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "41",
-            parentid: "37",
-            total: "971485",
-            self: "971485",
-            count: "4",
-            max: "252930",
-            min: "226389",
-            mean: "242871.25",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "40",
-            parentid: "37",
-            total: "2294531",
-            self: "2294531",
-            count: "4",
-            max: "590040",
-            min: "563532",
-            mean: "573632.75",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "41",
-            parentid: "37",
-            total: "964896",
-            self: "964896",
-            count: "4",
-            max: "253149",
-            min: "223761",
-            mean: "241224.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "38",
-            parentid: "37",
-            total: "2787599",
-            self: "2787599",
-            count: "4",
-            max: "905713",
-            min: "604991",
-            mean: "696899.75",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "39",
-            parentid: "37",
-            total: "1490109",
-            self: "1490109",
-            count: "4",
-            max: "395914",
-            min: "348000",
-            mean: "372527.25",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "40",
-            parentid: "37",
-            total: "2291221",
-            self: "2291221",
-            count: "4",
-            max: "584790",
-            min: "555425",
-            mean: "572805.25",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "41",
-            parentid: "37",
-            total: "979297",
-            self: "979297",
-            count: "4",
-            max: "251971",
-            min: "235235",
-            mean: "244824.25",
-            pet: "2",
-            children: [],
-          },
-        ],
-      },
-      {
-        id: "37",
-        parentid: "1",
-        total: "8085278",
-        self: "552259",
-        count: "1",
-        max: "8085278",
-        min: "8085278",
-        mean: "8085278.0",
-        pet: "1",
-        children: [],
-      },
-      {
-        id: "37",
-        parentid: "1",
-        total: "8075811",
-        self: "550828",
-        count: "1",
-        max: "8075811",
-        min: "8075811",
-        mean: "8075811.0",
-        pet: "3",
-        children: [],
-      },
-      {
-        id: "42",
-        parentid: "1",
-        total: "607697",
-        self: "362758",
-        count: "1",
-        max: "607697",
-        min: "607697",
-        mean: "607697.0",
-        pet: "0",
-        children: [
-          {
-            id: "43",
-            parentid: "42",
-            total: "91119",
-            self: "91119",
-            count: "1",
-            max: "91119",
-            min: "91119",
-            mean: "91119.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "44",
-            parentid: "42",
-            total: "48459",
-            self: "48459",
-            count: "1",
-            max: "48459",
-            min: "48459",
-            mean: "48459.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "45",
-            parentid: "42",
-            total: "55615",
-            self: "55615",
-            count: "1",
-            max: "55615",
-            min: "55615",
-            mean: "55615.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "46",
-            parentid: "42",
-            total: "49746",
-            self: "49746",
-            count: "1",
-            max: "49746",
-            min: "49746",
-            mean: "49746.0",
-            pet: "0",
-            children: [],
-          },
-          {
-            id: "43",
-            parentid: "42",
-            total: "92572",
-            self: "92572",
-            count: "1",
-            max: "92572",
-            min: "92572",
-            mean: "92572.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "44",
-            parentid: "42",
-            total: "50488",
-            self: "50488",
-            count: "1",
-            max: "50488",
-            min: "50488",
-            mean: "50488.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "43",
-            parentid: "42",
-            total: "91807",
-            self: "91807",
-            count: "1",
-            max: "91807",
-            min: "91807",
-            mean: "91807.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "45",
-            parentid: "42",
-            total: "55140",
-            self: "55140",
-            count: "1",
-            max: "55140",
-            min: "55140",
-            mean: "55140.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "44",
-            parentid: "42",
-            total: "50420",
-            self: "50420",
-            count: "1",
-            max: "50420",
-            min: "50420",
-            mean: "50420.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "46",
-            parentid: "42",
-            total: "49210",
-            self: "49210",
-            count: "1",
-            max: "49210",
-            min: "49210",
-            mean: "49210.0",
-            pet: "1",
-            children: [],
-          },
-          {
-            id: "45",
-            parentid: "42",
-            total: "54517",
-            self: "54517",
-            count: "1",
-            max: "54517",
-            min: "54517",
-            mean: "54517.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "46",
-            parentid: "42",
-            total: "49161",
-            self: "49161",
-            count: "1",
-            max: "49161",
-            min: "49161",
-            mean: "49161.0",
-            pet: "3",
-            children: [],
-          },
-          {
-            id: "43",
-            parentid: "42",
-            total: "89046",
-            self: "89046",
-            count: "1",
-            max: "89046",
-            min: "89046",
-            mean: "89046.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "44",
-            parentid: "42",
-            total: "48397",
-            self: "48397",
-            count: "1",
-            max: "48397",
-            min: "48397",
-            mean: "48397.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "45",
-            parentid: "42",
-            total: "54849",
-            self: "54849",
-            count: "1",
-            max: "54849",
-            min: "54849",
-            mean: "54849.0",
-            pet: "2",
-            children: [],
-          },
-          {
-            id: "46",
-            parentid: "42",
-            total: "48182",
-            self: "48182",
-            count: "1",
-            max: "48182",
-            min: "48182",
-            mean: "48182.0",
-            pet: "2",
-            children: [],
-          },
-        ],
-      },
-      {
-        id: "42",
-        parentid: "1",
-        total: "603113",
-        self: "355703",
-        count: "1",
-        max: "603113",
-        min: "603113",
-        mean: "603113.0",
-        pet: "1",
-        children: [],
-      },
-      {
-        id: "42",
-        parentid: "1",
-        total: "608422",
-        self: "362517",
-        count: "1",
-        max: "608422",
-        min: "608422",
-        mean: "608422.0",
-        pet: "3",
-        children: [],
-      },
-      {
-        id: "37",
-        parentid: "1",
-        total: "8087570",
-        self: "539344",
-        count: "1",
-        max: "8087570",
-        min: "8087570",
-        mean: "8087570.0",
-        pet: "2",
-        children: [],
-      },
-      {
-        id: "42",
-        parentid: "1",
-        total: "604343",
-        self: "363869",
-        count: "1",
-        max: "604343",
-        min: "604343",
-        mean: "604343.0",
-        pet: "2",
-        children: [],
-      },
-    ],
-  };
-</script>

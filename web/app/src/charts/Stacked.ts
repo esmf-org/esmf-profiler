@@ -3,6 +3,7 @@ import Highcharts from "highcharts";
 const defaultConfig = {
   chart: {
     type: "column", // column / bar
+    zoomType: "xy",
   },
   title: {
     text: "Default Title", // graph title
@@ -48,16 +49,18 @@ const defaultConfig = {
 export default class Stacked {
   containerNameString: string;
   chartConfig: object;
+  chart: any;
   constructor(container: string, chartObject: {}) {
     this.containerNameString = container;
     this.chartConfig = {
       ...defaultConfig,
       ...chartObject,
     };
+    this.chart = null;
   }
 
   render(): Stacked {
-    Highcharts.chart(this.containerNameString, this.chartConfig);
+    this.chart = Highcharts.chart(this.containerNameString, this.chartConfig);
     return this;
   }
 }

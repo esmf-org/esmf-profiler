@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <title>ESMF Profiler</title>
+  </head>
+  <body>
+    <div class="buttons">
+      <button id="2000">2000</button>
+      <button id="2004">2004</button>
+      <button id="2008">2008</button>
+      <button id="2012">2012</button>
+      <button id="2016" class="active">2016</button>
+    </div>
+    <div id="container"></div>
+
+    <figure class="highcharts-figure">
+      <div id="container2"></div>
+      <p class="highcharts-description">
+        ESMF Profiler is an alpha version web based GUI for viewing execution
+        times of [INSERT WORD HERE]
+      </p>
+    </figure>
+
+    <figure class="highcharts-figure">
+      <div id="basic-bar-container"></div>
+      <p class="highcharts-description">
+        A basic column chart compares rainfall values between four cities. Tokyo
+        has the overall highest amount of rainfall, followed by New York. The
+        chart is making use of the axis crosshair feature, to highlight months
+        as they are hovered over.
+      </p>
+    </figure>
+    <figure class="highcharts-figure">
+      <div id="drill-down-container"></div>
+      <p class="highcharts-description">
+        Chart showing browser market shares. Clicking on individual columns
+        brings up more detailed data. This chart makes use of the drilldown
+        feature in Highcharts to easily switch between datasets.
+      </p>
+    </figure>
+    <script src="./main.js"></script>
+  </body>
+</html>
