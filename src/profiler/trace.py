@@ -1,5 +1,3 @@
-import functools
-
 import json
 import textwrap
 from abc import ABC, abstractproperty
@@ -13,8 +11,8 @@ from profiler.lookup import Lookup
 
 from profiler.utils import print_execution_time
 
-from analyses import Analysis
-from event import TraceEvent, RegionProfile, DefineRegion
+from profiler.analyses import Analysis
+from profiler.event import TraceEvent, RegionProfile, DefineRegion
 
 logger = logging.getLogger(__name__)
 _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
@@ -41,15 +39,12 @@ class RegionProfiles:
     def toJson(self):
         return json.dumps(self, cls=RegionProfilesEncoder)
 
-    @functools.cached_property
     def profiles(self):
         return list(self._profiles)
 
-    @functools.cached_property
     def petIds(self):
         return list(set(map(lambda x: x.get("pet"), self.profiles)))
 
-    @functools.cached_property
     def parentIds(self):
         return list(set(self._filter_unique_values("parentId", [])))
 
@@ -81,10 +76,10 @@ class RegionProfiles:
             cls=TraceEventEncoder,
         )
 
-    def _populate_tree_from_map(self, tree_map: list[Node]):
+    def _populate_tree_from_map(self, tree_map: List[Node]):
         return self._fetch_objs(tree_map)
 
-    def _build_tree_map(self, profiles: list[Node]):
+    def _build_tree_map(self, profiles: List[Node]):
         return self._build_tree_from_root(profiles)
 
     def _fetch_objs(self, tree):
@@ -96,7 +91,7 @@ class RegionProfiles:
                 self._fetch_objs(leaf["children"])
         return tree
 
-    def _build_tree_from_root(self, nodes: list[Node], root: Node = None):
+    def _build_tree_from_root(self, nodes: List[Node], root: Node = None):
 
         nodes = list(filter(lambda x: x.petId == 0, nodes))
         root = (

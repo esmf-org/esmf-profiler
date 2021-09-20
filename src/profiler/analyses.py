@@ -1,4 +1,4 @@
-from event import TraceEvent, DefineRegion, RegionProfile
+from profiler.event import TraceEvent, DefineRegion, RegionProfile
 from abc import ABC, abstractproperty
 import logging
 

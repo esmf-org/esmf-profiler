@@ -1,8 +1,8 @@
 import textwrap
 from abc import ABC, abstractproperty
 import bt2
-import functools
 import json
+
 
 class TraceEvent(ABC):
     def __init__(self, msg: bt2._EventMessageConst):
@@ -46,15 +46,15 @@ class TraceEvent(ABC):
 
         raise AttributeError(f"Key '{key}' does not exist on {self.__class__.__name__}")
 
-    @functools.cached_property
+    @property
     def payload(self):
         return self._msg.event.payload_field
 
-    @functools.cached_property
+    @property
     def pet(self):
         return self._msg.event.packet.context_field["pet"]
 
-    @functools.cached_property
+    @property
     def nodename(self):
         return self._msg.event.packet.context_field["nodename"]
 
