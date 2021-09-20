@@ -6,6 +6,7 @@ import "../styles/sb-admin-2.scss";
 import rawData from "./charts/data.json";
 import DrillDown from "./charts/DrillDown";
 import { chart } from "highcharts";
+import Pie from "./charts/Pie";
 
 interface IStackedDataPoint {
   name: string;
@@ -17,44 +18,6 @@ class StackedDataChart {
   seriesData: IStackedDataPoint[];
   constructor(seriesData: IStackedDataPoint[]) {
     this.seriesData = seriesData;
-  }
-
-  categories() {
-    return new Set(
-      this.seriesData.map((x) => {
-        return x["petId"];
-      }, this.seriesData)
-    );
-  }
-
-  parse() {
-    let valuesMap = {};
-    for (let point of this.seriesData) {
-      let petId = point["petId"];
-      if (!valuesMap.hasOwnProperty(petId)) {
-        valuesMap[petId] = [];
-      }
-      valuesMap[petId].push(point["data"]);
-    }
-
-    let test = Object.entries(valuesMap).map((x, y) => {
-      console.log(x, y);
-      return {
-        name: x[0],
-        data: x[1],
-      };
-    });
-
-    console.log(test);
-    return test;
-
-    const points = this.seriesData.map((dataPoint) => {
-      return {
-        name: dataPoint["petId"],
-        value: dataPoint["data"],
-      };
-    });
-    return [];
   }
 }
 
@@ -84,11 +47,11 @@ const chartConf = {
   series: rawData["yvals"],
 };
 
-new Stacked("container2", chartConf).render();
-
-const chart2 = new Comparison("container", {});
-chart2.render();
-const chart3 = new BasicBar("basic-bar-container", {});
-chart3.render();
-const chart4 = new DrillDown("drill-down-container", {});
-chart4.render();
+new Stacked("myAreaChart", chartConf).render();
+new Pie("myPieChart", {}).render();
+// const chart2 = new Comparison("container", {});
+// chart2.render();
+// const chart3 = new BasicBar("basic-bar-container", {});
+// chart3.render();
+// const chart4 = new DrillDown("drill-down-container", {});
+// chart4.render();
