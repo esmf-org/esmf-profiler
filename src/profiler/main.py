@@ -10,12 +10,13 @@ import json
 import logging
 import pstats
 import io
-from pstats import SortKey
 from profiler.lookup import Lookup
 
 from profiler.utils import print_execution_time
 
 from profiler.trace import RegionProfile, RegionProfiles, Trace
+
+from profiler.analyses import Analysis, LoadBalance
 
 logger = logging.getLogger(__name__)
 _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
@@ -40,44 +41,47 @@ def main():
     TODO Go over region summary.  Not implemented, but will need to be.  Boilerplate is there, needs testing.
     """
 
-    with cProfile.Profile() as pr:
-        _path = "./tests/fixtures/test-traces-large"
+    _path = "./tests/fixtures/test-traces/atm-ocn"
+    #_path = "./tests/fixtures/test-traces-large"
 
-        include = ["region_profile", "define_region"]
-        assert (
-            "define_region" in include
-        )  # TODO Until i have time to figure out something better
-        exclude = []
+    #include = ["region_profile", "define_region"]
+    #assert (
+    #    "define_region" in include
+    #)  # TODO Until i have time to figure out something better
+    #exclude = []
 
-        logger.info("creating trace")
-        trace = Trace.from_path(_path, include, exclude)
-        logger.debug("complete")
+    # the only requested analysis is a load balance at the root level
+    analyses = [LoadBalance(None)]
 
-        logger.info("creating lookup table for region profiles")
-        lookup = Lookup(trace)
-        logger.debug("complete")
+    logger.info("creating trace")
+    trace = Trace.from_path(_path, analyses)
+    logger.debug("complete")
 
-        logger.info("creating lookup table for region profiles")
-        region_profiles = list(filter(lambda x: isinstance(x, RegionProfile), trace))
-        logger.debug("complete")
+    # indicate to the analyses that all events have been processed
+    for analysis in analyses:
+        analysis.finish()
+        # analysis.toJSON()
 
-        logger.info("Looking up and appending names to Region Profiles")
-        for item in region_profiles:
-            attribs = {"name": lookup.find(item.get("pet"), item.get("id"))}
-            item._attributes = attribs
-        logger.debug("complete")
+    #logger.info("creating lookup table for region profiles")
+    #lookup = Lookup(trace)
+    #logger.debug("complete")
 
-        logger.info(f"creating tree from list of region profiles")
-        tree = RegionProfiles(iter(region_profiles), lookup)._create_tree_json()
-        logger.debug("complete")
-        print(tree)
+    #logger.info("creating lookup table for region profiles")
+    #region_profiles = list(filter(lambda x: isinstance(x, RegionProfile), trace))
+    #logger.debug("complete")
 
-        # Uncomment for Profiling
-        # s = io.StringIO()
-        # sortby = SortKey.TIME
-        # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-        # ps.print_stats()
-        # print(s.getvalue())
+    #logger.info("Looking up and appending names to Region Profiles")
+    #for item in region_profiles:
+    #    attribs = {"name": lookup.find(item.get("pet"), item.get("id"))}
+    #    item._attributes = attribs
+    #logger.debug("complete")
+
+    #logger.info(f"creating tree from list of region profiles")
+    #tree = RegionProfiles(iter(region_profiles), lookup)._create_tree_json()
+    #logger.debug("complete")
+    #print(tree)
+
+        
 
 
 if __name__ == "__main__":
