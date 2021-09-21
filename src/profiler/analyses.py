@@ -4,117 +4,12 @@ import logging
 import sys
 import collections
 import json
+import pprint
+import os
 
 logger = logging.getLogger(__name__)
-
-# an abstract class that all analyses will extend
-# examples include LoadBalance, MemoryProfile, etc.
-class Analysis(ABC):
-
-    def __init__(self):
-        pass
-
-    @abstractproperty
-    def process_event(self):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} requires a process_event method"
-        )
-
-    @abstractproperty
-    def finish(self):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} requires a finish method"
-        )
-
-
-class LoadBalance(Analysis):
-
-    # rootRegionName is the name of the region to be used as
-    # the root for the load balance plot
-    # if None, then use the top level
-    def __init__(self, rootRegionName):
-        self._rootRegionName = rootRegionName
-        # two level mapping
-        # { pet -> { region_id -> region name } }
-        self._regionIdToNameMap = {}
-
-        # map pet -> root of timing tree
-        self._timingTrees = {}
-
-    def process_event(self, event: TraceEvent):
-
-        if isinstance(event, DefineRegion):
-            pet = event.pet
-            regionid = event.get("id")
-            name = event.get("name")
-            #logger.debug(f"found DefineRegion pet = {pet}, id = {regionid}, name = {name}")
-            self._regionIdToNameMap.setdefault(pet, {})[regionid] = name
-
-        if isinstance(event, RegionProfile):
-            pet = event.pet
-            regionid = event.get("id")
-            parentid = event.get("parentid")
-
-            if regionid == 1:
-                # special case for outermost timed region
-                name = "ROOT"
-            else:
-                map = self._regionIdToNameMap[pet]
-                name = map[regionid]  # should already be there
-
-            #logger.debug(f"found RegionProfile pet = {pet}, id = {regionid}, parentid = {parentid}, name = {name}")
-
-            node = SinglePETTimingNode(regionid, pet, name)
-            node.total = event.get("total")
-            node.count = event.get("count")
-            node.min = event.get("min")
-            node.max = event.get("max")
-
-            # add child to the timing tree for the given pet
-            root = self._timingTrees.setdefault(pet, SinglePETTimingNode(0, pet, "TOP_LEVEL"))
-            if not root.add_child(parentid, node):
-                raise RuntimeError(
-                    f"{self.__class__.__name__} child not added to tree pet = {pet}, regionid = {regionid}, parentid = {parentid}, name = {name}"
-                )
-
-    def finish(self):
-        # all events have been processed, so now we have a complete
-        # list of timing trees, one per PET in self._timingTrees
-
-        # merge all the SinglePETTimingNodes into a single tree
-        multiPETTree = MultiPETTimingNode()
-        for pet, t in self._timingTrees.items():
-            multiPETTree.merge(t)
-
-        # for now, assume we only want the first level
-
-        root = multiPETTree.children["ROOT"]
-        #root = root.children["[NEMS Grid Comp] Run 1"]
-        #root = root.children["[EARTH grid component] RunPhase1"]
-
-        xvals, yvals = root.load_balance()
-        yvalsjson = [
-            {"name" : n, "data" : totals} for n, totals in yvals.items()
-        ]
-
-        #s = json.dumps(yvalsjson)
-
-        print(f"xvals = {json.dumps(xvals)};")
-        print(f"yvals = {json.dumps(yvalsjson)};")
-
-        pass
-
-
-
-    def toJSON(self):
-        # return JSON format for Javascript Charts
-        pass
-
-
-# move this to utility layer
-def nano_to_sec(nanos):
-    return nanos / (1000*1000*1000)
-
+_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
+logging.basicConfig(level=logging.DEBUG, format=_format)
 
 # class to represent as a tree the timing
 # information in the RegionProfile events
@@ -204,7 +99,7 @@ class SinglePETTimingNode():
 class MultiPETTimingNode:
 
     def __init__(self):
-        self._children = {}  # sub-regions in the timing tree  { name -> MultiPETTimingNode }
+        self._children :dict[str, MultiPETTimingNode] = {}  # sub-regions in the timing tree  { name -> MultiPETTimingNode }
         self._pet_count = 0  # the number of PETs reporting timing information for this node
         self._count_each = -1  # how many times each PET called into this region
         self._counts_match = True  # if counts_each is not the same for all reporting PETs, then this is False
@@ -322,7 +217,6 @@ class MultiPETTimingNode:
         pets = [*range(lowpet, highpet+1)]
 
         # y values { region -> [time_pet0, time_pet1, ....] }
-
         child_regions = {}
         for name, child in self.children.items():
             totals = [0.0] * (highpet - lowpet + 1)  # total times
@@ -331,3 +225,122 @@ class MultiPETTimingNode:
             child_regions[str(name)] = totals
 
         return (pets, child_regions)
+
+
+# an abstract class that all analyses will extend
+# examples include LoadBalance, MemoryProfile, etc.
+class Analysis(ABC):
+
+    def __init__(self):
+        pass
+
+    @abstractproperty
+    def process_event(self):
+        raise NotImplementedError(
+            f"{self.__class__.__name__} requires a process_event method"
+        )
+
+    @abstractproperty
+    def finish(self):
+        raise NotImplementedError(
+            f"{self.__class__.__name__} requires a finish method"
+        )
+
+
+class LoadBalance(Analysis):
+
+    # rootRegionName is the name of the region to be used as
+    # the root for the load balance plot
+    # if None, then use the top level
+    def __init__(self, rootRegionName):
+        self._rootRegionName = rootRegionName
+        # two level mapping
+        # { pet -> { region_id -> region name } }
+        self._regionIdToNameMap = {}
+
+        # map pet -> root of timing tree
+        self._timingTrees = {}
+
+    def process_event(self, event: TraceEvent):
+
+        if isinstance(event, DefineRegion):
+            pet = event.pet
+            regionid = event.get("id")
+            name = event.get("name")
+            #logger.debug(f"found DefineRegion pet = {pet}, id = {regionid}, name = {name}")
+            self._regionIdToNameMap.setdefault(pet, {})[regionid] = name
+
+        if isinstance(event, RegionProfile):
+            pet = event.pet
+            regionid = event.get("id")
+            parentid = event.get("parentid")
+
+            if regionid == 1:
+                # special case for outermost timed region
+                name = "ROOT"
+            else:
+                map = self._regionIdToNameMap[pet]
+                name = map[regionid]  # should already be there
+
+            #logger.debug(f"found RegionProfile pet = {pet}, id = {regionid}, parentid = {parentid}, name = {name}")
+
+            node = SinglePETTimingNode(regionid, pet, name)
+            node.total = event.get("total")
+            node.count = event.get("count")
+            node.min = event.get("min")
+            node.max = event.get("max")
+
+            # add child to the timing tree for the given pet
+            root = self._timingTrees.setdefault(pet, SinglePETTimingNode(0, pet, "TOP_LEVEL"))
+            if not root.add_child(parentid, node):
+                raise RuntimeError(
+                    f"{self.__class__.__name__} child not added to tree pet = {pet}, regionid = {regionid}, parentid = {parentid}, name = {name}"
+                )
+
+    def finish(self):
+        # all events have been processed, so now we have a complete
+        # list of timing trees, one per PET in self._timingTrees
+
+        # merge all the SinglePETTimingNodes into a single tree
+        multiPETTree = MultiPETTimingNode()
+        for pet, t in self._timingTrees.items():
+            multiPETTree.merge(t)
+
+        # collect load balance timing results for all levels of the full tree
+        results = {}
+        self._full_tree_load_balance("", multiPETTree, results)
+
+        # format into dictionary suitable for JSON output
+        jsondict = {}
+        for r in results:
+            (xvals, yvals) = results[r]
+            yvalsjson = [
+                {"name" : n, "data" : totals} for n, totals in yvals.items()
+            ]
+            jsondict[r] = {"xvals": xvals, "yvals": yvalsjson}
+
+        #print(f"Final JSON =\n{json.dumps(jsondict)}")
+        with open('load_balance.json', 'w') as outfile:
+            json.dump(jsondict, outfile)
+        logger.debug(f"Wrote JSON file: {os.path.realpath(outfile.name)}")
+
+        #pprint.pprint(results)
+        #print(f"xvals = {json.dumps(xvals)};")
+        #print(f"yvals = {json.dumps(yvalsjson)};")
+
+        pass
+
+    def _full_tree_load_balance(self, prefix: str, node: MultiPETTimingNode, results: dict[str, tuple]):
+        for name, child in node.children.items():
+            name = prefix + "/" + str(name)
+            if len(child.children) > 0:
+                results[name] = child.load_balance()
+            self._full_tree_load_balance(name, child, results)
+
+
+# move this to utility layer
+def nano_to_sec(nanos):
+    return nanos / (1000*1000*1000)
+
+
+

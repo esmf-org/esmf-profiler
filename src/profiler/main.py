@@ -23,8 +23,8 @@ logging.basicConfig(level=logging.DEBUG, format=_format)
 @print_execution_time
 def main():
 
-    _path = "./tests/fixtures/test-traces/atm-ocn"
-    #_path = "./tests/fixtures/test-traces-large-tmp"
+    _path = "./tests/fixtures/test-traces/atm-ocn-concurrent"
+    #_path = "./tests/fixtures/test-traces-large"
 
     # the only requested analysis is a load balance at the root level
     analyses = [LoadBalance(None)]
