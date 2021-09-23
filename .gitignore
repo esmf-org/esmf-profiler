@@ -29,6 +29,13 @@ htmlcov/
 # pycharm files
 .idea/
 
-#JS
-
+# JS
 node_modules/
+
+# Dependencies
+dependencies/*/
+dependencies/*tar.gz
+dependencies/*tar.bz2
+*/bt2
+*/swig
+
