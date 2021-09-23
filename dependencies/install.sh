@@ -1,6 +1,4 @@
 #!/bin/bash
-
-
 SWIG='swig-4.0.2'
 PCRE='pcre-8.37'
 BT2='babeltrace2-2.0.4'
@@ -20,14 +18,12 @@ echo "Installing SWIG dependency ${PCRE}"
     
 # fi
 # Tools/pcre-build.sh
-./configure --prefix=/glade/u/home/rlong/opt/swig
+./configure --prefix=$HOME/swig
 make
 make install
 cd ..
 
-export PATH=/glade/u/home/rlong/opt/swig/bin:$PATH
-export PYTHONPATH=/glade/u/home/rlong/opt/bt2/lib/python3.7/site-packages:$PYTHONPATH
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/glade/u/home/rlong/opt/bt2/lib
+export PATH=$HOME/opt/swig/bin:$PATH
 
 echo "Installing ${BT2}"
 if [ ! -e ${BT2}.tar.bz2 ]; then
@@ -37,10 +33,13 @@ fi
 tar -xojvf ${BT2}.tar.bz2 || exit 1
 cd ${BT2}
 pip install python-config
-./configure --prefix=/glade/u/home/rlong/opt/bt2 --enable-shared --enable-python-bindings --enable-python-plugins --disable-man-pages --disable-debug-info
+./configure --prefix=$HOME/opt/bt2 --enable-shared --enable-python-bindings --enable-python-plugins --disable-man-pages --disable-debug-info
 make
 make install
 cd ..
+
+export PYTHONPATH=$HOME/bt2/lib/python3.7/site-packages:$PYTHONPATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/opt/bt2/lib
 
 
 
