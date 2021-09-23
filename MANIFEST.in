@@ -8,3 +8,7 @@ include LICENSE.txt
 
 # Include the data files
 recursive-include data *
+
+
+# Include only the pre-build web GUI
+recursive-include web/app/dist *
