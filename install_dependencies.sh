@@ -1,9 +1,15 @@
-# change from $HOME
-# gcc min 9 and must be loaded
-
 #!/bin/bash
+
+gccver="$(gcc -dumpversion)"
+requiredgcc="9.0.0"
+if [ "$(printf '%s\n' "$requiredgcc" "$gccver" | sort -V | head -n1)" = "$requiredgcc" ]; then 
+    echo "Found gcc version ${gccver}"
+else
+    echo "Error:  dependent libraries require gcc version of at least ${requiredgcc}"
+    exit 1
+fi
+
 SWIG='swig-4.0.2'
-PCRE='pcre-8.37'
 BT2='babeltrace2-2.0.4'
 
 cd ./dependencies
@@ -15,7 +21,7 @@ fi
 tar -xovzf ${SWIG}.tar.gz || exit 1
 cd $SWIG
 ./configure --prefix=$PWD/$SWIG
-make
+make -j6
 make install
 cd ..
 export PATH=$PWD/$SWIG/$SWIG/bin:$PATH
@@ -29,7 +35,7 @@ cd $BT2
 
 #  Must have GCC
 ./configure --prefix=$PWD/$BT2/$BT2 --enable-shared --enable-python-bindings --enable-python-plugins --disable-man-pages --disable-debug-info
-make
+make -j6
 make install
 cd ..
 
