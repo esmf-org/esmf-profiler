@@ -64,6 +64,34 @@ make install
 export LD_LIBRARY_PATH=/glade/u/home/dunlap/bt/INSTALL/babeltrace2-2.0.4/lib:$LD_LIBRARY_PATH
 ```
 
+### install_dependencies.sh
+
+esmf-profiler includes a script to build and install dependencies, setup a virtual environment, and add the necessary dependencies to the newly created virtual environment so that, when activate, all dependencies will available.
+
+From the root of the project, execute the install_dependencies.sh script:
+
+```bash
+source ./install_dependencies.sh
+```
+
+The script will:
+* Build SWIG (not needed after the install)
+* Build BabelTrace2
+* Create a virtual environment (using virtualenv at the time of this writing.)
+* Append the necessary BabelTrace2 library paths $LD_LIBRARY_PATH and $PYTHONPATH in the virtual environment
+* Install the ESMF profiler inside the newly created virtual environment
+
+The user will need to activate the virtual environment post installation.  To do so, in the root folder of the project, verify the '/venv' directory exists and enter:
+
+```bash
+source ./venv/bin/activate
+```
+
+(venv) should now be pre-pended to your prompt.
+
+At this point, you can run the profiler by typing 'profiler' at the command prompt.
+
+
 ## Run Unit Tests
 ```
 python3 -m unittest process_trace
