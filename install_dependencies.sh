@@ -20,11 +20,11 @@ if [ ! -e ${SWIG}.tar.gz ]; then
 fi
 tar -xovzf ${SWIG}.tar.gz || exit 1
 cd $SWIG
-./configure --prefix=$PWD/$SWIG
+./configure --prefix=$PWD/../INSTALL/$SWIG --without-go --without-r --without-lua --without-csharp --without-ocaml --without-ruby --without-mzscheme --without-java --without-javascript --without-octave --without-scilab
 make -j6
 make install
 cd ..
-export PATH=$PWD/$SWIG/$SWIG/bin:$PATH
+export PATH=$PWD/INSTALL/$SWIG/bin:$PATH
 
 echo "Installing ${BT2}"
 if [ ! -e ${BT2}.tar.bz2 ]; then
@@ -33,31 +33,10 @@ fi
 tar -xojvf ${BT2}.tar.bz2 || exit 1
 cd $BT2
 
-#  Must have GCC
-./configure --prefix=$PWD/$BT2/$BT2 --enable-shared --enable-python-bindings --enable-python-plugins --disable-man-pages --disable-debug-info
+./configure --prefix=$PWD/../INSTALL/$BT2 --enable-shared --enable-python-bindings --enable-python-plugins --disable-man-pages --disable-debug-info
 make -j6
 make install
 cd ..
-
-# pip install python-config
-echo $PWD
-echo "Creating virtual environment"
-cd ..
-python3 -m virtualenv ./venv || exit 1
-
-echo "Adding BT2/lib to PYTHONPATH"
-echo "export PYTHONPATH=$PWD/$BT2/$BT2/lib/python3.7/site-packages:$PYTHONPATH" >> ./venv/bin/activate
-
-echo "Adding BT2/lib to LD_LIBRARY_PATH"
-echo "export LD_LIBRARY_PATH=$PWD/$BT2/$BT2/lib:$LD_LIBRARY_PATH" >> ./venv/bin/activate
-
-source ./venv/bin/activate || exit 1
-
-pip install -e .
-
-
-# Have 3.6 default
-
 
 
 
