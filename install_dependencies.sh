@@ -5,7 +5,7 @@ requiredgcc="9.0.0"
 if [ "$(printf '%s\n' "$requiredgcc" "$gccver" | sort -V | head -n1)" = "$requiredgcc" ]; then 
     echo "Found gcc version ${gccver}"
 else
-    echo "Error:  dependent libraries require gcc version of at least ${requiredgcc}"
+    echo "Error:  The Babeltrace2 dependent library require gcc version of at least ${requiredgcc}.  Make sure gcc 9+ is in your path before running this script."
     exit 1
 fi
 
