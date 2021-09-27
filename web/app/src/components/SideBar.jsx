@@ -7,6 +7,7 @@ import {
   faChartBar,
   faProjectDiagram,
   faHdd,
+  faArrowCircleLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default class Sidebar extends React.Component {
@@ -93,22 +94,9 @@ export default class Sidebar extends React.Component {
 
         {/* Sidebar Toggler (Sidebar) */}
         <div className="text-center d-none d-md-inline">
-          <button
-            className="rounded-circle border-0"
-            id="sidebarToggle"
-          ></button>
-        </div>
-
-        {/* Sidebar Message */}
-        <div className="sidebar-card d-none d-lg-flex">
-          <img
-            className="sidebar-card-illustration mb-2"
-            src="img/undraw_rocket.svg"
-            alt="..."
-          />
-          <p className="text-center mb-2">
-            <strong>Add messages here</strong>
-          </p>
+          <button className="rounded-circle border-0" id="sidebarToggler">
+            <FontAwesomeIcon icon={faArrowCircleLeft} />
+          </button>
         </div>
       </ul>
     );
