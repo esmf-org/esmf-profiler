@@ -4,8 +4,8 @@ import ChartContainer from "./components/ChartContainer";
 import Stacked from "./charts/Stacked";
 import Sidebar from "./components/SideBar";
 import Footer from "./components/Footer";
-import { Helmet } from "react-helmet-async";
 import data from "./data.json";
+import { Helmet } from "react-helmet-async";
 
 const defaultConfig = {
   chart: {
@@ -36,12 +36,10 @@ const defaultConfig = {
   series: data.yvals,
 };
 
-function App() {
+function Report() {
   return (
     <div className="App">
-      <Helmet>
-        <title>ABCD</title>
-      </Helmet>
+      <Helmet title={Date.now().toString()}></Helmet>
       <div id="wrapper">
         <Sidebar />
         <div id="content-wrapper" className="d-flex flex-column">
@@ -53,7 +51,7 @@ function App() {
 
               <div className="row">
                 <ChartContainer>
-                  <Stacked defaultConfig />
+                  <Stacked config={defaultConfig} />
                 </ChartContainer>
               </div>
             </div>
@@ -66,4 +64,4 @@ function App() {
   );
 }
 
-export default App;
+export default Report;
