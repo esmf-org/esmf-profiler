@@ -26,7 +26,11 @@ export default class Sidebar extends React.Component {
             <i className="fas fa-laugh-wink"></i>
           </div>
           <div className="sidebar-brand-text mx-3">
-            ESMF Profiler <sup>V0.0.1</sup>
+            ESMF Profiler{" "}
+            <div>
+              {/* TODO Add JS to dynamically update version based on tag */}
+              <img src="https://img.shields.io/badge/version-0.1.0-success"></img>
+            </div>
           </div>
         </a>
 
