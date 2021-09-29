@@ -1,7 +1,10 @@
 import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import HC_exporting from "highcharts/modules/exporting";
 import styled, { ThemeProvider } from "styled-components";
+
+
 
 const StackedContainer = styled.div``;
 
@@ -38,6 +41,11 @@ const defaultConfig = {
     },
   },
   series: [1, 2, 3, 4],
+  navigation: {
+    menuStyle: {
+      background: "#E0E0E0",
+    },
+  },
 };
 
 export default class Stacked extends React.Component {
