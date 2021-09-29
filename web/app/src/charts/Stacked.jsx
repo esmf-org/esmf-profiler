@@ -1,9 +1,10 @@
-import React from 'react';
-import Highcharts from 'highcharts'
-import HighchartsReact from 'highcharts-react-official'
-import data from './data.json'
+import React from "react";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import styled, { ThemeProvider } from "styled-components";
+import data from "./data.json";
 
-
+const StackedContainer = styled.div``;
 
 const defaultConfig = {
   chart: {
@@ -11,7 +12,7 @@ const defaultConfig = {
     zoomType: "xy",
   },
   title: {
-    text: "Default Title", // graph title
+    text: "Default Chart Title", // graph title
   },
   xAxis: {
     categories: data.xvals, // single bar label
@@ -20,7 +21,7 @@ const defaultConfig = {
     min: 0,
     allowDecimals: false,
     title: {
-      text: "Default Title",
+      text: "Default X Axis Title",
     },
   },
   legend: {
@@ -31,15 +32,22 @@ const defaultConfig = {
       stacking: "normal",
     },
   },
-  series: data.yvals
+  series: data.yvals,
 };
 
 export default class Stacked extends React.Component {
-
+  constructor(props) {
+    super(props);
+  }
 
   render() {
     return (
-      <HighchartsReact highcharts={Highcharts} options={defaultConfig} />
-    )
+      <StackedContainer>
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={this.props.config || defaultConfig}
+        />
+      </StackedContainer>
+    );
   }
 }
