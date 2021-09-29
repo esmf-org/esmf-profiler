@@ -23,7 +23,7 @@ export default class ChartContainer extends React.Component {
                       justify-content-between
                       "
           >
-            <h2 className="m-0 text-dark">Load Balance</h2>
+            <h6 className="m-0 text-dark">Load Balance</h6>
           </div>
           {/* Card Body */}
           <Container>
