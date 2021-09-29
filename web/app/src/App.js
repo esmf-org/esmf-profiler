@@ -8,30 +8,8 @@ import { Helmet } from "react-helmet-async";
 import data from "./data.json";
 
 const defaultConfig = {
-  chart: {
-    type: "column", // column / bar
-    zoomType: "xy",
-  },
-  title: {
-    text: "XXDefault Chart Title", // graph title
-  },
   xAxis: {
     categories: data.xvals, // single bar label
-  },
-  yAxis: {
-    min: 0,
-    allowDecimals: false,
-    title: {
-      text: "Default X Axis Title",
-    },
-  },
-  legend: {
-    reversed: true,
-  },
-  plotOptions: {
-    series: {
-      stacking: "normal",
-    },
   },
   series: data.yvals,
 };
@@ -40,7 +18,7 @@ function App() {
   return (
     <div className="App">
       <Helmet>
-        <title>ABCD</title>
+        <title>ESMF Profiler</title>
       </Helmet>
       <div id="wrapper">
         <Sidebar />
@@ -53,7 +31,7 @@ function App() {
 
               <div className="row">
                 <ChartContainer>
-                  <Stacked defaultConfig />
+                  <Stacked config={defaultConfig} />
                 </ChartContainer>
               </div>
             </div>

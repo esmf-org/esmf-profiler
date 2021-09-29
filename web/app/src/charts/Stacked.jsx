@@ -2,7 +2,6 @@ import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import styled, { ThemeProvider } from "styled-components";
-import data from "./data.json";
 
 const StackedContainer = styled.div``;
 
@@ -12,16 +11,19 @@ const defaultConfig = {
     zoomType: "xy",
   },
   title: {
-    text: "Default Chart Title", // graph title
+    text: "PET Timings", // graph title
   },
   xAxis: {
-    categories: data.xvals, // single bar label
+    categories: [1, 2, 3], // single bar label
+    title: {
+      text: "PET Number",
+    },
   },
   yAxis: {
     min: 0,
     allowDecimals: false,
     title: {
-      text: "Default X Axis Title",
+      text: "Time (s)",
     },
   },
   legend: {
@@ -32,12 +34,13 @@ const defaultConfig = {
       stacking: "normal",
     },
   },
-  series: data.yvals,
+  series: [1, 2, 3, 4],
 };
 
 export default class Stacked extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this.props.config);
   }
 
   render() {

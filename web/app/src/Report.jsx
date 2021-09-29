@@ -13,16 +13,19 @@ const defaultConfig = {
     zoomType: "xy",
   },
   title: {
-    text: "XXDefault Chart Title", // graph title
+    text: "PET Timings", // graph title
   },
   xAxis: {
     categories: data.xvals, // single bar label
+    title: {
+      text: "PET Number",
+    },
   },
   yAxis: {
     min: 0,
     allowDecimals: false,
     title: {
-      text: "Default X Axis Title",
+      text: "Time (s)",
     },
   },
   legend: {
