@@ -13,6 +13,9 @@ const defaultConfig = {
   title: {
     text: "PET Timings", // graph title
   },
+  credits: {
+    enabled: false,
+  },
   xAxis: {
     categories: [1, 2, 3], // single bar label
     title: {
@@ -40,16 +43,17 @@ const defaultConfig = {
 export default class Stacked extends React.Component {
   constructor(props) {
     super(props);
+    this.config = {
+      ...defaultConfig,
+      ...this.props.config,
+    };
     console.log(this.props.config);
   }
 
   render() {
     return (
       <StackedContainer>
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={this.props.config || defaultConfig}
-        />
+        <HighchartsReact highcharts={Highcharts} options={this.config} />
       </StackedContainer>
     );
   }

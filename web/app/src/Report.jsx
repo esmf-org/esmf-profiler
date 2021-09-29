@@ -8,33 +8,8 @@ import data from "./data.json";
 import { Helmet } from "react-helmet-async";
 
 const defaultConfig = {
-  chart: {
-    type: "column", // column / bar
-    zoomType: "xy",
-  },
-  title: {
-    text: "PET Timings", // graph title
-  },
   xAxis: {
     categories: data.xvals, // single bar label
-    title: {
-      text: "PET Number",
-    },
-  },
-  yAxis: {
-    min: 0,
-    allowDecimals: false,
-    title: {
-      text: "Time (s)",
-    },
-  },
-  legend: {
-    reversed: true,
-  },
-  plotOptions: {
-    series: {
-      stacking: "normal",
-    },
   },
   series: data.yvals,
 };
