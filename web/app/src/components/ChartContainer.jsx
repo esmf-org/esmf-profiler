@@ -1,9 +1,16 @@
 import React from "react";
+import styled, { ThemeProvider } from "styled-components";
+
+const Container = styled.div`
+  overflow: auto;
+  min-height: 75vh;
+  margin: 25px;
+`;
 
 export default class ChartContainer extends React.Component {
   render() {
     return (
-      <div className="col-xl-8 col-lg-7">
+      <div className="col-xl-12 col-lg-12">
         <div className="card shadow mb-4">
           {/* Card Header - Dropdown */}
           <div
@@ -16,45 +23,12 @@ export default class ChartContainer extends React.Component {
                       justify-content-between
                       "
           >
-            <h2 className="m-0 font-weight-bold text-dark">Load Balance</h2>
-            <div className="dropdown no-arrow">
-              <a
-                className="dropdown-toggle"
-                href="#"
-                role="button"
-                id="dropdownMenuLink"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <i className="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-              </a>
-              <div
-                className="
-                          dropdown-menu dropdown-menu-right
-                          shadow
-                          animated--fade-in
-                          "
-                aria-labelledby="dropdownMenuLink"
-              >
-                <div className="dropdown-header">Dropdown Header:</div>
-                <a className="dropdown-item" href="#">
-                  Action
-                </a>
-                <a className="dropdown-item" href="#">
-                  Another action
-                </a>
-                <div className="dropdown-divider"></div>
-                <a className="dropdown-item" href="#">
-                  Something else here
-                </a>
-              </div>
-            </div>
+            <h2 className="m-0 text-dark">Load Balance</h2>
           </div>
           {/* Card Body */}
-          <div className="card-body">
+          <Container>
             <div className="chart-area">{this.props.children}</div>
-          </div>
+          </Container>
         </div>
       </div>
     );
