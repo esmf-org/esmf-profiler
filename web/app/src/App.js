@@ -4,6 +4,36 @@ import ChartContainer from "./components/ChartContainer";
 import Stacked from "./charts/Stacked";
 import Sidebar from "./components/SideBar";
 import Footer from "./components/Footer";
+import data from "./data.json"
+
+const defaultConfig = {
+  chart: {
+    type: "column", // column / bar
+    zoomType: "xy",
+  },
+  title: {
+    text: "XXDefault Chart Title", // graph title
+  },
+  xAxis: {
+    categories: data.xvals, // single bar label
+  },
+  yAxis: {
+    min: 0,
+    allowDecimals: false,
+    title: {
+      text: "Default X Axis Title",
+    },
+  },
+  legend: {
+    reversed: true,
+  },
+  plotOptions: {
+    series: {
+      stacking: "normal",
+    },
+  },
+  series: data.yvals,
+};
 
 function App() {
   return (
@@ -19,7 +49,8 @@ function App() {
 
               <div className="row">
                 <ChartContainer>
-                  <Stacked />
+                  <Stacked config={defaultConfig} />
+                  
                 </ChartContainer>
               </div>
             </div>
