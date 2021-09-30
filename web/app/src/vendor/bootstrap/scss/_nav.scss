@@ -9,6 +9,8 @@
   padding-left: 0;
   margin-bottom: 0;
   list-style: none;
+  transition-timing-function: ease-in-out;
+  transition-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
 }
 
 .nav-link {
@@ -66,7 +68,6 @@
   }
 }
 
-
 //
 // Pills
 //
@@ -82,7 +83,6 @@
     background-color: $nav-pills-link-active-bg;
   }
 }
-
 
 //
 // Justified variants
@@ -104,7 +104,6 @@
     text-align: center;
   }
 }
-
 
 // Tabbable tabs
 //
