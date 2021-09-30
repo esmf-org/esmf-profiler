@@ -4,7 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import HC_exporting from "highcharts/modules/exporting";
 import styled, { ThemeProvider } from "styled-components";
 
-
+HC_exporting(Highcharts);
 
 const StackedContainer = styled.div``;
 
