@@ -72,7 +72,7 @@ export default function Sidebar() {
           <hr className="sidebar-divider my-10" />
           <div className="sidebar-heading">Application Info</div>
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className="nav-link text-muted" to="/">
               <FontAwesomeIcon icon={faBox} />
               <span> Component Configuration</span>
             </Link>
@@ -86,7 +86,7 @@ export default function Sidebar() {
 
           {/* Nav Item - Pages Collapse Menu */}
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className="nav-link text-muted" to="/">
               <FontAwesomeIcon icon={faClock} />
               <span> Timing Summary</span>
             </Link>
@@ -98,7 +98,7 @@ export default function Sidebar() {
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className="nav-link text-muted" to="/">
               <FontAwesomeIcon icon={faProjectDiagram} />
               <span> MPI Profile</span>
             </Link>
@@ -112,7 +112,7 @@ export default function Sidebar() {
 
           {/* Nav Item - Pages Collapse Menu */}
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className="nav-link text-muted" to="/">
               <FontAwesomeIcon icon={faHubspot} />
               <span> Memory Profile</span>
             </Link>
@@ -121,7 +121,7 @@ export default function Sidebar() {
           {/* Nav Item - Charts */}
           <div className="sidebar-heading">I/O</div>
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className="nav-link text-muted" to="/">
               <FontAwesomeIcon icon={faHdd} />
               <span> NetCDF Profile</span>
             </Link>
