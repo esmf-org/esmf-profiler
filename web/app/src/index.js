@@ -1,3 +1,4 @@
+import './styles/main.scss'
 import React from "react";
 import ReactDOM from "react-dom";
 import {
@@ -5,7 +6,7 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import Main from "./Report"
+import Report from "./components/Report"
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 
@@ -14,13 +15,13 @@ function App() {
     <div>
       <HelmetProvider>
         <Helmet>
-          <title>Hello World</title>
-          <link rel="canonical" href="https://www.tacobell.com/" />
+          <title>ESMF Profiler</title>
+          <link rel="canonical" href="https://earthsystemmodeling.org/" />
         </Helmet>
 
         <Switch>
           <Route path="/">
-            <Main />
+            <Report />
           </Route>
         </Switch>
       </HelmetProvider>
