@@ -37,102 +37,117 @@ const closed = styled.div`
 export default function Sidebar() {
   const [show, setShow] = useState(true);
 
+  const toggleSidebar = () => {
+    if (!show) {
+      document.body.classList.add("sidebar-toggled");
+    }
+    document.body.classList.remove("sidebar-toggled");
+    setShow(!show);
+  };
+
   return (
     <React.Fragment>
       <br />
 
-      <div style={show ? { width: "10px" } : { width: "auto" }}>
-        <Nav className="flex-column" bg="gradient-dark">
-          <ul className="navbar-nav bg-gradient-dark sidebar sidebar-dark">
-            {/* Sidebar - Brand */}
-            <div className="sidebar-brand d-flex align-items-center justify-content-center">
-              <div className="sidebar-brand-text">
-                ESMF Profiler{" "}
-                <div>
-                  {/* TODO Add JS to dynamically update version based on tag */}
-                  <img src="https://img.shields.io/badge/version-0.1.0-success"></img>
-                </div>
+      <Nav className="flex-column" bg="gradient-dark">
+        <ul
+          data-toggle="collapse"
+          className={`navbar-nav bg-gradient-dark sidebar sidebar-dark accordion ${
+            show ? "" : "toggled"
+          }`}
+          id="accordionSidebar"
+        >
+          {/* Sidebar - Brand */}
+          <div className="sidebar-brand d-flex align-items-center justify-content-center">
+            <div className="sidebar-brand-text">
+              ESMF Profiler{" "}
+              <div>
+                {/* TODO Add JS to dynamically update version based on tag */}
+                <img src="https://img.shields.io/badge/version-0.1.0-success"></img>
               </div>
             </div>
+          </div>
 
-            {/* Divider */}
-            <hr className="sidebar-divider my-10" />
-            <div className="sidebar-heading">Application Info</div>
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                <FontAwesomeIcon icon={faBox} />
-                <span> Component Configuration</span>
-              </Link>
-            </li>
+          {/* Divider */}
+          <hr className="sidebar-divider my-10" />
+          <div className="sidebar-heading">Application Info</div>
+          <li className="nav-item">
+            <Link className="nav-link" to="/">
+              <FontAwesomeIcon icon={faBox} />
+              <span> Component Configuration</span>
+            </Link>
+          </li>
 
-            {/* Divider */}
-            <hr className="sidebar-divider" />
+          {/* Divider */}
+          <hr className="sidebar-divider" />
 
-            {/* Heading */}
-            <div className="sidebar-heading">Timing</div>
+          {/* Heading */}
+          <div className="sidebar-heading">Timing</div>
 
-            {/* Nav Item - Pages Collapse Menu */}
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                <FontAwesomeIcon icon={faClock} />
-                <span> Timing Summary</span>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                <FontAwesomeIcon icon={faChartBar} />
-                <span> Load Balance</span>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                <FontAwesomeIcon icon={faProjectDiagram} />
-                <span> MPI Profile</span>
-              </Link>
-            </li>
+          {/* Nav Item - Pages Collapse Menu */}
+          <li className="nav-item">
+            <Link className="nav-link" to="/">
+              <FontAwesomeIcon icon={faClock} />
+              <span> Timing Summary</span>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/">
+              <FontAwesomeIcon icon={faChartBar} />
+              <span> Load Balance</span>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/">
+              <FontAwesomeIcon icon={faProjectDiagram} />
+              <span> MPI Profile</span>
+            </Link>
+          </li>
 
-            {/* Divider */}
-            <hr className="sidebar-divider" />
+          {/* Divider */}
+          <hr className="sidebar-divider" />
 
-            {/* Heading */}
-            <div className="sidebar-heading"> Memory</div>
+          {/* Heading */}
+          <div className="sidebar-heading"> Memory</div>
 
-            {/* Nav Item - Pages Collapse Menu */}
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                <FontAwesomeIcon icon={faHubspot} />
-                <span> Memory Profile</span>
-              </Link>
-            </li>
+          {/* Nav Item - Pages Collapse Menu */}
+          <li className="nav-item">
+            <Link className="nav-link" to="/">
+              <FontAwesomeIcon icon={faHubspot} />
+              <span> Memory Profile</span>
+            </Link>
+          </li>
 
-            {/* Nav Item - Charts */}
-            <div className="sidebar-heading">I/O</div>
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                <FontAwesomeIcon icon={faHdd} />
-                <span> NetCDF Profile</span>
-              </Link>
-            </li>
+          {/* Nav Item - Charts */}
+          <div className="sidebar-heading">I/O</div>
+          <li className="nav-item">
+            <Link className="nav-link" to="/">
+              <FontAwesomeIcon icon={faHdd} />
+              <span> NetCDF Profile</span>
+            </Link>
+          </li>
 
-            {/* Divider */}
-            <hr className="sidebar-divider d-none d-md-block" />
+          {/* Divider */}
+          <hr className="sidebar-divider d-none d-md-block" />
 
-            {/* Sidebar Toggler (Sidebar) */}
+          {/* Sidebar Toggler (Sidebar) */}
 
-            {/* <button className="rounded-circle border-0" id="sidebarToggler">
+          {/* <button className="rounded-circle border-0" id="sidebarToggler">
             <FontAwesomeIcon icon={faArrowCircleLeft} />
           </button> */}
-            <Button
+
+          <div class="text-center d-none d-md-inline">
+            <button
+              class="rounded-circle border-0"
+              id="sidebarToggle"
               onClick={() => {
-                setShow(() => !show);
-                console.log(show);
+                toggleSidebar();
+                console.log("CLICK");
               }}
-            >
-              Open Menu
-            </Button>
-          </ul>
-        </Nav>
-      </div>
+            ></button>
+          </div>
+        </ul>
+      </Nav>
     </React.Fragment>
   );
 }

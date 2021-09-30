@@ -2,6 +2,7 @@
 .sidebar {
   width: $sidebar-collapsed-width;
   min-height: 100vh;
+  @extend .animated--ease-out;
 
   .nav-item {
     position: relative;
@@ -34,7 +35,7 @@
       z-index: 1;
       top: 2px;
       // Grow In Animation
-      @extend .animated--grow-in;
+      @extend .animated--ease-in;
 
       .collapse-inner {
         border-radius: $border-radius;
@@ -99,10 +100,7 @@
     cursor: pointer;
 
     &::after {
-      font-weight: 900;
-      content: "\f104";
-      font-family: "Font Awesome 5 Free";
-      margin-right: 0.1rem;
+      content: "X";
     }
 
     &:hover {
@@ -117,11 +115,10 @@
   &.toggled {
     width: 0 !important;
     overflow: hidden;
+    @extend .animated--ease-in;
 
     #sidebarToggle::after {
-      content: "\f105";
-      font-family: "Font Awesome 5 Free";
-      margin-left: 0.25rem;
+      content: "X";
     }
 
     .sidebar-card {
