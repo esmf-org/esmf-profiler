@@ -1,10 +1,8 @@
-import "./styles/main.scss";
-
-import ChartContainer from "./components/ChartContainer";
-import Stacked from "./charts/Stacked";
-import Sidebar from "./components/SideBar";
-import Footer from "./components/Footer";
-import data from "./data.json";
+import ChartContainer from "./ChartContainer";
+import Stacked from "../charts/Stacked";
+import Sidebar from "./SideBar";
+import Footer from "./Footer";
+import data from "../data.json";
 import { Helmet } from "react-helmet-async";
 
 const defaultConfig = {
