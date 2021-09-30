@@ -11,25 +11,24 @@ export default class ChartContainer extends React.Component {
   render() {
     return (
       <div className="col-xl-12 col-lg-12">
-        <div className="card shadow mb-4">
-          {/* Card Header - Dropdown */}
-          <div
-            className="
+        {/* Card Header - Dropdown */}
+        <div
+          className="
                       card-header
                       py-3
                       d-flex
                       flex-row
                       align-items-center
+                      bg-white
                       justify-content-between
                       "
-          >
-            <h6 className="m-0 text-dark">Load Balance</h6>
-          </div>
-          {/* Card Body */}
-          <Container>
-            <div className="chart-area">{this.props.children}</div>
-          </Container>
+        >
+          <h6 className="m-0 text-dark">Load Balance</h6>
         </div>
+        {/* Card Body */}
+        <Container>
+          <div className="chart-area">{this.props.children}</div>
+        </Container>
       </div>
     );
   }
