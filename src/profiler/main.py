@@ -13,6 +13,7 @@ import io
 import argparse
 import os
 from pathlib import Path
+import datetime
 
 from profiler.utils import print_execution_time
 from profiler.analyses import Analysis, LoadBalance
@@ -21,6 +22,16 @@ from profiler.trace import Trace
 logger = logging.getLogger(__name__)
 _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
 logging.basicConfig(level=logging.DEBUG, format=_format)
+
+# output some general JSON data
+# to be used on the site
+def write_site_json(data, dir):
+    outfile = os.path.join(dir, "site.json")
+    logger.debug(f"Writing site JSON to file: {outfile}")
+    with open(outfile, "w") as outfile:
+        json.dump(data, outfile)
+    logger.debug(f"Finished writing site JSON file")
+
 
 def main():
 
@@ -42,6 +53,11 @@ def main():
     if not os.path.isdir(outdatadir):
         print(f"Failed to create output directory: {outdir}")
         return
+
+    # write general site JSON
+    site = {"name" : args["name"],
+            "timestamp" : str(datetime.datetime.now())}
+    write_site_json(site, outdatadir)
 
     #_path = "./tests/fixtures/test-traces/atm-ocn-concurrent"
     #_path = "./tests/fixtures/test-traces-large"
