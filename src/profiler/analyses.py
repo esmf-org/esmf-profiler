@@ -254,8 +254,10 @@ class LoadBalance(Analysis):
     # rootRegionName is the name of the region to be used as
     # the root for the load balance plot
     # if None, then use the top level
-    def __init__(self, rootRegionName):
+    # outdir = output location  TODO:  consider moving outdir to Analysis class since it is a common param
+    def __init__(self, rootRegionName, outdir):
         self._rootRegionName = rootRegionName
+        self._outdir = outdir
         # two level mapping
         # { pet -> { region_id -> region name } }
         self._regionIdToNameMap = {}
@@ -321,14 +323,11 @@ class LoadBalance(Analysis):
             yvalsjson = [{"name": n, "data": totals} for n, totals in yvals.items()]
             jsondict[r] = {"xvals": xvals, "yvals": yvalsjson}
 
-        # print(f"Final JSON =\n{json.dumps(jsondict)}")
-        with open("load_balance.json", "w") as outfile:
+        outfile = os.path.join(self._outdir, "load_balance.json")
+        logger.debug(f"Writing load balance JSON to file: {outfile}")
+        with open(outfile, "w") as outfile:
             json.dump(jsondict, outfile)
-        logger.debug(f"Wrote JSON file: {os.path.realpath(outfile.name)}")
-
-        # pprint.pprint(results)
-        # print(f"xvals = {json.dumps(xvals)};")
-        # print(f"yvals = {json.dumps(yvalsjson)};")
+        logger.debug(f"Finished writing load balance JSON file")
 
         pass
 
