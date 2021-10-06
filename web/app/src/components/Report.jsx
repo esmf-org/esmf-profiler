@@ -1,18 +1,32 @@
 import ChartContainer from "./ChartContainer";
 import Stacked from "../charts/Stacked";
 import Sidebar from "./SideBar";
+import React, { useState } from "react";
 import Footer from "./Footer";
-import data from "../data.json";
+
 import { Helmet } from "react-helmet-async";
 
-const defaultConfig = {
-  xAxis: {
-    categories: data.xvals, // single bar label
-  },
-  series: data.yvals,
-};
-
 function Report() {
+  const [data, setData] = useState();
+
+  // Fetch Function
+  fetch("../data.json")
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (_data) {
+      // store Data in State Data Variable
+      setData({
+        xAxis: {
+          categories: _data.xvals,
+        },
+        series: _data.yvals,
+      });
+    })
+    .catch(function (err) {
+      console.log(err, " error");
+    });
+
   return (
     <div className="App">
       <Helmet title={Date.now().toString()}></Helmet>
@@ -26,9 +40,13 @@ function Report() {
               </div>
 
               <div className="row">
-                <ChartContainer>
-                  <Stacked config={defaultConfig} />
-                </ChartContainer>
+                {data ? (
+                  <ChartContainer>
+                    <Stacked config={data} />
+                  </ChartContainer>
+                ) : (
+                  <div>{data}</div>
+                )}
               </div>
             </div>
           </div>
