@@ -3,7 +3,6 @@ temp/
 #Python
 
 # general things to ignore
-build/
 *.egg-info/
 *.egg
 *.py[cod]
