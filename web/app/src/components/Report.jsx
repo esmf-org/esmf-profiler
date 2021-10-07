@@ -16,11 +16,21 @@ function Report() {
     })
     .then(function (_data) {
       // store Data in State Data Variable
+
+      //TODO: need a way for user to drill down the levels
+      //var _root = "/ROOT"
+      var _root = "/ROOT/[EARTH Grid Comp] RunPhase1";
+      //var _root = "/ROOT/[EARTH Grid Comp] RunPhase1/[ATM] RunPhase1";
+      var _dataroot = _data[_root];
+
       setData({
-        xAxis: {
-          categories: _data["/ROOT/[EARTH Grid Comp] RunPhase1"].xvals,
+        title: {
+          text: _root,
         },
-        series: _data["/ROOT/[EARTH Grid Comp] RunPhase1"].yvals,
+        xAxis: {
+          categories: _dataroot.xvals,
+        },
+        series: _dataroot.yvals,
       });
     })
     .catch(function (err) {

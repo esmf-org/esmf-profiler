@@ -39,6 +39,13 @@ const defaultConfig = {
   plotOptions: {
     series: {
       stacking: "normal",
+      events: {
+        click: function (event) {
+            alert(
+                "you clicked series: " + this.name
+            );
+        }
+      }
     },
   },
   series: [1, 2, 3, 4],
@@ -46,7 +53,7 @@ const defaultConfig = {
     menuStyle: {
       background: "#E0E0E0",
     },
-  },
+  }
 };
 
 export default class Stacked extends React.Component {
