@@ -67,9 +67,9 @@ def push_to_repo(url, outdir, name):
 
     cmd = ["whoami"]
     logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir, capture_output=True, text=True)
-    logger.debug(f"whoami: {stat.stdout}")
+    stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding='utf-8')
     username = str(stat.stdout).strip()
+    logger.debug(f"CMD: whoami returned: {username}")
 
     outdir = os.path.abspath(outdir)
 
