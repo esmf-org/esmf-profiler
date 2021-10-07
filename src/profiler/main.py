@@ -145,7 +145,7 @@ def main():
         # analysis.toJSON()
     logger.debug(f"Finishing analyses complete")
 
-    if "push" in args:
+    if args["push"] is not None:
         push_to_repo(url=args["push"], outdir=outdir, name=args["name"])
 
 
