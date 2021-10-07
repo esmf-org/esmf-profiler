@@ -57,7 +57,7 @@ def push_to_repo(url, outdir, name):
 
     # TODO: this deletes/reclones every time which can be inefficient if the repo is large
     # instead we want to check whether it exists already and see if we can git pull
-    cmd = ["rm", "-r", "tmprepo"]
+    cmd = ["rm", "-rf", "tmprepo"]
     logger.debug(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir)
 
