@@ -85,7 +85,16 @@ def push_to_repo(url, outdir, name):
     logger.debug(f"Profile path: {profilepath}")
     Path(profilepath).mkdir(parents=True, exist_ok=True)
 
+    # copy json data
     cmd = ["cp", "-r"] + glob.glob(outdir+"/*") + [profilepath]
+    logger.debug(f"CMD: {' '.join(cmd)}")
+    stat = subprocess.run(cmd, cwd=tmpdir)
+
+    # copy static site
+    # TODO:  need a more robust way to get a handle on the esmf-profiler root path
+    # either that or we need to bundle the static site files into the Python install
+    cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
+    cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [profilepath]
     logger.debug(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir)
 

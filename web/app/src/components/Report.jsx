@@ -10,7 +10,7 @@ function Report() {
   const [data, setData] = useState();
 
   // Fetch Function
-  fetch("../data.json")
+  fetch("../data/load_balance.json")
     .then(function (res) {
       return res.json();
     })
@@ -18,13 +18,13 @@ function Report() {
       // store Data in State Data Variable
       setData({
         xAxis: {
-          categories: _data.xvals,
+          categories: _data["/ROOT/[EARTH Grid Comp] RunPhase1"].xvals,
         },
-        series: _data.yvals,
+        series: _data["/ROOT/[EARTH Grid Comp] RunPhase1"].yvals,
       });
     })
     .catch(function (err) {
-      console.log(err, " error");
+      console.log(err, "Error loading JSON data");
     });
 
   return (

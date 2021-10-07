@@ -22,18 +22,19 @@ const defaultConfig = {
   xAxis: {
     categories: [1, 2, 3], // single bar label
     title: {
-      text: "PET Number",
+      text: "PET Number"
     },
   },
   yAxis: {
     min: 0,
-    allowDecimals: false,
+    allowDecimals: true,
     title: {
       text: "Time (s)",
     },
   },
   legend: {
     reversed: true,
+    itemStyle: {fontSize: "12pt"}
   },
   plotOptions: {
     series: {
