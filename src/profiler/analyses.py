@@ -9,8 +9,8 @@ import pprint
 import os
 
 logger = logging.getLogger(__name__)
-_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=_format)
+#_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
+#logging.basicConfig(level=logging.DEBUG, format=_format)
 
 # class to represent as a tree the timing
 # information in the RegionProfile events

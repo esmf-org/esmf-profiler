@@ -13,8 +13,8 @@ from profiler.analyses import Analysis
 from profiler.event import TraceEvent, RegionProfile, DefineRegion
 
 logger = logging.getLogger(__name__)
-_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=_format)
+#_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
+#logging.basicConfig(level=logging.DEBUG, format=_format)
 
 
 class Trace:
