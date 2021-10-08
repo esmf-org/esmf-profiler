@@ -84,7 +84,7 @@ def push_to_repo(url, outdir, name):
     Path(profilepath).mkdir(parents=True, exist_ok=True)
 
     # copy json data
-    cmd = ["cp", "-r"] + glob.glob(outdir+"/*") + [profilepath]
+    cmd = ["cp", "-r", outdir+"/data", profilepath]
     logger.debug(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir)
 
