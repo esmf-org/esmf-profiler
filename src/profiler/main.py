@@ -22,9 +22,6 @@ from profiler.analyses import Analysis, LoadBalance
 from profiler.trace import Trace
 
 logger = logging.getLogger(__name__)
-_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=_format)
-
 
 def handle_args():
     parser = argparse.ArgumentParser(description='ESMF Profiler')
@@ -32,6 +29,7 @@ def handle_args():
     parser.add_argument('-n', '--name', help='name to use for the generated profile', required=True)
     parser.add_argument('-o', '--outdir', help='path to output directory', required=True)
     parser.add_argument('-p', '--push', help='git url of remote repository where to push profile', required=False)
+    parser.add_argument('-v', '--verbose', help='enable verbose output', action='store_true', required=False)
     args = vars(parser.parse_args())
     return args
 
@@ -47,7 +45,7 @@ def write_site_json(data, dir):
 
 
 def push_to_repo(url, outdir, name):
-    logger.debug(f"Pushing to repository: {url}")
+    logger.info(f"Pushing to repository: {url}")
 
     tmpdir = "./.pushtmp"
     Path(tmpdir).mkdir(parents=True, exist_ok=True)
@@ -119,6 +117,13 @@ def main():
         print(f"name argument must contain only letters and numbers: {args['name']}")
         return
 
+    if args["verbose"]:
+        _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
+        logging.basicConfig(level=logging.DEBUG, format=_format)
+    else:
+        _format = "%(name)s : %(message)s"
+        logging.basicConfig(level=logging.INFO, format=_format)
+
     tracedir = args["tracedir"]
     if not os.path.isdir(tracedir):
         print(f"tracedir does not exist: {tracedir}")
@@ -148,7 +153,7 @@ def main():
     logger.debug(f"Processing trace complete")
 
     # indicate to the analyses that all events have been processed
-    logger.info(f"Finishing analyses")
+    logger.info(f"Generating profile")
     for analysis in analyses:
         analysis.finish()
         # analysis.toJSON()

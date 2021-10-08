@@ -10,7 +10,7 @@ function Report() {
   const [data, setData] = useState();
 
   // Fetch Function
-  fetch("../data/load_balance2.json")
+  fetch("../data/load_balance.json")
     .then(function (res) {
       return res.json();
     })
@@ -18,8 +18,8 @@ function Report() {
       // store Data in State Data Variable
 
       //TODO: need a way for user to drill down the levels
-      var _root = "/ROOT"
-      //var _root = "/ROOT/[EARTH Grid Comp] Init 1";
+      //var _root = "/ROOT"
+      var _root = "/ROOT/[EARTH Grid Comp] Init 1";
       //var _root = "/ROOT/[EARTH Grid Comp] RunPhase1";
       //var _root = "/ROOT/[EARTH Grid Comp] RunPhase1/[ATM] RunPhase1";
       var _dataroot = _data[_root];
