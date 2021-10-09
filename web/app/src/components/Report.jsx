@@ -18,21 +18,13 @@ function Report() {
       // store Data in State Data Variable
 
       //TODO: need a way for user to drill down the levels
-      var _root = "/ROOT"
+      var _root = "/ROOT";
       //var _root = "/ROOT/[EARTH Grid Comp] Init 1";
       //var _root = "/ROOT/[EARTH Grid Comp] RunPhase1";
       //var _root = "/ROOT/[EARTH Grid Comp] RunPhase1/[ATM] RunPhase1";
       var _dataroot = _data[_root];
 
-      setData({
-        title: {
-          text: _root,
-        },
-        xAxis: {
-          categories: _dataroot.xvals,
-        },
-        series: _dataroot.yvals,
-      });
+      setData(_data);
     })
     .catch(function (err) {
       console.log(err, "Error loading JSON data");

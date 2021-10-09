@@ -42,21 +42,6 @@ const defaultConfig = {
   plotOptions: {
     series: {
       stacking: "normal",
-      events: {
-        click: function (event) {
-          console.log(event.point);
-          console.log(this.name);
-
-          // alert("you clicked series: " + this.name);
-        },
-        click: function () {
-          var name = this.name;
-          var _i = this._i;
-          Highcharts.each(this.chart.series, function (p, i) {
-            // clicked(name, _i, p);
-          });
-        },
-      },
     },
   },
   series: [1, 2, 3, 4],
@@ -67,36 +52,27 @@ const defaultConfig = {
   },
 };
 
-// function clicked(name, _i, p) {
-//   console.log("click");
-//   console.log(name, p.name);
-//   console.log(_i, p._i);
-//   console.log(name === p.name);
-//   if (name === p.name) {
-//     console.log(p.visible);
-//     !p.visible ? p.show() : p.hide();
-//     console.log(p.visible);
-//   }
-// }
-
 function Stacked(props) {
   const [data, setData] = useState();
 
   useEffect(() => {
+    let level = "/ROOT";
+    let chartData = {
+      title: {
+        text: level,
+      },
+      xAxis: {
+        categories: props.config[level].xvals,
+      },
+      series: props.config[level].yvals,
+    };
     setData({
       ...defaultConfig,
-      ...props.config,
+      ...chartData,
+      ...seriesShit,
     });
+    // clicker();
   }, []);
-
-  // constructor(props) {
-  //   super(props);
-  //   this.config = {
-  //     ...defaultConfig,
-  //     ...this.props.config,
-  //   };
-  //   console.log(this.props.config);
-  // }
 
   const toggleOn = () => toggleAllSeries(true);
   const toggleOff = () => toggleAllSeries(false);
@@ -108,6 +84,39 @@ function Stacked(props) {
           visible: value,
         },
       },
+    });
+  };
+
+  const seriesShit = {
+    plotOptions: {
+      series: {
+        stacking: "normal",
+        events: {
+          click: function (event) {
+            clicker(this.name);
+            // alert("you clicked series: " + this.name);
+          },
+        },
+      },
+    },
+  };
+
+  const clicker = (level) => {
+    console.log("This level " + level);
+    console.log(props.config);
+    level = "/ROOT/" + level;
+
+    let chartData = {
+      title: {
+        text: level,
+      },
+      xAxis: {
+        categories: props.config[level].xvals,
+      },
+      series: props.config[level].yvals,
+    };
+    setData({
+      ...chartData,
     });
   };
 
