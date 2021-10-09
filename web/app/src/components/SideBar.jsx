@@ -136,9 +136,9 @@ export default function Sidebar() {
             <FontAwesomeIcon icon={faArrowCircleLeft} />
           </button> */}
 
-          <div class="text-center d-none d-md-inline">
+          <div className="text-center d-none d-md-inline">
             <button
-              class="rounded-circle border-0"
+              className="rounded-circle border-0"
               id="sidebarToggle"
               onClick={() => {
                 toggleSidebar();

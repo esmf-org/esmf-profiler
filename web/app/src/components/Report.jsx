@@ -36,7 +36,7 @@ function Report() {
               </div>
 
               <div className="row">
-                <AlertDismissible />
+                
                 {data ? (
                   <ChartContainer>
                     <Stacked options={data} />
