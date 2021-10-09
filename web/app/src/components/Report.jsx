@@ -15,15 +15,6 @@ function Report() {
       return res.json();
     })
     .then(function (_data) {
-      // store Data in State Data Variable
-
-      //TODO: need a way for user to drill down the levels
-      var _root = "/ROOT";
-      //var _root = "/ROOT/[EARTH Grid Comp] Init 1";
-      //var _root = "/ROOT/[EARTH Grid Comp] RunPhase1";
-      //var _root = "/ROOT/[EARTH Grid Comp] RunPhase1/[ATM] RunPhase1";
-      var _dataroot = _data[_root];
-
       setData(_data);
     })
     .catch(function (err) {
@@ -45,7 +36,7 @@ function Report() {
               <div className="row">
                 {data ? (
                   <ChartContainer>
-                    <Stacked config={data} />
+                    <Stacked options={data} />
                   </ChartContainer>
                 ) : (
                   <div>{data}</div>

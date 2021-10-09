@@ -54,7 +54,7 @@ const defaultConfig = {
 };
 
 function Stacked(props) {
-  const [data, setData] = useState();
+  const [options, setOptions] = useState(props.options);
   const [level, setLevel] = useState(["/ROOT"]);
 
   useEffect(() => {
@@ -63,22 +63,22 @@ function Stacked(props) {
         text: level.join("/"),
       },
       xAxis: {
-        categories: props.config[level.join("/")].xvals,
+        categories: props.options[level.join("/")].xvals,
       },
-      series: props.config[level.join("/")].yvals,
+      series: props.options[level.join("/")].yvals,
     };
-    setData({
+    setOptions({
       ...defaultConfig,
       ...chartData,
       ...seriesEvents,
     });
-  }, []);
+  }, [level]);
 
   const toggleOn = () => toggleAllSeries(true);
   const toggleOff = () => toggleAllSeries(false);
 
   const toggleAllSeries = (value) => {
-    setData({
+    setOptions({
       plotOptions: {
         series: {
           visible: value,
@@ -102,16 +102,17 @@ function Stacked(props) {
   };
 
   const clicker = (_level) => {
+    console.log(`clicker(${_level})`);
     setLevel(() => [...level, _level]);
 
-    setData({
+    setOptions({
       title: {
         text: level.join("/"),
       },
       xAxis: {
-        categories: props.config[level.join("/")].xvals,
+        categories: props.options[level.join("/")].xvals,
       },
-      series: props.config[level.join("/")].yvals,
+      series: props.options[level.join("/")].yvals,
     });
   };
 
@@ -125,10 +126,19 @@ function Stacked(props) {
     });
   };
 
+  const Chart = () => {
+    return props.options ? (
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    ) : (
+      ""
+    );
+  };
+
   return (
     <StackedContainer>
       <Breadcrumb>{ChartCrumbs()}</Breadcrumb>
-      <HighchartsReact highcharts={Highcharts} options={data} />
+      {Chart}
+      <HighchartsReact highcharts={Highcharts} options={options} />
       <ButtonGroup size="sm" className="me-2">
         <Button onClick={toggleOn} className="m-1">
           Select All
