@@ -6,6 +6,7 @@ import styled, { ThemeProvider } from "styled-components";
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Breadcrumb from "react-bootstrap/Breadcrumb";
 
 HC_exporting(Highcharts);
 
@@ -54,24 +55,23 @@ const defaultConfig = {
 
 function Stacked(props) {
   const [data, setData] = useState();
+  const [level, setLevel] = useState(["/ROOT"]);
 
   useEffect(() => {
-    let level = "/ROOT";
     let chartData = {
       title: {
-        text: level,
+        text: level.join("/"),
       },
       xAxis: {
-        categories: props.config[level].xvals,
+        categories: props.config[level.join("/")].xvals,
       },
-      series: props.config[level].yvals,
+      series: props.config[level.join("/")].yvals,
     };
     setData({
       ...defaultConfig,
       ...chartData,
-      ...seriesShit,
+      ...seriesEvents,
     });
-    // clicker();
   }, []);
 
   const toggleOn = () => toggleAllSeries(true);
@@ -87,7 +87,7 @@ function Stacked(props) {
     });
   };
 
-  const seriesShit = {
+  const seriesEvents = {
     plotOptions: {
       series: {
         stacking: "normal",
@@ -101,27 +101,33 @@ function Stacked(props) {
     },
   };
 
-  const clicker = (level) => {
-    console.log("This level " + level);
-    console.log(props.config);
-    level = "/ROOT/" + level;
+  const clicker = (_level) => {
+    setLevel(() => [...level, _level]);
 
-    let chartData = {
+    setData({
       title: {
-        text: level,
+        text: level.join("/"),
       },
       xAxis: {
-        categories: props.config[level].xvals,
+        categories: props.config[level.join("/")].xvals,
       },
-      series: props.config[level].yvals,
-    };
-    setData({
-      ...chartData,
+      series: props.config[level.join("/")].yvals,
+    });
+  };
+
+  const ChartCrumbs = () => {
+    return level.map((item) => {
+      return (
+        <Breadcrumb.Item onClick={() => setLevel([item])} href="">
+          {item}
+        </Breadcrumb.Item>
+      );
     });
   };
 
   return (
     <StackedContainer>
+      <Breadcrumb>{ChartCrumbs()}</Breadcrumb>
       <HighchartsReact highcharts={Highcharts} options={data} />
       <ButtonGroup size="sm" className="me-2">
         <Button onClick={toggleOn} className="m-1">
