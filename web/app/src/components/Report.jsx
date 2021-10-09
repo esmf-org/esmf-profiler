@@ -5,9 +5,11 @@ import React, { useState } from "react";
 import Footer from "./Footer";
 
 import { Helmet } from "react-helmet-async";
+import AlertDismissible from "./alerts/AlertDismissible";
 
 function Report() {
   const [data, setData] = useState();
+  const [timeStamp, setTimeStamp] = useState(Date.now().toString());
 
   // Fetch Function
   fetch("data/load_balance.json")
@@ -23,7 +25,7 @@ function Report() {
 
   return (
     <div className="App">
-      <Helmet title={Date.now().toString()}></Helmet>
+      <Helmet title={timeStamp}></Helmet>
       <div id="wrapper">
         <Sidebar />
         <div id="content-wrapper" className="d-flex flex-column">
@@ -34,6 +36,7 @@ function Report() {
               </div>
 
               <div className="row">
+                <AlertDismissible />
                 {data ? (
                   <ChartContainer>
                     <Stacked options={data} />
