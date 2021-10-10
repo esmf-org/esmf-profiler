@@ -281,7 +281,7 @@ class LoadBalance(Analysis):
 
             if regionid == 1:
                 # special case for outermost timed region
-                name = "ROOT"
+                name = "TOP"
             else:
                 map = self._regionIdToNameMap[pet]
                 name = map[regionid]  # should already be there

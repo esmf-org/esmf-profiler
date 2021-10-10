@@ -64,9 +64,9 @@ const defaultConfig = {
 
 function Stacked(props) {
   const [options, setOptions] = useState(props.options);
-  const [level, setLevel] = useState(["/ROOT"]);
+  const [level, setLevel] = useState(["/TOP"]);
   const [error, setError] = useState("");
-  const [history, setHistory] = useState(["/ROOT"]);
+  const [history, setHistory] = useState(["/TOP"]);
 
   useEffect(() => {
     updateLevel();
@@ -90,9 +90,8 @@ function Stacked(props) {
     const key = level.join("/");
     if (!hasData(key)) {
       setLevel(level.slice(0, level.length - 1));
-      setError("That branch contains no data");
-    }
-    if (!props.options.hasOwnProperty(key) || props.options[key] == undefined) {
+
+      setError("No additional timing detail");
       return;
     }
     if (
