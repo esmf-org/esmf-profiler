@@ -9,7 +9,7 @@ import AlertDismissible from "./alerts/AlertDismissible";
 
 function Report() {
   const [data, setData] = useState();
-  const [timeStamp, setTimeStamp] = useState(Date.now().toString());
+  const [title, setTitle] = useState();
 
   // Fetch Function
   fetch("data/load_balance.json")
@@ -20,12 +20,23 @@ function Report() {
       setData(_data);
     })
     .catch(function (err) {
-      console.log(err, "Error loading JSON data");
+      console.log(err, "Error loading data/load_balance.json");
+    });
+
+   fetch("data/site.json")
+     .then(function (res) {
+      return res.json();
+    })
+    .then(function (_site) {
+      setTitle(_site.name + " - ESMF Profiler");
+    })
+    .catch(function (err) {
+      console.log(err, "Error loading data/site.json");
     });
 
   return (
     <div className="App">
-      <Helmet title={timeStamp}></Helmet>
+      <Helmet title={title}></Helmet>
       <div id="wrapper">
         <Sidebar />
         <div id="content-wrapper" className="d-flex flex-column">
