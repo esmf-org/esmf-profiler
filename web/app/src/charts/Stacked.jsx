@@ -17,6 +17,14 @@ const defaultConfig = {
   chart: {
     type: "column", // column / bar
     zoomType: "xy",
+    events: {
+      redraw: function (event) {
+        console.log("REDRAW");
+      },
+      load: function (event) {
+        console.log("LOAD");
+      },
+    },
   },
   title: {
     text: "PET Timings", // graph title
@@ -64,24 +72,40 @@ function Stacked(props) {
     updateLevel();
   }, [level]);
 
+  const hasData = (key) => {
+    if (!props.options.hasOwnProperty(key) || props.options[key] == undefined) {
+      return false;
+    }
+    if (!props.options.hasOwnProperty(key) || props.options[key] == undefined) {
+      return false;
+    }
+    return true;
+  };
+
   const updateLevel = () => {
     console.debug(`updateLevel()`);
     if (!level.join) {
-      return;
+      return; //should throw exception here
     }
     const key = level.join("/");
-    if (!key in props.options || props.options[key] == undefined) {
+    if (!hasData(key)) {
       setLevel(level.slice(0, level.length - 1));
       setError("That branch contains no data");
+    }
+    if (!props.options.hasOwnProperty(key) || props.options[key] == undefined) {
       return;
     }
-    if (!"xvals" in props.options[key] || !"yvals" in props.options[key]) {
+    if (
+      !props.options[key].hasOwnProperty("xvals") ||
+      !props.options[key].hasOwnProperty("yvals")
+    ) {
       console.log(error);
       setLevel(history);
       setError("You've reached the tree limit");
       return;
     }
 
+    console.log(props.options, key);
     let chartData = {
       title: {
         text: key,
@@ -113,6 +137,19 @@ function Stacked(props) {
     });
   };
 
+  const chartEvents = {
+    chart: {
+      events: {
+        redraw: function (event) {
+          console.log("REDRAW");
+        },
+        load: function (event) {
+          console.log("LOAD");
+        },
+      },
+    },
+  };
+
   const seriesEvents = {
     plotOptions: {
       series: {
@@ -141,8 +178,6 @@ function Stacked(props) {
   };
 
   const ChartCrumbs = () => {
-    console.debug("ChartCrumbs()");
-
     return level.map
       ? level.map((item, idx) => {
           return (
