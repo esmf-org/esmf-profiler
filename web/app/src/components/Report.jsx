@@ -38,7 +38,7 @@ function Report() {
         //console.log("setting title")
         console.log(_site);
         setTitle({
-          title: _site.name + " - ESMF Profiler",
+          title: _site.name,
           timestamp: _site.timestamp,
         });
       })
@@ -49,7 +49,7 @@ function Report() {
 
   return (
     <div className="App">
-      <Helmet title={`${title.title} - ${title.timestamp}`}></Helmet>
+      <Helmet title={`${title.title} - ESMF Profiler`}></Helmet>
       <div id="wrapper">
         <Sidebar />
         <div id="content-wrapper" className="d-flex flex-column">
