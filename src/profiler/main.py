@@ -18,7 +18,7 @@ import subprocess
 import glob
 
 from profiler.utils import print_execution_time
-from profiler.analyses import Analysis, LoadBalance
+from profiler.analyses import Analysis, LoadBalance, IterationTiming
 from profiler.trace import Trace
 
 logger = logging.getLogger(__name__)
@@ -146,7 +146,9 @@ def main():
     #_path = "./tests/fixtures/test-traces-large"
 
     # the only requested analysis is a load balance at the root level
-    analyses = [LoadBalance(None, outdatadir)]
+    lbAnalysis = LoadBalance(None, outdatadir)
+    itAnalysis = IterationTiming(pet=0, regionName="[OCN-TO-MED] RunPhase1", loadBalanceAnalysis=lbAnalysis)
+    analyses = [lbAnalysis, itAnalysis]
 
     logger.info(f"Processing trace: {tracedir}")
     trace = Trace.from_path(tracedir, analyses)

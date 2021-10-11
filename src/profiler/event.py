@@ -58,6 +58,10 @@ class TraceEvent(ABC):
     def nodename(self):
         return self._msg.event.packet.context_field["nodename"]
 
+    @property
+    def timestamp(self):
+        return self._msg.default_clock_snapshot.ns_from_origin
+
     @staticmethod
     def Of(msg: bt2._EventMessageConst):
         """Of Convnience constructor

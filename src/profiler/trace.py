@@ -33,7 +33,7 @@ class Trace:
 
         # hard code for now - eventually query each Analysis
         # for what events need to be included
-        includes = ["define_region", "region_profile"]
+        includes = ["define_region", "region_profile", "regionid_enter", "regionid_exit"]
         tmp_count = 0
 
         for msg in bt2.TraceCollectionMessageIterator(_path):

@@ -1,4 +1,4 @@
-from profiler.event import TraceEvent, DefineRegion, RegionProfile
+from profiler.event import TraceEvent, DefineRegion, RegionProfile, RegionIdEnter, RegionIdExit
 from typing import Dict
 from abc import ABC, abstractproperty
 import logging
@@ -265,6 +265,9 @@ class LoadBalance(Analysis):
         # map pet -> root of timing tree
         self._timingTrees = {}
 
+    def lookup_region_name(self, pet, regionid):
+        return self._regionIdToNameMap[pet][regionid]
+
     def process_event(self, event: TraceEvent):
 
         if isinstance(event, DefineRegion):
@@ -339,6 +342,57 @@ class LoadBalance(Analysis):
             if len(child.children) > 0:
                 results[name] = child.load_balance()
             self._full_tree_load_balance(name, child, results)
+
+
+class IterationTiming(Analysis):
+
+    def __init__(self, pet, regionName, loadBalanceAnalysis: LoadBalance):
+        logger.debug(f"Initialize IterationTiming")
+        self._pet = pet
+        self._regionName = regionName
+        # use this instance to look up region id -> region name
+        self._loadBalanceAnalysis = loadBalanceAnalysis
+
+        self._lastenter = -1
+        self._total = 0
+        self._dts = []
+
+
+    def process_event(self, event: TraceEvent):
+
+        if isinstance(event, RegionIdEnter):
+            pet = event.pet
+            if pet == self._pet:
+                regionid = event.get("regionid")
+                name = self._loadBalanceAnalysis.lookup_region_name(pet, regionid)
+                if name == self._regionName:
+                    self._lastenter = event.timestamp
+                    #logger.debug(f"RegionIdEnter pet = {pet}, id = {regionid}, name = {name}, ts = {self._lastenter}")
+
+        if isinstance(event, RegionIdExit):
+            pet = event.pet
+            if pet == self._pet:
+                regionid = event.get("regionid")
+                name = self._loadBalanceAnalysis.lookup_region_name(pet, regionid)
+                if name == self._regionName:
+                    dt = event.timestamp - self._lastenter
+                    self._total = self._total + dt
+                    self._dts.append(nano_to_sec(dt))
+                    logger.debug(f"RegionIdExit pet = {pet}, id = {regionid}, name = {name}, dt = {nano_to_sec(dt)}")
+
+    def finish(self):
+        logger.debug(f"finish IterationTiming: total = {nano_to_sec(self._total)}")
+
+        jsondict = {"yvals": self._dts}
+        out = json.dumps(jsondict)
+        logger.debug(f"json = {out}")
+
+        #outfile = os.path.join(self._outdir, "load_balance.json")
+        #logger.debug(f"Writing load balance JSON to file: {outfile}")
+        #with open(outfile, "w") as outfile:
+        #    json.dump(jsondict, outfile)
+        #logger.debug(f"Finished writing load balance JSON file")
+
 
 
 # move this to utility layer
