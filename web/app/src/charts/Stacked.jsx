@@ -56,9 +56,9 @@ const defaultConfig = {
 
 function Stacked(props) {
   const [options, setOptions] = useState(props.options);
-  const [level, setLevel] = useState(["/ROOT"]);
+  const [level, setLevel] = useState(["/TOP"]);
   const [error, setError] = useState("");
-  const [history, setHistory] = useState(["/ROOT"]);
+  const [history, setHistory] = useState(["/TOP"]);
 
   useEffect(() => {
     updateLevel();
