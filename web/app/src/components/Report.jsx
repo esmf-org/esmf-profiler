@@ -2,13 +2,11 @@ import ChartContainer from "./ChartContainer";
 import Stacked from "../charts/Stacked";
 import Sidebar from "./SideBar";
 import React, { useState, useEffect } from "react";
-import Footer from "./Footer";
 
 import { Helmet } from "react-helmet-async";
-import AlertDismissible from "./alerts/AlertDismissible";
 
 function Report() {
-  const [data, setData] = useState();
+  const [data, setData] = useState({});
   const [title, setTitle] = useState();
 
   useEffect(()=>{
@@ -39,8 +37,7 @@ function Report() {
         .catch(function (err) {
           console.log(err, "Error loading data/site.json");
         });
-
-    },[])
+  }, []);
 
   return (
     <div className="App">
@@ -55,14 +52,9 @@ function Report() {
               </div>
 
               <div className="row">
-                
-                {data ? (
                   <ChartContainer>
                     <Stacked options={data} />
                   </ChartContainer>
-                ) : (
-                  <div>{data}</div>
-                )}
               </div>
             </div>
           </div>

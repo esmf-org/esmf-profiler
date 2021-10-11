@@ -64,47 +64,41 @@ function Stacked(props) {
     updateLevel();
   }, [level]);
 
-  const dataMap = () => {
-    let map = {};
-    for (let key in props.options) {
-      map[key] = props.options[key];
-    }
-    return map;
-  };
-
-  const hasData = (key) => {
-    const map = dataMap();
-    if (!key in map || map == undefined) {
-      console.debug("datamap is undefined or missing key");
-      return false;
-    }
-    if (!map[key] || !"xvals" in map[key] || !"yvals" in map[key]) {
-      console.debug("missing xvals or yvals");
-      return false;
-    }
-    return true;
-  };
-
   const updateLevel = () => {
     console.debug(`updateLevel()`);
-
+    if (level === history) {
+      return;
+    }
+    if (!level.join) {
+      return;
+    }
     const key = level.join("/");
+    if (!key in props.options || props.options[key] == undefined) {
+      setLevel(level.slice(0, level.length - 1));
+      setError("That branch contains no data");
+      return;
+    }
+    if (!"xvals" in props.options[key] || !"yvals" in props.options[key]) {
+      console.log(error);
+      setLevel(history);
+      setError("You've reached the tree limit");
+      return;
+    }
+
     let chartData = {
       title: {
         text: key,
       },
       xAxis: {
-        categories: dataMap()[key].xvals,
+        categories: props.options[key].xvals,
       },
-      series: dataMap()[key].yvals,
+      series: props.options[key].yvals,
     };
     setOptions({
-      // ...chartEvents,
       ...defaultConfig,
       ...chartData,
       ...seriesEvents,
     });
-    console.log("The opptions are ", options);
     setHistory(history + level);
   };
 
@@ -122,19 +116,6 @@ function Stacked(props) {
     });
   };
 
-  const chartEvents = {
-    chart: {
-      events: {
-        redraw: function (event) {
-          console.log("REDRAW");
-        },
-        load: function (event) {
-          console.log("LOAD");
-        },
-      },
-    },
-  };
-
   const seriesEvents = {
     plotOptions: {
       series: {
@@ -149,32 +130,22 @@ function Stacked(props) {
   };
 
   const clickLevel = (_level) => {
-    if (level === _level) return;
     console.debug(`clickLevel(${_level})`);
     setError("");
     let position = level.indexOf(_level);
+    console.log(`Position is ${position}`);
 
-    let tempLevel;
     if (position === -1) {
-      tempLevel = [...level, _level];
+      setLevel(() => [...level, _level]);
     } else {
-      tempLevel = level.slice(0, position + 1);
+      setLevel(() => level.slice(0, position + 1));
     }
-
-    const key = level.join("/");
-    if (!tempLevel.join("/") in dataMap()) {
-      console.error(tempLevel.join("/"), " not found in ", props.options);
-      return;
-    }
-
-    if (!hasData(key)) {
-      setError("No additional timing detail");
-      return;
-    }
-    setLevel(tempLevel);
+    console.log(level);
   };
 
   const ChartCrumbs = () => {
+    console.debug("ChartCrumbs()");
+
     return level.map
       ? level.map((item, idx) => {
           return (
