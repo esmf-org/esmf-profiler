@@ -17,14 +17,6 @@ const defaultConfig = {
   chart: {
     type: "column", // column / bar
     zoomType: "xy",
-    events: {
-      redraw: function (event) {
-        console.log("REDRAW");
-      },
-      load: function (event) {
-        console.log("LOAD");
-      },
-    },
   },
   title: {
     text: "PET Timings", // graph title
@@ -64,19 +56,30 @@ const defaultConfig = {
 
 function Stacked(props) {
   const [options, setOptions] = useState(props.options);
-  const [level, setLevel] = useState(["/TOP"]);
+  const [level, setLevel] = useState(["/ROOT"]);
   const [error, setError] = useState("");
-  const [history, setHistory] = useState(["/TOP"]);
+  const [history, setHistory] = useState(["/ROOT"]);
 
   useEffect(() => {
     updateLevel();
   }, [level]);
 
+  const dataMap = () => {
+    let map = {};
+    for (let key in props.options) {
+      map[key] = props.options[key];
+    }
+    return map;
+  };
+
   const hasData = (key) => {
-    if (!props.options.hasOwnProperty(key) || props.options[key] == undefined) {
+    const map = dataMap();
+    if (!key in map || map == undefined) {
+      console.debug("datamap is undefined or missing key");
       return false;
     }
-    if (!props.options.hasOwnProperty(key) || props.options[key] == undefined) {
+    if (!map[key] || !"xvals" in map[key] || !"yvals" in map[key]) {
+      console.debug("missing xvals or yvals");
       return false;
     }
     return true;
@@ -84,41 +87,24 @@ function Stacked(props) {
 
   const updateLevel = () => {
     console.debug(`updateLevel()`);
-    if (!level.join) {
-      return; //should throw exception here
-    }
+
     const key = level.join("/");
-    if (!hasData(key)) {
-      setLevel(level.slice(0, level.length - 1));
-
-      setError("No additional timing detail");
-      return;
-    }
-    if (
-      !props.options[key].hasOwnProperty("xvals") ||
-      !props.options[key].hasOwnProperty("yvals")
-    ) {
-      console.log(error);
-      setLevel(history);
-      setError("You've reached the tree limit");
-      return;
-    }
-
-    console.log(props.options, key);
     let chartData = {
       title: {
         text: key,
       },
       xAxis: {
-        categories: props.options[key].xvals,
+        categories: dataMap()[key].xvals,
       },
-      series: props.options[key].yvals,
+      series: dataMap()[key].yvals,
     };
     setOptions({
+      // ...chartEvents,
       ...defaultConfig,
       ...chartData,
       ...seriesEvents,
     });
+    console.log("The opptions are ", options);
     setHistory(history + level);
   };
 
@@ -163,17 +149,29 @@ function Stacked(props) {
   };
 
   const clickLevel = (_level) => {
+    if (level === _level) return;
     console.debug(`clickLevel(${_level})`);
     setError("");
     let position = level.indexOf(_level);
-    console.log(`Position is ${position}`);
 
+    let tempLevel;
     if (position === -1) {
-      setLevel(() => [...level, _level]);
+      tempLevel = [...level, _level];
     } else {
-      setLevel(() => level.slice(0, position + 1));
+      tempLevel = level.slice(0, position + 1);
     }
-    console.log(level);
+
+    const key = level.join("/");
+    if (!tempLevel.join("/") in dataMap()) {
+      console.error(tempLevel.join("/"), " not found in ", props.options);
+      return;
+    }
+
+    if (!hasData(key)) {
+      setError("No additional timing detail");
+      return;
+    }
+    setLevel(tempLevel);
   };
 
   const ChartCrumbs = () => {
