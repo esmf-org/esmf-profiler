@@ -191,14 +191,16 @@ function Stacked(props) {
       {error && <AlertDismissible message={error} />}
       <Breadcrumb>{ChartCrumbs()}</Breadcrumb>
       <HighchartsReact highcharts={Highcharts} options={options} />
-      <ButtonGroup size="sm" className="me-2">
-        <Button onClick={toggleOn} className="m-1">
-          Select All
-        </Button>
-        <Button onClick={toggleOff} className="m-1">
-          Select None
-        </Button>
-      </ButtonGroup>
+      <div className="d-flex justify-content-center">
+        <ButtonGroup size="sm" className="me-2">
+          <Button onClick={toggleOn} className="m-1">
+            Select All
+          </Button>
+          <Button onClick={toggleOff} className="m-1">
+            Select None
+          </Button>
+        </ButtonGroup>
+      </div>
     </StackedContainer>
   );
 }
