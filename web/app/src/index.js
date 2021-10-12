@@ -16,7 +16,7 @@ function App() {
       <HelmetProvider>
         <Helmet>
           <title>ESMF Profiler</title>
-          <link rel="canonical" href="https://earthsystemmodeling.org/" />
+          <link rel="canonical" href="#" />
         </Helmet>
 
         <Switch>

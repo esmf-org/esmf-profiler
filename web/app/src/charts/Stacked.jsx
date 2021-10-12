@@ -55,6 +55,7 @@ const chartOptions = {
 };
 
 function Stacked(props) {
+
   let plotOptions_series_events = {
     plotOptions: {
       series: {
@@ -71,6 +72,7 @@ function Stacked(props) {
   const [level, setLevel] = useState(["/ROOT"]);
   const [levelHistory, setLevelHistory] = useState([]);
   const [options, setOptions] = useState({ ...chartOptions });
+
 
   useEffect(() => {
     updateLevel();
@@ -139,7 +141,9 @@ function Stacked(props) {
   return (
     <StackedContainer>
       {error && <AlertDismissible message={error} />}
-      <Breadcrumb>
+
+    <div className="d-flex justify-content-center">  
+    <Breadcrumb>
         {level.map
           ? level.map((item, idx) => {
               return (
@@ -154,6 +158,7 @@ function Stacked(props) {
             })
           : ""}
       </Breadcrumb>
+      </div>
 
       <HighchartsReact highcharts={Highcharts} options={{ ...options }} />
 
@@ -165,6 +170,7 @@ function Stacked(props) {
           Select None
         </Button>
       </ButtonGroup>
+
     </StackedContainer>
   );
 }
