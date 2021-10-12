@@ -55,7 +55,6 @@ const chartOptions = {
 };
 
 function Stacked(props) {
-
   let plotOptions_series_events = {
     plotOptions: {
       series: {
@@ -69,10 +68,9 @@ function Stacked(props) {
   };
 
   const [error, setError] = useState("");
-  const [level, setLevel] = useState(["/ROOT"]);
+  const [level, setLevel] = useState(["/TOP"]);
   const [levelHistory, setLevelHistory] = useState([]);
   const [options, setOptions] = useState({ ...chartOptions });
-
 
   useEffect(() => {
     updateLevel();
@@ -142,8 +140,7 @@ function Stacked(props) {
     <StackedContainer>
       {error && <AlertDismissible message={error} />}
 
-    <div className="d-flex justify-content-center">  
-    <Breadcrumb>
+      <Breadcrumb>
         {level.map
           ? level.map((item, idx) => {
               return (
@@ -158,19 +155,19 @@ function Stacked(props) {
             })
           : ""}
       </Breadcrumb>
-      </div>
 
       <HighchartsReact highcharts={Highcharts} options={{ ...options }} />
 
-      <ButtonGroup size="sm" className="me-2">
-        <Button onClick={toggleOn} className="m-1">
-          Select All
-        </Button>
-        <Button onClick={toggleOff} className="m-1">
-          Select None
-        </Button>
-      </ButtonGroup>
-
+      <div className="d-flex justify-content-center">
+        <ButtonGroup size="sm" className="me-2">
+          <Button onClick={toggleOn} className="m-1">
+            Select All
+          </Button>
+          <Button onClick={toggleOff} className="m-1">
+            Select None
+          </Button>
+        </ButtonGroup>
+      </div>
     </StackedContainer>
   );
 }
