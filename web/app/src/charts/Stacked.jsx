@@ -13,7 +13,7 @@ HC_exporting(Highcharts);
 
 const StackedContainer = styled.div``;
 
-const defaultConfig = {
+const chartOptions = {
   chart: {
     type: "column", // column / bar
     zoomType: "xy",
@@ -25,7 +25,6 @@ const defaultConfig = {
     enabled: false,
   },
   xAxis: {
-    categories: [1, 2, 3], // single bar label
     title: {
       text: "PET Number",
     },
@@ -38,6 +37,7 @@ const defaultConfig = {
     },
   },
   legend: {
+    enabled: true,
     reversed: true,
     itemStyle: { fontSize: "12pt" },
   },
@@ -46,7 +46,7 @@ const defaultConfig = {
       stacking: "normal",
     },
   },
-  series: [1, 2, 3, 4],
+  series: [],
   navigation: {
     menuStyle: {
       background: "#E0E0E0",
@@ -55,71 +55,9 @@ const defaultConfig = {
 };
 
 function Stacked(props) {
-  const [options, setOptions] = useState(props.options);
-  const [level, setLevel] = useState(["/ROOT"]);
-  const [error, setError] = useState("");
-  const [history, setHistory] = useState(["/ROOT"]);
-
-  useEffect(() => {
-    updateLevel();
-  }, [level]);
-
-  const updateLevel = () => {
-    console.debug(`updateLevel()`);
-    if (level === history) {
-      return;
-    }
-    if (!level.join) {
-      return;
-    }
-    const key = level.join("/");
-    if (!key in props.options || props.options[key] == undefined) {
-      setLevel(level.slice(0, level.length - 1));
-      setError("That branch contains no data");
-      return;
-    }
-    if (!"xvals" in props.options[key] || !"yvals" in props.options[key]) {
-      console.log(error);
-      setLevel(history);
-      setError("You've reached the tree limit");
-      return;
-    }
-
-    let chartData = {
-      title: {
-        text: key,
-      },
-      xAxis: {
-        categories: props.options[key].xvals,
-      },
-      series: props.options[key].yvals,
-    };
-    setOptions({
-      ...defaultConfig,
-      ...chartData,
-      ...seriesEvents,
-    });
-    setHistory(history + level);
-  };
-
-  const toggleOn = () => toggleAllSeries(true);
-  const toggleOff = () => toggleAllSeries(false);
-
-  const toggleAllSeries = (value) => {
-    console.debug(`toggleAllSeries(${value})`);
-    setOptions({
-      plotOptions: {
-        series: {
-          visible: value,
-        },
-      },
-    });
-  };
-
-  const seriesEvents = {
+  let plotOptions_series_events = {
     plotOptions: {
       series: {
-        stacking: "normal",
         events: {
           click: function (event) {
             clickLevel(this.name);
@@ -129,39 +67,96 @@ function Stacked(props) {
     },
   };
 
-  const clickLevel = (_level) => {
-    console.debug(`clickLevel(${_level})`);
-    setError("");
-    let position = level.indexOf(_level);
-    console.log(`Position is ${position}`);
+  const [error, setError] = useState("");
+  const [level, setLevel] = useState(["/ROOT"]);
+  const [levelHistory, setLevelHistory] = useState([]);
+  const [options, setOptions] = useState({ ...chartOptions });
 
-    if (position === -1) {
-      setLevel(() => [...level, _level]);
-    } else {
-      setLevel(() => level.slice(0, position + 1));
+  useEffect(() => {
+    updateLevel();
+  }, [props.options, level]);
+
+  const updateLevel = () => {
+    setError("");
+    if (!props.options) {
+      setError("No data available");
+      return;
     }
-    console.log(level);
+
+    console.debug(`updateLevel() current level: ${level}`);
+
+    const key = level.join("/");
+    if (!props.options[key]) {
+      setError("No data available");
+      return;
+    }
+    const newOptions = {
+      ...options,
+      ...props?.options[key],
+      xAxis: {
+        categories: props?.options[key]?.xvals,
+      },
+
+      series: props?.options[key]?.yvals,
+      ...plotOptions_series_events,
+    };
+    setOptions(newOptions);
   };
 
-  const ChartCrumbs = () => {
-    console.debug("ChartCrumbs()");
+  const toggleOn = () => toggleAllSeries(true);
+  const toggleOff = () => toggleAllSeries(false);
 
-    return level.map
-      ? level.map((item, idx) => {
-          return (
-            <Breadcrumb.Item key={idx} onClick={() => clickLevel(item)} href="">
-              {item}
-            </Breadcrumb.Item>
-          );
-        })
-      : "";
+  const toggleAllSeries = (value) => {
+    console.debug(`toggleAllSeries(${value})`);
+    setOptions({
+      ...options.plotOptions,
+      plotOptions: {
+        series: {
+          visible: value,
+        },
+      },
+    });
+  };
+
+  const clickLevel = (_level) => {
+    let position = level?.indexOf(_level);
+    let key = level.join("/");
+    if (position === -1) {
+      console.debug(`Appending ${_level} to ${level}`);
+      key = [...level, _level];
+    } else {
+      console.debug(`Popping ${position}`);
+      key = [...level].slice(0, position + 1);
+    }
+    setLevelHistory(...level);
+    setLevel(key);
+
+    console.debug(
+      `clickLevel(${_level}): key is (${key}): position is (${position})`
+    );
   };
 
   return (
     <StackedContainer>
       {error && <AlertDismissible message={error} />}
-      <Breadcrumb>{ChartCrumbs()}</Breadcrumb>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      <Breadcrumb>
+        {level.map
+          ? level.map((item, idx) => {
+              return (
+                <Breadcrumb.Item
+                  key={idx}
+                  onClick={() => clickLevel(item)}
+                  href=""
+                >
+                  {item}
+                </Breadcrumb.Item>
+              );
+            })
+          : ""}
+      </Breadcrumb>
+
+      <HighchartsReact highcharts={Highcharts} options={{ ...options }} />
+
       <ButtonGroup size="sm" className="me-2">
         <Button onClick={toggleOn} className="m-1">
           Select All
