@@ -94,33 +94,33 @@ interface ISeriesDataPoint {
 interface IBasicBar {
   chart?: IChartTypes;
   title?: {
-    text: string;
+    text: string,
   };
   subtitle?: {
-    text: string;
+    text: string,
   };
   xAxis?: {
-    categories: any[];
-    crosshair?: boolean;
+    categories: any[],
+    crosshair?: boolean,
   };
   yAxis?: {
-    min: number;
+    min: number,
     title: {
-      text: string;
-    };
+      text: string,
+    },
   };
   tooltip?: {
-    headerFormat?: string;
-    pointFormat?: string;
-    footerFormat?: string;
-    shared?: boolean;
-    useHTML?: boolean;
+    headerFormat?: string,
+    pointFormat?: string,
+    footerFormat?: string,
+    shared?: boolean,
+    useHTML?: boolean,
   };
   plotOptions?: {
     column: {
-      pointPadding?: number;
-      borderWidth?: number;
-    };
+      pointPadding?: number,
+      borderWidth?: number,
+    },
   };
   series?: ISeriesDataPoint[];
 }

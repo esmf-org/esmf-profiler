@@ -13,94 +13,109 @@ HC_exporting(Highcharts);
 
 const StackedContainer = styled.div``;
 
-const chartOptions = {
-  chart: {
-    type: "column", // column / bar
-    zoomType: "xy",
-  },
-  title: {
-    text: "PET Timings", // graph title
-  },
-  credits: {
-    enabled: false,
-  },
-  xAxis: {
-    title: {
-      text: "PET Number",
-    },
-  },
-  yAxis: {
-    min: 0,
-    allowDecimals: true,
-    title: {
-      text: "Time (s)",
-    },
-  },
-  legend: {
-    enabled: true,
-    reversed: true,
-    itemStyle: { fontSize: "12pt" },
-  },
-  plotOptions: {
-    series: {
-      stacking: "normal",
-    },
-  },
-  series: [],
-  navigation: {
-    menuStyle: {
-      background: "#E0E0E0",
-    },
-  },
-};
-
 function Stacked(props) {
-  let plotOptions_series_events = {
+  let chartOptions = {
+    chart: {
+      type: "column", // column / bar
+      zoomType: "xy",
+    },
+    title: {
+      text: "PET Timings", // graph title
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      title: {
+        text: "PET Number",
+      },
+    },
+    yAxis: {
+      min: 0,
+      allowDecimals: true,
+      title: {
+        text: "Time (s)",
+      },
+    },
+    legend: {
+      enabled: true,
+      reversed: true,
+      itemStyle: { fontSize: "12pt" },
+    },
+    chart: {
+      type: "column", // column / bar
+      zoomType: "xy",
+    },
+    title: {
+      text: "PET Timings", // graph title
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      title: {
+        text: "PET Number",
+      },
+    },
+    yAxis: {
+      min: 0,
+      allowDecimals: true,
+      title: {
+        text: "Time (s)",
+      },
+    },
+    legend: {
+      enabled: true,
+      reversed: true,
+      itemStyle: { fontSize: "12pt" },
+    },
     plotOptions: {
       series: {
+        stacking: "normal",
         events: {
-          click: function (event) {
+          click: function () {
             clickLevel(this.name);
           },
         },
+      },
+    },
+    series: [],
+    navigation: {
+      menuStyle: {
+        background: "#E0E0E0",
       },
     },
   };
 
   const [error, setError] = useState("");
   const [level, setLevel] = useState(["/TOP"]);
-  const [levelHistory, setLevelHistory] = useState([]);
-  const [options, setOptions] = useState({ ...chartOptions });
-
+  const [options, setOptions] = useState(chartOptions);
   useEffect(() => {
     updateLevel();
-  }, [props.options, level]);
+  }, [props, level]);
 
   const updateLevel = () => {
     setError("");
-    if (!props.options) {
-      setError("No data available");
-      return;
-    }
-
-    console.debug(`updateLevel() current level: ${level}`);
+    console.debug(
+      `updateLevel() current level: ${level}  length: ${level.length}`
+    );
 
     const key = level.join("/");
+    console.log("level: ", level);
+    console.log(`stringed key: ${key}`);
     if (!props.options[key]) {
-      setError("No data available");
+      setError("no data available");
       return;
     }
-    const newOptions = {
-      ...options,
-      ...props?.options[key],
-      xAxis: {
-        categories: props?.options[key]?.xvals,
-      },
+    console.log(level, key, props.options[key], props.options);
 
-      series: props?.options[key]?.yvals,
-      ...plotOptions_series_events,
-    };
-    setOptions(newOptions);
+    const newxVals = props.options[key].xvals;
+    const newyVals = props.options[key].yvals;
+    setOptions({
+      ...options.series.yvals,
+      xVals: newxVals,
+      series: newyVals,
+    });
   };
 
   const toggleOn = () => toggleAllSeries(true);
@@ -109,7 +124,6 @@ function Stacked(props) {
   const toggleAllSeries = (value) => {
     console.debug(`toggleAllSeries(${value})`);
     setOptions({
-      ...options.plotOptions,
       plotOptions: {
         series: {
           visible: value,
@@ -119,21 +133,34 @@ function Stacked(props) {
   };
 
   const clickLevel = (_level) => {
-    let position = level?.indexOf(_level);
+    console.debug(`clickLevel(${_level})`);
+    let position = level.lastIndexOf(_level);
     let key = level.join("/");
-    if (position === -1) {
+    if (position < 0) {
       console.debug(`Appending ${_level} to ${level}`);
       key = [...level, _level];
     } else {
-      console.debug(`Popping ${position}`);
-      key = [...level].slice(0, position + 1);
+      key = level.slice(0, position + 1);
     }
-    setLevelHistory(...level);
-    setLevel(key);
-
     console.debug(
       `clickLevel(${_level}): key is (${key}): position is (${position})`
     );
+    setLevel(key);
+  };
+
+  const clickCrumb = (idx, _level) => {
+    console.debug(`clickCrumb(${idx}, ${_level})`);
+    let newLevel = level;
+    if (idx === 0) {
+      console.log("idx is 0!!");
+      newLevel = ["/TOP"];
+    } else if (idx < level.length) {
+      newLevel = level.slice(0, idx + 1);
+    } else {
+      newLevel = [...level, _level];
+    }
+    setLevel(newLevel);
+    console.log(idx, level);
   };
 
   return (
@@ -142,21 +169,21 @@ function Stacked(props) {
 
       <Breadcrumb>
         {level.map
-          ? level.map((item, idx) => {
+          ? level.map((_level, idx) => {
               return (
                 <Breadcrumb.Item
                   key={idx}
-                  onClick={() => clickLevel(item)}
+                  onClick={() => clickCrumb(idx, _level)}
                   href=""
                 >
-                  {item}
+                  {_level}
                 </Breadcrumb.Item>
               );
             })
           : ""}
       </Breadcrumb>
 
-      <HighchartsReact highcharts={Highcharts} options={{ ...options }} />
+      <HighchartsReact highcharts={Highcharts} options={options} />
 
       <div className="d-flex justify-content-center">
         <ButtonGroup size="sm" className="me-2">

@@ -1,5 +1,4 @@
-import { Alert, Button, Row, Col, Fade } from "react-bootstrap";
-import { useState } from "react";
+import { Alert, Row, Col } from "react-bootstrap";
 import styled from "styled-components";
 
 const DismissButton = styled.div`

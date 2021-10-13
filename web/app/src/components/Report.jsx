@@ -6,13 +6,11 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 
 function Report() {
-
   const [data, setData] = useState();
   const [title, setTitle] = useState({
     title: "",
     timestamp: "",
   });
-
 
   useEffect(() => {
     // Fetch Function
@@ -28,25 +26,22 @@ function Report() {
       .catch(function (err) {
         console.log(err, "Error loading data/load_balance.json");
       });
+  }, []);
 
+  useEffect(() => {
     fetch("data/site.json")
       .then(function (res) {
-        //console.log("site response = " + res)
         return res.json();
       })
       .then(function (_site) {
-        //console.log("setting title")
-        console.log(_site);
         setTitle({
           title: _site.name,
           timestamp: _site.timestamp,
         });
-
       })
       .catch(function (err) {
         console.log(err, "Error loading data/site.json");
       });
-
   }, []);
 
   return (
@@ -63,10 +58,9 @@ function Report() {
               </div>
 
               <div className="row">
-
-                  <ChartContainer>
-                    <Stacked options={data} />
-                  </ChartContainer>
+                {data && <ChartContainer>
+                  <Stacked options={data} />
+                </ChartContainer> }
               </div>
             </div>
           </div>
