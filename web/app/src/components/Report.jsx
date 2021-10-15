@@ -6,43 +6,38 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 
 function Report() {
-  const [data, setData] = useState();
+  const [data, setData] = useState(undefined);
   const [title, setTitle] = useState({
     title: "",
     timestamp: "",
   });
 
   useEffect(() => {
-    // Fetch Function
-    fetch("data/load_balance.json")
-      .then(function (res) {
-        //console.log("lb response")
-        return res.json();
-      })
-      .then(function (_data) {
-        //console.log("lb setData")
-        setData(_data);
-      })
-      .catch(function (err) {
-        console.log(err, "Error loading data/load_balance.json");
-      });
+    fetchData();
+    fetchSite();
   }, []);
 
-  useEffect(() => {
-    fetch("data/site.json")
-      .then(function (res) {
-        return res.json();
-      })
-      .then(function (_site) {
-        setTitle({
-          title: _site.name,
-          timestamp: _site.timestamp,
-        });
-      })
-      .catch(function (err) {
-        console.log(err, "Error loading data/site.json");
-      });
-  }, []);
+  const _fetchData = async (path) => {
+    try {
+      let res = await fetch("data/load_balance.json");
+      return await res.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchData = async () => {
+    let data = await _fetchData();
+    setData(data);
+  };
+
+  const fetchSite = async (path) => {
+    let response = await fetch("data/site.json");
+    if (response.status === 200) {
+      let data = await response.json();
+      setData(data);
+    }
+  };
 
   return (
     <div className="App">
@@ -58,9 +53,11 @@ function Report() {
               </div>
 
               <div className="row">
-                {data && <ChartContainer>
-                  <Stacked options={data} />
-                </ChartContainer> }
+                {data && (
+                  <ChartContainer>
+                    <Stacked options={data} />
+                  </ChartContainer>
+                )}
               </div>
             </div>
           </div>
