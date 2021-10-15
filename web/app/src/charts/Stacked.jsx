@@ -80,14 +80,11 @@ function Stacked(props) {
       return;
     }
 
-    const newxVals = props.options[key].xvals;
-    const newyVals = props.options[key].yvals;
-
     let _new = {
       xAxis: {
-        categories: newxVals,
+        categories: props.options[key].xvals,
       },
-      series: newyVals,
+      series: props.options[key].yvals,
     };
     setOptions((prevOptions) => {
       return { ...prevOptions, ..._new };
