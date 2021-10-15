@@ -1,4 +1,4 @@
-from profiler.trace import Trace, RegionSummary, RegionProfile
+# from profiler.trace import Trace, RegionSummary, RegionProfile
 
 
 def testTrace_whenInstantiatedFromDirectory_IsCorrect():
