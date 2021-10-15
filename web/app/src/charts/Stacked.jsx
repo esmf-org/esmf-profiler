@@ -11,7 +11,6 @@ import AlertDismissible from "./../components/alerts/AlertDismissible";
 
 HC_exporting(Highcharts);
 
-// const StackedContainer = styled.div``;
 
 function Stacked(props) {
   const chartOptions = {
@@ -70,7 +69,10 @@ function Stacked(props) {
   }, [level]);
 
   const updateLevel = () => {
-    setError("");
+    //TODO:  add a way to dismiss the error message since
+    //       resetting it here clears the error before the user sees it
+    //       Consider switching to a popup.
+    //setError("");
 
     const key = level.join("/");
 
@@ -82,9 +84,9 @@ function Stacked(props) {
 
     let _new = {
       xAxis: {
-        categories: props.options[key].xvals,
+        categories: JSON.parse(JSON.stringify(props.options[key].xvals))
       },
-      series: props.options[key].yvals,
+      series: JSON.parse(JSON.stringify(props.options[key].yvals))
     };
     setOptions((prevOptions) => {
       return { ...prevOptions, ..._new };
@@ -108,9 +110,10 @@ function Stacked(props) {
     });
   };
 
-  const hasData = (_level) => {
-    const key = level.join("/") + `/${_level}`;
 
+  const hasData = (check) => {
+    const key = check.join("/")
+    console.debug("hasData: key = ", key)
     if (!props.options[key]) {
       return false;
     }
@@ -118,19 +121,35 @@ function Stacked(props) {
   };
 
   const clickLevel = (_level) => {
-    if (!hasData(_level)) {
-      setError(`No data available for ${_level}`);
-      return;
-    }
+    //if (!hasData(_level)) {
+    //  setError(`No data available for ${_level}`);
+    //  return;
+    //}
     console.debug(`clickLevel(${_level})`);
-    setLevel((current) => [...current, _level]);
+    let err = "";
+    setLevel((current) => {
+        //NOTE:  I had to move this in here to access
+        //       the previous value correctly.
+        if (hasData([...current, _level])) {
+            return [...current, _level];
+        }
+        else {
+            err = "No deeper timing information available";
+            return [...current];
+        }
+    });
+
+    if (err != "") {
+        setError(err);
+    }
+
   };
 
   const clickCrumb = (idx, _level) => {
-    if (!hasData(_level)) {
-      setError(`No data available for ${_level}`);
-      return;
-    }
+    //if (!hasData(_level)) {
+    //  setError(`No data available for ${_level}`);
+    //  return;
+    //}
     console.debug(`clickCrumb(${idx}, ${_level})`);
     setLevel((prev) => prev.slice(0, idx + 1));
   };

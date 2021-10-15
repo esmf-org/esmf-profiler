@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet-async";
 function Report() {
   const [data, setData] = useState(undefined);
   const [site, setSite] = useState({
-    title: "",
+    name: "",
     timestamp: "",
   });
 
@@ -47,14 +47,14 @@ function Report() {
 
   return (
     <div className="App">
-      <Helmet title={`${site.title} - ESMF Profiler`}></Helmet>
+      <Helmet title={`${site.name} - ESMF Profiler`}></Helmet>
       <div id="wrapper">
         <Sidebar />
         <div id="content-wrapper" className="d-flex flex-column">
           <div id="content">
             <div className="container-fluid bg-white">
               <div className="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 className="h3 mb-0 text-gray-800">{site.title}</h1>
+                <h1 className="h3 mb-0 text-gray-800">{site.name}</h1>
                 <sup>{site.timestamp}</sup>
               </div>
 
