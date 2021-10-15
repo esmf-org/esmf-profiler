@@ -67,7 +67,7 @@ function Stacked(props) {
 
   useEffect(() => {
     updateLevel();
-  }, [props.options, level]);
+  }, [level]);
 
   const updateLevel = () => {
     setError("");
@@ -76,7 +76,7 @@ function Stacked(props) {
 
     if (!props.options[key]) {
       setError("no data available");
-      // setLevel((prev) => [...prev.slice(0, prev.length)]);
+      // setLevel((prev) => [...prev.slice(0, prev.length - 1)]);
       return;
     }
 
@@ -108,12 +108,29 @@ function Stacked(props) {
     });
   };
 
-  let clickLevel = (_level) => {
+  const hasData = (_level) => {
+    const key = level.join("/") + `/${_level}`;
+
+    if (!props.options[key]) {
+      return false;
+    }
+    return true;
+  };
+
+  const clickLevel = (_level) => {
+    if (!hasData(_level)) {
+      setError(`No data available for ${_level}`);
+      return;
+    }
     console.debug(`clickLevel(${_level})`);
     setLevel((current) => [...current, _level]);
   };
 
   const clickCrumb = (idx, _level) => {
+    if (!hasData(_level)) {
+      setError(`No data available for ${_level}`);
+      return;
+    }
     console.debug(`clickCrumb(${idx}, ${_level})`);
     setLevel((prev) => prev.slice(0, idx + 1));
   };
