@@ -25,3 +25,6 @@ htmlcov/
 
 # pycharm files
 .idea/
+.pytest_cache
+
+node_modules/
