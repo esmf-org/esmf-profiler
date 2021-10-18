@@ -21,6 +21,7 @@ fi
 tar -xovzf ${SWIG}.tar.gz || exit 1
 cd $SWIG
 ./configure --prefix=$PWD/../INSTALL/$SWIG --without-go --without-r --without-lua --without-csharp --without-ocaml --without-ruby --without-mzscheme --without-java --without-javascript --without-octave --without-scilab
+make clean
 make -j6
 make install
 cd ..
@@ -34,6 +35,7 @@ tar -xojvf ${BT2}.tar.bz2 || exit 1
 cd $BT2
 
 ./configure --prefix=$PWD/../INSTALL/$BT2 --enable-shared --enable-python-bindings --enable-python-plugins --disable-man-pages --disable-debug-info
+make clean
 make -j6
 make install
 cd ..
