@@ -4,6 +4,7 @@ import Sidebar from "./SideBar";
 import React, { useState, useEffect } from "react";
 
 import { Helmet } from "react-helmet-async";
+import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
 
 function Report() {
   const [data, setData] = useState(undefined);
@@ -13,17 +14,15 @@ function Report() {
   });
 
   useEffect(() => {
-    fetchData();
-    fetchSite();
+    _fetchData();
+    _fetchSite();
   }, []);
 
-  const _fetchData = async (path) => {
-    try {
-      let res = await fetch("data/load_balance.json");
-      return await res.json();
-    } catch (error) {
-      console.log(error);
-    }
+  const _fetchData = (path) => {
+    fetch("data/load_balance.json")
+      .then((resp) => resp.json())
+      .then((data) => setData(() => data))
+      .catch((err) => console.log(err));
   };
 
   const fetchData = async () => {
@@ -37,12 +36,10 @@ function Report() {
   };
 
   const _fetchSite = async (path) => {
-    try {
-      let res = await fetch("data/site.json");
-      return await res.json();
-    } catch (error) {
-      console.log(error);
-    }
+    fetch("site.json")
+      .then((resp) => resp.json())
+      .then((data) => setData(() => data))
+      .catch((err) => console.log(err));
   };
 
   return (
