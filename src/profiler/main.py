@@ -5,34 +5,20 @@
     * Remove any 'print_execution_time' calls before going to prod
 """
 
-import cProfile
+
+import datetime
+import glob
 import json
 import logging
-import pstats
-import io
-import argparse
 import os
-from pathlib import Path
-import datetime
 import subprocess
-import glob
+from pathlib import Path
 
-from profiler.utils import print_execution_time
-from profiler.analyses import Analysis, LoadBalance
+from profiler.analyses import LoadBalance
 from profiler.trace import Trace
+from profiler.view import handle_args
 
 logger = logging.getLogger(__name__)
-
-def handle_args():
-    parser = argparse.ArgumentParser(description='ESMF Profiler')
-    parser.add_argument('-t', '--tracedir', help='directory containing the ESMF trace', required=True)
-    parser.add_argument('-n', '--name', help='name to use for the generated profile', required=True)
-    parser.add_argument('-o', '--outdir', help='path to output directory', required=True)
-    parser.add_argument('-p', '--push', help='git url of remote repository where to push profile', required=False)
-    parser.add_argument('-v', '--verbose', help='enable verbose output', action='store_true', required=False)
-    args = vars(parser.parse_args())
-    return args
-
 
 # output some general JSON data
 # to be used on the site
@@ -50,7 +36,9 @@ def push_to_repo(url, outdir, name):
     tmpdir = "./.pushtmp"
     Path(tmpdir).mkdir(parents=True, exist_ok=True)
     if not os.path.isdir(tmpdir):
-        print(f"Cannot push to remote repo.  Failed to create temporary directory: {tmpdir}")
+        print(
+            f"Cannot push to remote repo.  Failed to create temporary directory: {tmpdir}"
+        )
         return
 
     # TODO: this deletes/reclones every time which can be inefficient if the repo is large
@@ -65,14 +53,14 @@ def push_to_repo(url, outdir, name):
 
     cmd = ["whoami"]
     logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding='utf-8')
+    stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
     username = str(stat.stdout).strip()
     logger.debug(f"CMD: whoami returned: {username}")
 
     outdir = os.path.abspath(outdir)
 
-    #now = datetime.datetime.now()
-    #timestamp = now.strftime("%Y%m%d-%H%M%S")
+    # now = datetime.datetime.now()
+    # timestamp = now.strftime("%Y%m%d-%H%M%S")
 
     repopath = os.path.join(tmpdir, "tmprepo")
     repopath = os.path.abspath(repopath)
@@ -92,11 +80,11 @@ def push_to_repo(url, outdir, name):
     stat = subprocess.run(cmd, cwd=tmpdir)
 
     # copy json data
-    cmd = ["cp", "-r", outdir+"/data", profilepath]
+    cmd = ["cp", "-r", outdir + "/data", profilepath]
     logger.debug(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir)
 
-    cmd = ["git", "add"] + glob.glob(profilepath+"/*")
+    cmd = ["git", "add"] + glob.glob(profilepath + "/*")
     logger.debug(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=repopath)
 
@@ -113,11 +101,7 @@ def main():
 
     args = handle_args()
 
-    if not args["name"].isalnum():
-        print(f"name argument must contain only letters and numbers: {args['name']}")
-        return
-
-    if args["verbose"]:
+    if args["verbose"] > 0:
         _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
         logging.basicConfig(level=logging.DEBUG, format=_format)
     else:
@@ -125,10 +109,6 @@ def main():
         logging.basicConfig(level=logging.INFO, format=_format)
 
     tracedir = args["tracedir"]
-    if not os.path.isdir(tracedir):
-        print(f"tracedir does not exist: {tracedir}")
-        return
-
     outdir = args["outdir"]
     outdatadir = os.path.join(outdir, "data")
     Path(outdatadir).mkdir(parents=True, exist_ok=True)
@@ -138,12 +118,8 @@ def main():
         return
 
     # write general site JSON
-    site = {"name" : args["name"],
-            "timestamp" : str(datetime.datetime.now())}
+    site = {"name": args["name"], "timestamp": str(datetime.datetime.now())}
     write_site_json(site, outdatadir)
-
-    #_path = "./tests/fixtures/test-traces/atm-ocn-concurrent"
-    #_path = "./tests/fixtures/test-traces-large"
 
     # the only requested analysis is a load balance at the root level
     analyses = [LoadBalance(None, outdatadir)]
@@ -156,7 +132,6 @@ def main():
     logger.info(f"Generating profile")
     for analysis in analyses:
         analysis.finish()
-        # analysis.toJSON()
     logger.debug(f"Finishing analyses complete")
 
     if args["push"] is not None:
@@ -164,4 +139,4 @@ def main():
 
 
 if __name__ == "__main__":
-   main()
+    main()
