@@ -25,20 +25,10 @@ function Report() {
       .catch((err) => console.log(err));
   };
 
-  const fetchData = async () => {
-    let data = await _fetchData();
-    setData(() => data);
-  };
-
-  const fetchSite = async () => {
-    let data = await _fetchSite();
-    setSite(() => data);
-  };
-
-  const _fetchSite = async (path) => {
+  const _fetchSite = (path) => {
     fetch("site.json")
       .then((resp) => resp.json())
-      .then((data) => setData(() => data))
+      .then((data) => setSite(() => data))
       .catch((err) => console.log(err));
   };
 
