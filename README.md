@@ -96,3 +96,8 @@ At this point, you can run the profiler by typing 'profiler' at the command prom
 ```
 python3 -m unittest process_trace
 ```
+
+## Linting
+Pylint
+
+All settings are in the well documented .pylintrc file.
