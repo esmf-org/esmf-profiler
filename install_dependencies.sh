@@ -34,7 +34,7 @@ gccver="$(gcc -dumpversion)"
 requiredgcc="9.0.0"
 
 vercomp $gccver $requiredgcc
-if [[ $? < 1 ]]; then 
+if [[ $? < 2 ]]; then 
     echo "Found gcc version ${gccver}"
 else
     echo "Error:  The Babeltrace2 dependent library require gcc version of at least ${requiredgcc}.  Make sure gcc 9+ is in your path before running this script."
