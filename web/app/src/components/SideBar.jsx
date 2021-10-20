@@ -92,7 +92,7 @@ export default function Sidebar() {
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className="nav-link" to="#">
               <FontAwesomeIcon icon={faChartBar} />
               <span> Load Balance</span>
             </Link>
