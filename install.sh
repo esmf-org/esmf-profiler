@@ -24,7 +24,6 @@ echo "Adding BT2/lib to LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH=$PWD/dependencies/INSTALL/$BT2/lib:$LD_LIBRARY_PATH
 # echo "setenv LD_LIBRARY_PATH $PWD/dependencies/INSTALL/$BT2/lib:$LD_LIBRARY_PATH" >> ./venv/bin/activate.csh
 
-pip install -e .
 
 
 
