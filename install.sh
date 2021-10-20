@@ -17,13 +17,14 @@ else
 fi
 
 echo "Adding BT2/lib to PYTHONPATH"
-export PYTHONPATH=$BT2PYTHON:$PYTHONPATH
+export PYTHONPATH=$BT2PYTHON:$PYTHONPATH >> ./venv/bin/activate
+# echo "setenv PYTHONPATH $BT2PYTHON:$PYTHONPATH" >> ./venv/bin/activate.csh
+
+echo "Adding BT2/lib to LD_LIBRARY_PATH" 
+export LD_LIBRARY_PATH=$PWD/dependencies/INSTALL/$BT2/lib:$LD_LIBRARY_PATH >> ./venv/bin/activate
+# echo "setenv LD_LIBRARY_PATH $PWD/dependencies/INSTALL/$BT2/lib:$LD_LIBRARY_PATH" >> ./venv/bin/activate.csh
 
 
-echo "Adding BT2/lib to LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH=$PWD/dependencies/INSTALL/$BT2/lib:$LD_LIBRARY_PATH
-
-pip install -e .
 
 
 
