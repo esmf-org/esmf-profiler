@@ -23,14 +23,14 @@ RUN apt-get install -y -q build-essential libssl-dev libffi-dev python3 python3-
 WORKDIR /home
 
 # TODO: Specifiying a branch here, should be main once we get into prod
-RUN git clone -b 32_bug_version_compare_install_script https://github.com/esmf-org/esmf-profiler.git
+RUN git clone -b development https://github.com/esmf-org/esmf-profiler.git
 WORKDIR /home/esmf-profiler
 
 # install OS dependencies
 RUN ./install_dependencies.sh
 RUN ./install.sh 
 
-RUN source ./venv/bin/activate && python3 -m pip install -e .
+RUN ./venv/bin/activate && python3 -m pip install -e .
 
 # execute the profiler
 RUN esmf-profiler -t ./tests/fixtures/test-traces -n 'test1' -o /home
