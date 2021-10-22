@@ -140,7 +140,7 @@ def main():
     for analysis in analyses:
         json_dict = analysis.finish()
         write_json_to_file(os.path.join(outdatadir, "load_balance.json"), json_dict)
-    copy_web_template(outdatadir)
+    copy_web_template(outdir)
 
     logger.debug(f"Finishing analyses complete")
 
