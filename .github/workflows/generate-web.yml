@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Generate
         uses: ../action.yml
-        run: esmf-profiler -t /home/traces -n 'option3_test' -o /home/traces/output
+        
