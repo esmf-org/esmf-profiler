@@ -3,9 +3,7 @@ FROM ubuntu:20.04
 MAINTAINER "Ryan Long <ryan.long@noaa.gov>"
 
 # links remote /home with local current directory
-ADD . /home
 
-ENV HOME /home
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update package repo
@@ -20,15 +18,15 @@ WORKDIR /home
 RUN git clone -b development https://github.com/esmf-org/esmf-profiler.git
 WORKDIR /home/esmf-profiler
 
-# Create virtual environment to persist paths
-RUN python3 -m venv ./venv
-
 # install OS dependencies
-RUN ./install_dependencies.sh && ./install.sh
+RUN ./install_dependencies.sh
 
-# activate venv and install application
-# TODO -e (local install) is required to pick up the module...
-RUN ./venv/bin/activate && python3 -m pip install -e .
+# Set Environtment paths for Python and LD_Library
+ENV PYTHONPATH="/home/esmf-profiler/dependencies/INSTALL/babeltrace2-2.0.4/lib/python3.8/site-packages:$PYTHONPATH"
+ENV LD_LIBRARY_PATH="/home/esmf-profiler/dependencies/INSTALL/babeltrace2-2.0.4/lib:$LB_LIBRARY_PATH"
 
-# activate venv and execute the profiler
-CMD ./venv/bin/activate && esmf-profiler -t ./tests/fixtures/test-traces -n 'test1' -o /home
+# TODO -e (local install) is required to pick up the module... https://github.com/esmf-org/esmf-profiler/issues/35
+RUN ["python3", "-m", "pip", "install", "-e", "."]
+
+# RUN ["/bin/bash", "-c ", ".", "./venv/bin/activate",  "&& esmf-profiler", "-t ", "./tests/fixtures/test-traces", "-n", "test1",  "-o",  "/home/blitzcrank"]"
+# CMD [".", "./venv/bin/activate",   && esmf-profiler -t ./tests/fixtures/test-traces -n 'test1' -o /home/blitzcrank
