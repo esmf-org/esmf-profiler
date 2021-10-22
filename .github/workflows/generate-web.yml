@@ -1,0 +1,14 @@
+on:
+  push:
+    branches: [ 29b_containerize_option3 ]
+  pull_request:
+    branches: [ 29b_containerize_option3 ]
+
+jobs:
+  generate_job:
+    runs-on: ubuntu-latest
+    name: Generates a web report from binary traces in the current directory
+    steps:
+      - name: Generate
+        uses: ../action.yml
+        run: esmf-profiler -t /home/traces -n 'option3_test' -o /home/traces/output
