@@ -1,0 +1,17 @@
+# action.yml
+name: 'Generate Report'
+author: 'Ryan Long <ryan.long@noaa.gov>'
+description: 'Generates a graphical web report from binary traces in directory'
+inputs:
+  report-name:  
+    description: 'Name of the report'
+    required: false
+    default: 'default-report'
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.report-name }}
