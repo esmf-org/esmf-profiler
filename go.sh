@@ -3,6 +3,6 @@
 DEFAULT_OUTPUT_NAME="default"
 OUTPUT_NAME="${1:-$DEFAULT_OUTPUT_NAME}"
 
-docker build -t test9 .
+docker build -t esmf-profiler-image .
 
-docker run -it -v $(pwd)/traces:/home/traces test9 esmf-profiler -t /home/traces -n $1 -o /home/traces/output
+docker run -it -v $(pwd)/traces:/home/traces esmf-profiler-image esmf-profiler -t /home/traces -n $OUTPUT_NAME -o /home/traces/output
