@@ -1,7 +1,8 @@
+---
 # action.yml
 name: 'Generate Report'
 author: 'Ryan Long <ryan.long@noaa.gov>'
-description: 'Generates a graphical web report from binary traces in directory'
+description: 'Generates a graphical web report from binary traces in the version directory'
 inputs:
   report-name:  
     description: 'Name of the report'
@@ -14,4 +15,9 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.report-name }}
+    -it -v $(pwd)/traces:/home/traces esmf-profiler-image esmf-profiler -t /home/traces -n $OUTPUT_NAME -o /home/traces/output
+branding:
+  icon: 'code'
+  color: 'yellow'
+
+
