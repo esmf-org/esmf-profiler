@@ -9,6 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Generates a web report from binary traces in the current directory
     steps:
-      - name: Generate
+      - name: Generates
         uses: esmf-org/profiler-action@v1.1
         
