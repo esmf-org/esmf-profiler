@@ -10,12 +10,12 @@ jobs:
     name: Generates a web report from binary traces in the current directory
     steps:
       - name: Generates
-        uses: esmf-org/profiler-action@v1.26
+        uses: esmf-org/profiler-action@v1.27
         with: 
           report_name: 'test-from-generate-web'
       - name: Store output
         uses: actions/upload-artifact@v2
         with:
           name: report_output
-          path: traces/data/
+          path: /home/esmf-profiler/traces/data/
         
