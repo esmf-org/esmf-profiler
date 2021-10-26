@@ -13,7 +13,7 @@ jobs:
         uses: esmf-org/profiler-action@v1.16
         with: 
           report_name: 'test-from-generate-web'
-      name: Store output
+      - name: Store output
         uses: actions/upload-artifact@v2
         with:
           name: report_output
