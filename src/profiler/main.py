@@ -12,6 +12,7 @@ import json
 import logging
 import os
 import subprocess
+import tempfile
 from pathlib import Path
 
 from profiler.analyses import LoadBalance
@@ -33,68 +34,68 @@ def write_site_json(data, dir):
 def push_to_repo(url, outdir, name):
     logger.info(f"Pushing to repository: {url}")
 
-    tmpdir = "./.pushtmp"
-    Path(tmpdir).mkdir(parents=True, exist_ok=True)
-    if not os.path.isdir(tmpdir):
-        print(
-            f"Cannot push to remote repo.  Failed to create temporary directory: {tmpdir}"
-        )
-        return
+    with tempfile.TemporaryDirectory() as tmpdir:
+        Path(tmpdir).mkdir(parents=True, exist_ok=True)
+        if not os.path.isdir(tmpdir):
+            print(
+                f"Cannot push to remote repo.  Failed to create temporary directory: {tmpdir}"
+            )
+            return
 
-    # TODO: this deletes/reclones every time which can be inefficient if the repo is large
-    # instead we want to check whether it exists already and see if we can git pull
-    cmd = ["rm", "-rf", "tmprepo"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir)
+        # TODO: this deletes/reclones every time which can be inefficient if the repo is large
+        # instead we want to check whether it exists already and see if we can git pull
+        cmd = ["rm", "-rf", "tmprepo"]
+        logger.debug(f"CMD: {' '.join(cmd)}")
+        stat = subprocess.run(cmd, cwd=tmpdir)
 
-    cmd = ["git", "clone", url, "tmprepo"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir)
+        cmd = ["git", "clone", url, "tmprepo"]
+        logger.debug(f"CMD: {' '.join(cmd)}")
+        stat = subprocess.run(cmd, cwd=tmpdir)
 
-    cmd = ["whoami"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
-    username = str(stat.stdout).strip()
-    logger.debug(f"CMD: whoami returned: {username}")
+        cmd = ["whoami"]
+        logger.debug(f"CMD: {' '.join(cmd)}")
+        stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
+        username = str(stat.stdout).strip()
+        logger.debug(f"CMD: whoami returned: {username}")
 
-    outdir = os.path.abspath(outdir)
+        outdir = os.path.abspath(outdir)
 
-    # now = datetime.datetime.now()
-    # timestamp = now.strftime("%Y%m%d-%H%M%S")
+        # now = datetime.datetime.now()
+        # timestamp = now.strftime("%Y%m%d-%H%M%S")
 
-    repopath = os.path.join(tmpdir, "tmprepo")
-    repopath = os.path.abspath(repopath)
-    logger.debug(f"Repo path: {repopath}")
+        repopath = os.path.join(tmpdir, "tmprepo")
+        repopath = os.path.abspath(repopath)
+        logger.debug(f"Repo path: {repopath}")
 
-    profilepath = os.path.join(repopath, username, name)
-    profilepath = os.path.abspath(profilepath)
-    logger.debug(f"Profile path: {profilepath}")
-    Path(profilepath).mkdir(parents=True, exist_ok=True)
+        profilepath = os.path.join(repopath, username, name)
+        profilepath = os.path.abspath(profilepath)
+        logger.debug(f"Profile path: {profilepath}")
+        Path(profilepath).mkdir(parents=True, exist_ok=True)
 
-    # copy static site
-    # TODO:  need a more robust way to get a handle on the esmf-profiler root path
-    # either that or we need to bundle the static site files into the Python install
-    cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
-    cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [profilepath]
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir)
+        # copy static site
+        # TODO:  need a more robust way to get a handle on the esmf-profiler root path
+        # either that or we need to bundle the static site files into the Python install
+        cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
+        cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [profilepath]
+        logger.debug(f"CMD: {' '.join(cmd)}")
+        stat = subprocess.run(cmd, cwd=tmpdir)
 
-    # copy json data
-    cmd = ["cp", "-r", outdir + "/data", profilepath]
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir)
+        # copy json data
+        cmd = ["cp", "-r", outdir + "/data", profilepath]
+        logger.debug(f"CMD: {' '.join(cmd)}")
+        stat = subprocess.run(cmd, cwd=tmpdir)
 
-    cmd = ["git", "add"] + glob.glob(profilepath + "/*")
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
+        cmd = ["git", "add"] + glob.glob(profilepath + "/*")
+        logger.debug(f"CMD: {' '.join(cmd)}")
+        stat = subprocess.run(cmd, cwd=repopath)
 
-    cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
+        cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
+        logger.debug(f"CMD: {' '.join(cmd)}")
+        stat = subprocess.run(cmd, cwd=repopath)
 
-    cmd = ["git", "push", "origin"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
+        cmd = ["git", "push", "origin"]
+        logger.debug(f"CMD: {' '.join(cmd)}")
+        stat = subprocess.run(cmd, cwd=repopath)
 
 
 def main():
