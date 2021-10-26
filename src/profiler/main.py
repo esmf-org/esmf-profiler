@@ -25,6 +25,12 @@ logger = logging.getLogger(__name__)
 
 
 def copyanything(src, dst):
+    """copyanything copy one path to another regardless of contents
+
+    Args:
+        src (str):
+        dst (str):
+    """
     try:
         shutil.copytree(src, dst)
     except OSError as exc:  # python >2.5
@@ -36,12 +42,10 @@ def copyanything(src, dst):
 
 # output some general JSON data
 # to be used on the site
-def write_site_json(data, dir):
-    outfile = os.path.join(dir, "site.json")
-    logger.debug(f"Writing site JSON to file: {outfile}")
-    with open(outfile, "w") as outfile:
+def write_site_json(data, _dir):
+    outfile = os.path.join(_dir, "site.json")
+    with open(outfile, "w", encoding="utf-8") as outfile:
         json.dump(data, outfile)
-    logger.debug(f"Finished writing site JSON file")
 
 
 def command_safe(cmd, cwd):
@@ -51,19 +55,21 @@ def command_safe(cmd, cwd):
 
 def git_add(profilepath, repopath):
     cmd = ["git", "add"] + glob.glob(profilepath + "/*")
-    logger.debug(f"CMD: {' '.join(cmd)}")
     return command_safe(cmd, repopath)
 
 
 def git_commit(username, name, repopath):
     cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    return command_safe(cmd, repopath)
+
+
+def git_pull(repopath):
+    cmd = ["git", "pull", "origin"]
     return command_safe(cmd, repopath)
 
 
 def git_push(repopath):
     cmd = ["git", "push", "origin"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
     return command_safe(cmd, repopath)
 
 
@@ -73,16 +79,14 @@ def git_clone(url, tmpdir):
 
 
 def profile_path(repopath, username, name):
-    profilepath = os.path.join(repopath, username, name)
-    profilepath = os.path.abspath(profilepath)
+    profilepath = os.path.abspath(os.path.join(repopath, username, name))
     logger.debug(f"Profile path: {profilepath}")
     Path(profilepath).mkdir(parents=True, exist_ok=True)
     return profilepath
 
 
 def repo_path(_root):
-    repopath = os.path.join(_root, "tmprepo")
-    repopath = os.path.abspath(repopath)
+    repopath = os.path.abspath(os.path.join(_root, "tmprepo"))
     logger.debug(f"Repo path: {repopath}")
     return repopath
 
@@ -102,7 +106,6 @@ def push_to_repo(url, outdir, name):
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
         shutil.rmtree("tmprepo")
 
-        git_clone(url, tmpdir)
         username = _whoami(tmpdir)
         outdir = os.path.abspath(outdir)
 
@@ -113,6 +116,7 @@ def push_to_repo(url, outdir, name):
         # copy static site
         # TODO:  need a more robust way to get a handle on the esmf-profiler root path
         # either that or we need to bundle the static site files into the Python install
+        git_pull(repopath)
         copyanything(os.path.join(cwd, "/web/app/build/*"), profilepath)
 
         # copy json data
@@ -132,6 +136,12 @@ def handle_logging(verbosity):
         logging.basicConfig(level=logging.INFO, format=_format)
 
 
+def create_output_directory(outdir):
+    outdatadir = os.path.join(outdir, "data")
+    Path(outdatadir).mkdir(parents=True, exist_ok=True)
+    return outdatadir
+
+
 def main():
 
     args = handle_args()
@@ -139,16 +149,14 @@ def main():
 
     tracedir = args["tracedir"]
     outdir = args["outdir"]
-    outdatadir = os.path.join(outdir, "data")
-    Path(outdatadir).mkdir(parents=True, exist_ok=True)
 
-    if not os.path.isdir(outdatadir):
-        print(f"Failed to create output directory: {outdir}")
-        return
+    outdatadir = create_output_directory(outdir)
 
     # write general site JSON
     site = {"name": args["name"], "timestamp": str(datetime.datetime.now())}
+    logger.debug(f"Writing site JSON to file: {outdatadir}")
     write_site_json(site, outdatadir)
+    logger.debug(f"Finished writing site JSON file")
 
     # the only requested analysis is a load balance at the root level
     analyses = [LoadBalance(None, outdatadir)]
