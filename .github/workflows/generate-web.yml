@@ -9,13 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     name: Generates a web report from binary traces in the current directory
     steps:
-      - name: Generates
+      - name: Generate report
         uses: esmf-org/profiler-action@v1.32
         with: 
           report_name: 'test-from-generate-web'
+  
       - name: Store output
         uses: actions/upload-artifact@v2
         with:
           name: report_output
           path: /home/esmf-profiler/traces
+          if-no-files-found: error
+          retention-days: 7
         
