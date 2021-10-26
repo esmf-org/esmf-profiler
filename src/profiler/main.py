@@ -123,16 +123,19 @@ def push_to_repo(url, outdir, name):
         git_push(repopath)
 
 
-def main():
-
-    args = handle_args()
-
-    if args["verbose"] > 0:
+def handle_logging(verbosity):
+    if verbosity > 0:
         _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
         logging.basicConfig(level=logging.DEBUG, format=_format)
     else:
         _format = "%(name)s : %(message)s"
         logging.basicConfig(level=logging.INFO, format=_format)
+
+
+def main():
+
+    args = handle_args()
+    handle_logging(args["verbose"])
 
     tracedir = args["tracedir"]
     outdir = args["outdir"]
