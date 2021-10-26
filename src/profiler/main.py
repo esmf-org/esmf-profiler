@@ -23,19 +23,19 @@ logger = logging.getLogger(__name__)
 # output some general JSON data
 # to be used on the site
 def write_json_to_file(output_file_name, json_data):
-    logger.debug(f"Writing load {type(json_data)}to file: {output_file_name}")
+    logger.info(f"Writing load {type(json_data)}to file: {output_file_name}")
     with open(output_file_name, "w") as output_file_name:
         json.dump(json_data, output_file_name)
-    logger.debug(f"Finished writing load balance JSON file")
+    logger.info(f"Finished writing load balance JSON file")
 
 
 def copy_web_template(destination_path):
-    logger.debug(f"copying web template")
+    logger.info(f"copying web template")
     cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
     cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [destination_path]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=cwd, check=True)
-    logger.debug(f"finish copying web template")
+    logger.info(f"finish copying web template")
 
 
 def push_to_repo(url, outdir, name):
@@ -52,18 +52,18 @@ def push_to_repo(url, outdir, name):
     # TODO: this deletes/reclones every time which can be inefficient if the repo is large
     # instead we want to check whether it exists already and see if we can git pull
     cmd = ["rm", "-rf", "tmprepo"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir)
 
     cmd = ["git", "clone", url, "tmprepo"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir)
 
     cmd = ["whoami"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
     username = str(stat.stdout).strip()
-    logger.debug(f"CMD: whoami returned: {username}")
+    logger.info(f"CMD: whoami returned: {username}")
 
     outdir = os.path.abspath(outdir)
 
@@ -72,35 +72,35 @@ def push_to_repo(url, outdir, name):
 
     repopath = os.path.join(tmpdir, "tmprepo")
     repopath = os.path.abspath(repopath)
-    logger.debug(f"Repo path: {repopath}")
+    logger.info(f"Repo path: {repopath}")
 
     profilepath = os.path.join(repopath, username, name)
     profilepath = os.path.abspath(profilepath)
-    logger.debug(f"Profile path: {profilepath}")
+    logger.info(f"Profile path: {profilepath}")
     Path(profilepath).mkdir(parents=True, exist_ok=True)
 
     # copy static site
     # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
     cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
     cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [profilepath]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir, check=True)
 
     # copy json data
     cmd = ["cp", "-r", outdir + "/data", profilepath]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=tmpdir)
 
     cmd = ["git", "add"] + glob.glob(profilepath + "/*")
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=repopath)
 
     cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=repopath)
 
     cmd = ["git", "push", "origin"]
-    logger.debug(f"CMD: {' '.join(cmd)}")
+    logger.info(f"CMD: {' '.join(cmd)}")
     stat = subprocess.run(cmd, cwd=repopath)
 
 
@@ -133,16 +133,17 @@ def main():
 
     logger.info(f"Processing trace: {tracedir}")
     trace = Trace.from_path(tracedir, analyses)
-    logger.debug(f"Processing trace complete")
+    logger.info(f"Processing trace complete")
 
     # indicate to the analyses that all events have been processed
     logger.info(f"Generating profile")
     for analysis in analyses:
         json_dict = analysis.finish()
         write_json_to_file(os.path.join(outdatadir, "load_balance.json"), json_dict)
+    logger.info(f"copying web templates to {outdir}")
     copy_web_template(outdir)
 
-    logger.debug(f"Finishing analyses complete")
+    logger.info(f"Finishing analyses complete")
 
     if args["push"] is not None:
         push_to_repo(url=args["push"], outdir=outdir, name=args["name"])
