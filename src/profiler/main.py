@@ -18,8 +18,20 @@ from pathlib import Path
 from profiler.analyses import LoadBalance
 from profiler.trace import Trace
 from profiler.view import handle_args
+import shutil, errno
 
 logger = logging.getLogger(__name__)
+
+
+def copyanything(src, dst):
+    try:
+        shutil.copytree(src, dst)
+    except OSError as exc:  # python >2.5
+        if exc.errno in (errno.ENOTDIR, errno.EINVAL):
+            shutil.copy(src, dst)
+        else:
+            raise
+
 
 # output some general JSON data
 # to be used on the site
@@ -29,6 +41,44 @@ def write_site_json(data, dir):
     with open(outfile, "w") as outfile:
         json.dump(data, outfile)
     logger.debug(f"Finished writing site JSON file")
+
+
+def command_safe(cmd, cwd):
+    logger.debug(f"CMD: {' '.join(cmd)}")
+    return subprocess.run(cmd, cwd=cwd, check=True)
+
+
+def git_add(profilepath, repopath):
+    cmd = ["git", "add"] + glob.glob(profilepath + "/*")
+    logger.debug(f"CMD: {' '.join(cmd)}")
+    stat = subprocess.run(cmd, cwd=repopath)
+
+
+def git_commit(username, name, repopath):
+    cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
+    logger.debug(f"CMD: {' '.join(cmd)}")
+    stat = subprocess.run(cmd, cwd=repopath)
+
+
+def git_push(repopath):
+    cmd = ["git", "push", "origin"]
+    logger.debug(f"CMD: {' '.join(cmd)}")
+    stat = subprocess.run(cmd, cwd=repopath)
+
+
+def profile_path(repopath, username, name):
+    profilepath = os.path.join(repopath, username, name)
+    profilepath = os.path.abspath(profilepath)
+    logger.debug(f"Profile path: {profilepath}")
+    Path(profilepath).mkdir(parents=True, exist_ok=True)
+    return profilepath
+
+
+def repo_path(_root):
+    repopath = os.path.join(_root, "tmprepo")
+    repopath = os.path.abspath(repopath)
+    logger.debug(f"Repo path: {repopath}")
+    return repopath
 
 
 def push_to_repo(url, outdir, name):
@@ -42,60 +92,38 @@ def push_to_repo(url, outdir, name):
             )
             return
 
-        # TODO: this deletes/reclones every time which can be inefficient if the repo is large
-        # instead we want to check whether it exists already and see if we can git pull
+        # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
         cmd = ["rm", "-rf", "tmprepo"]
-        logger.debug(f"CMD: {' '.join(cmd)}")
-        stat = subprocess.run(cmd, cwd=tmpdir)
+        command_safe(cmd, tmpdir)
 
         cmd = ["git", "clone", url, "tmprepo"]
-        logger.debug(f"CMD: {' '.join(cmd)}")
-        stat = subprocess.run(cmd, cwd=tmpdir)
+        command_safe(cmd, tmpdir)
 
+        # TODO
         cmd = ["whoami"]
-        logger.debug(f"CMD: {' '.join(cmd)}")
+        command_safe(cmd, tmpdir)
         stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
+
         username = str(stat.stdout).strip()
         logger.debug(f"CMD: whoami returned: {username}")
 
         outdir = os.path.abspath(outdir)
 
-        # now = datetime.datetime.now()
-        # timestamp = now.strftime("%Y%m%d-%H%M%S")
-
-        repopath = os.path.join(tmpdir, "tmprepo")
-        repopath = os.path.abspath(repopath)
-        logger.debug(f"Repo path: {repopath}")
-
-        profilepath = os.path.join(repopath, username, name)
-        profilepath = os.path.abspath(profilepath)
-        logger.debug(f"Profile path: {profilepath}")
-        Path(profilepath).mkdir(parents=True, exist_ok=True)
+        repopath = repo_path(tmpdir)
+        profilepath = profile_path(repopath, username, name)
+        cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
 
         # copy static site
         # TODO:  need a more robust way to get a handle on the esmf-profiler root path
         # either that or we need to bundle the static site files into the Python install
-        cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
-        cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [profilepath]
-        logger.debug(f"CMD: {' '.join(cmd)}")
-        stat = subprocess.run(cmd, cwd=tmpdir)
+        copyanything(os.path.join(cwd, "/web/app/build/*"), profilepath)
 
         # copy json data
-        cmd = ["cp", "-r", outdir + "/data", profilepath]
-        logger.debug(f"CMD: {' '.join(cmd)}")
-        stat = subprocess.run(cmd, cwd=tmpdir)
+        copyanything(os.path.join(outdir, "/data"), profilepath)
 
-        cmd = ["git", "add"] + glob.glob(profilepath + "/*")
-        logger.debug(f"CMD: {' '.join(cmd)}")
-        stat = subprocess.run(cmd, cwd=repopath)
-
-        cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
-        logger.debug(f"CMD: {' '.join(cmd)}")
-        stat = subprocess.run(cmd, cwd=repopath)
-
-        cmd = ["git", "push", "origin"]
-        logger.debug(f"CMD: {' '.join(cmd)}")
-        stat = subprocess.run(cmd, cwd=repopath)
+        git_add(profilepath, repopath)
+        git_commit(username, name, repopath)
+        git_push(repopath)
 
 
 def main():
