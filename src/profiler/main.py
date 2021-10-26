@@ -7,10 +7,12 @@
 
 
 import datetime
+import errno
 import glob
 import json
 import logging
 import os
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -18,7 +20,6 @@ from pathlib import Path
 from profiler.analyses import LoadBalance
 from profiler.trace import Trace
 from profiler.view import handle_args
-import shutil, errno
 
 logger = logging.getLogger(__name__)
 
@@ -51,19 +52,24 @@ def command_safe(cmd, cwd):
 def git_add(profilepath, repopath):
     cmd = ["git", "add"] + glob.glob(profilepath + "/*")
     logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
+    return command_safe(cmd, repopath)
 
 
 def git_commit(username, name, repopath):
     cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
     logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
+    return command_safe(cmd, repopath)
 
 
 def git_push(repopath):
     cmd = ["git", "push", "origin"]
     logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
+    return command_safe(cmd, repopath)
+
+
+def git_clone(url, tmpdir):
+    cmd = ["git", "clone", url, "tmprepo"]
+    return command_safe(cmd, tmpdir)
 
 
 def profile_path(repopath, username, name):
@@ -81,32 +87,23 @@ def repo_path(_root):
     return repopath
 
 
+def _whoami(tmpdir):
+    cmd = ["whoami"]
+    command_safe(cmd, tmpdir)
+    stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
+    return str(stat.stdout).strip()
+
+
 def push_to_repo(url, outdir, name):
     logger.info(f"Pushing to repository: {url}")
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir).mkdir(parents=True, exist_ok=True)
-        if not os.path.isdir(tmpdir):
-            print(
-                f"Cannot push to remote repo.  Failed to create temporary directory: {tmpdir}"
-            )
-            return
 
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
-        cmd = ["rm", "-rf", "tmprepo"]
-        command_safe(cmd, tmpdir)
+        shutil.rmtree("tmprepo")
 
-        cmd = ["git", "clone", url, "tmprepo"]
-        command_safe(cmd, tmpdir)
-
-        # TODO
-        cmd = ["whoami"]
-        command_safe(cmd, tmpdir)
-        stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
-
-        username = str(stat.stdout).strip()
-        logger.debug(f"CMD: whoami returned: {username}")
-
+        git_clone(url, tmpdir)
+        username = _whoami(tmpdir)
         outdir = os.path.abspath(outdir)
 
         repopath = repo_path(tmpdir)
