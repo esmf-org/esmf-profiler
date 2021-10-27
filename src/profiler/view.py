@@ -48,5 +48,5 @@ def handle_args():
         action="count",
         default=0,
     )
-    args = vars(parser.parse_args())
-    return args
+
+    return parser.parse_args()

@@ -127,33 +127,32 @@ def handle_logging(verbosity):
         logging.basicConfig(level=logging.INFO, format=_format)
 
 
-def create_output_directory(outdir):
-    outdatadir = os.path.join(outdir, "data")
-    Path(outdatadir).mkdir(parents=True, exist_ok=True)
-    return outdatadir
+def create_directory(paths):
+    _path = os.path.join(*paths)
+    Path(_path).mkdir(parents=True, exist_ok=True)
+    return _path
 
 
 def main():
-
     # collect user args
     args = handle_args()
 
-    # setup logging based on args
-    handle_logging(args["verbose"])
+    # setup logging based on args.verbose
+    handle_logging(args.verbose)
 
-    tracedir = args["tracedir"]
-    outdir = args["outdir"]
-    outdatadir = create_output_directory(outdir)
+    outdatadir = create_directory([args.outdir, "data"])
 
+    # write site.json 
     write_site_json(
         {"name": args["name"], "timestamp": str(datetime.datetime.now())}, outdatadir
     )
 
     # the only requested analysis is a load balance at the root level
+    
     analyses = [LoadBalance(None, outdatadir)]
 
-    logger.info(f"Processing trace: {tracedir}")
-    trace = Trace.from_path(tracedir, analyses)
+    logger.info(f"Processing trace: {args.tracedir}")
+    trace = Trace.from_path(args.tracedir, analyses)
     logger.debug("Processing trace complete")
 
     # indicate to the analyses that all events have been processed
@@ -164,7 +163,7 @@ def main():
 
     if args["push"] is not None:
         push_to_repo(
-            url=args["push"], outdir=os.path.abspath(outdir), name=args["name"]
+            url=args["push"], outdir=os.path.abspath(args.outdir), name=args["name"]
         )
 
 
