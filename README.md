@@ -1,16 +1,21 @@
 # esmf-profiler
 
-## Install Jinja2 into your Python environment
-https://jinja.palletsprojects.com/en/3.0.x/intro/#installation
+## Description
+The ESMF-Profiler project is designed to take trace binary output and display it in a web based GUI.
 
-## Install Babeltrace2
+## Quickstart
+The quickest way to visually display your data is to ...
 
-### Use a Package Manager
+
+## Dependencies
+### Install Babeltrace2
+
+#### Use a Package Manager
 There are some package managers that install Babeltrace2.  
 https://babeltrace.org/#bt2-get
 However, you need to make sure the Python bindings are included.
 
-### Build Babeltrace2 from source
+#### Build Babeltrace2 from source
 
 Prereqs:
 - glibc-2.0  (Ubuntu: `sudo apt-get install libglib2.0`)
@@ -19,9 +24,9 @@ Prereqs:
 Download:
 https://www.efficios.com/files/babeltrace/babeltrace2-2.0.4.tar.bz2
 
-**Note: Babeltrace2 appears to require the GNU compiler - there are failures with Intel.**
+**Note: Babeltrace2 appears to require the GNU compiler >9.0 - there are failures with Intel.**
 
-### Linux gcc 9.3
+#### Linux gcc 9.3
 
 ```bash
 cd /path/to/babeltrace2-2.0.4
@@ -37,7 +42,7 @@ export LD_LIBRARY_PATH=/path/to/babeltrace2/INSTALL/2.0.4/lib
 
 ```
 
-### Cheyenne
+#### Cheyenne
 
 ```
 module load gnu/9.1.0 python/3.7.9
@@ -64,7 +69,7 @@ make install
 export LD_LIBRARY_PATH=/glade/u/home/dunlap/bt/INSTALL/babeltrace2-2.0.4/lib:$LD_LIBRARY_PATH
 ```
 
-### install_dependencies.sh
+#### install_dependencies.sh
 
 esmf-profiler includes a script to build and install dependencies, setup a virtual environment, and add the necessary dependencies to the newly created virtual environment so that, when activate, all dependencies will available.
 
@@ -74,30 +79,20 @@ From the root of the project, execute the install_dependencies.sh script:
 source ./install_dependencies.sh
 ```
 
-The script will:
-* Build SWIG (not needed after the install)
-* Build BabelTrace2
-* Create a virtual environment (using virtualenv at the time of this writing.)
-* Append the necessary BabelTrace2 library paths $LD_LIBRARY_PATH and $PYTHONPATH in the virtual environment
-* Install the ESMF profiler inside the newly created virtual environment
 
-The user will need to activate the virtual environment post installation.  To do so, in the root folder of the project, verify the '/venv' directory exists and enter:
 
-```bash
-source ./venv/bin/activate
-```
 
 (venv) should now be pre-pended to your prompt.
 
 At this point, you can run the profiler by typing 'profiler' at the command prompt.
 
 
-## Run Unit Tests
+### Run Unit Tests
 ```
 python3 -m unittest process_trace
 ```
 
-## Linting
+### Linting
 Pylint
 
 All settings are in the well documented .pylintrc file.

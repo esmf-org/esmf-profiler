@@ -1,0 +1,23 @@
+---
+# action.yml
+name: 'Generate Report'
+author: 'Ryan Long <ryan.long@noaa.gov>'
+description: 'Generates a graphical web report from binary traces in the version directory'
+inputs:
+  report-name:  
+    description: 'Name of the report'
+    required: false
+    default: 'default-report'
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    -it -v $(pwd)/traces:/home/traces esmf-profiler-image esmf-profiler -t /home/traces -n $OUTPUT_NAME -o /home/traces/output
+branding:
+  icon: 'code'
+  color: 'yellow'
+
+

@@ -94,28 +94,28 @@ def _whoami():
 
 
 def push_to_repo(url, outdir, name):
-    logger.info(f"Pushing to repository: {url}")
+    logger.info("Pushing to repository: %s", url)
 
     with tempfile.TemporaryDirectory() as tmpdir:
 
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
         username = _whoami()
 
-        repopath = create_temp_dir()
-        profilepath = create_profile_path(repopath, username, name)
+    
+        profilepath = create_profile_path(tmpdir, username, name)
 
         # copy static site
         # TODO:  need a more robust way to get a handle on the esmf-profiler root path
         # either that or we need to bundle the static site files into the Python install
-        git_pull(repopath)
+        git_pull(tmpdir)
         copy_path(os.path.join(os.getcwd(), "/web/app/build/*"), profilepath)
 
         # copy json data
         copy_path(os.path.join(outdir, "/data"), profilepath)
 
-        git_add(profilepath, repopath)
-        git_commit(username, name, repopath)
-        git_push(repopath)
+        git_add(profilepath, tmpdir)
+        git_commit(username, name, tmpdir)
+        git_push(tmpdir)
 
 
 def handle_logging(verbosity):
@@ -151,8 +151,8 @@ def main():
     
     analyses = [LoadBalance(None, outdatadir)]
 
-    logger.info(f"Processing trace: {args.tracedir}")
-    trace = Trace.from_path(args.tracedir, analyses)
+    logger.info("Processing trace: %s", args.tracedir)
+    Trace.from_path(args.tracedir, analyses)
     logger.debug("Processing trace complete")
 
     # indicate to the analyses that all events have been processed
@@ -161,7 +161,7 @@ def main():
         analysis.finish()
     logger.debug("Finishing analyses complete")
 
-    if args["push"] is not None:
+    if args.push is not None:
         push_to_repo(
             url=args["push"], outdir=os.path.abspath(args.outdir), name=args["name"]
         )
