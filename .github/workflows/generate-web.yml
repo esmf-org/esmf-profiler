@@ -18,7 +18,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: report_output
-          path: /home/esmf-profiler/traces/traces/**/*
+          path: ${{ github.workspace }}/artifact/**/*
           if-no-files-found: error
           retention-days: 7
         
