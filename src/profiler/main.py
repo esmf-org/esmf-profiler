@@ -25,9 +25,11 @@ logger = logging.getLogger(__name__)
 def write_json_to_file(output_file_name, json_data):
     with open(output_file_name, "w") as output_file_name:
         json.dump(json_data, output_file_name)
+    logger.info(f"Finished writing load balance JSON file")
 
 
 def copy_web_template(destination_path):
+    logger.info(f"copying web template")
     cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
     cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [destination_path]
     logger.info(f"CMD: {' '.join(cmd)}")
