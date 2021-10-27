@@ -24,8 +24,8 @@ from profiler.view import handle_args
 logger = logging.getLogger(__name__)
 
 
-def copyanything(src, dst):
-    """copyanything copy one path to another regardless of contents
+def copy_path(src, dst):
+    """copy_path copy one path to another including contents
 
     Args:
         src (str):
@@ -42,15 +42,15 @@ def copyanything(src, dst):
 
 # output some general JSON data
 # to be used on the site
-def write_site_json(data, _dir):
-    outfile = os.path.join(_dir, "site.json")
-    with open(outfile, "w", encoding="utf-8") as outfile:
-        json.dump(data, outfile)
+def write_site_json(data, _dir, file_name="site.json"):
+    with open(os.path.join(_dir, file_name), "w", encoding="utf-8") as _file:
+        json.dump(data, _file)
 
 
-def command_safe(cmd, cwd):
-    logger.debug(f"CMD: {' '.join(cmd)}")
-    return subprocess.run(cmd, cwd=cwd, check=True)
+def command_safe(cmd, cwd=os.getcwd()):
+    return subprocess.run(
+        cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
+    )
 
 
 def git_add(profilepath, repopath):
@@ -78,24 +78,19 @@ def git_clone(url, tmpdir):
     return command_safe(cmd, tmpdir)
 
 
-def profile_path(repopath, username, name):
+def create_profile_path(repopath, username, name):
     profilepath = os.path.abspath(os.path.join(repopath, username, name))
-    logger.debug(f"Profile path: {profilepath}")
     Path(profilepath).mkdir(parents=True, exist_ok=True)
     return profilepath
 
 
-def repo_path(_root):
-    repopath = os.path.abspath(os.path.join(_root, "tmprepo"))
-    logger.debug(f"Repo path: {repopath}")
-    return repopath
+def create_temp_dir():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        return tmpdir
 
 
-def _whoami(tmpdir):
-    cmd = ["whoami"]
-    command_safe(cmd, tmpdir)
-    stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
-    return str(stat.stdout).strip()
+def _whoami():
+    return command_safe(["whoami"]).stdout.strip()
 
 
 def push_to_repo(url, outdir, name):
@@ -104,23 +99,19 @@ def push_to_repo(url, outdir, name):
     with tempfile.TemporaryDirectory() as tmpdir:
 
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
-        shutil.rmtree("tmprepo")
+        username = _whoami()
 
-        username = _whoami(tmpdir)
-        outdir = os.path.abspath(outdir)
-
-        repopath = repo_path(tmpdir)
-        profilepath = profile_path(repopath, username, name)
-        cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
+        repopath = create_temp_dir()
+        profilepath = create_profile_path(repopath, username, name)
 
         # copy static site
         # TODO:  need a more robust way to get a handle on the esmf-profiler root path
         # either that or we need to bundle the static site files into the Python install
         git_pull(repopath)
-        copyanything(os.path.join(cwd, "/web/app/build/*"), profilepath)
+        copy_path(os.path.join(os.getcwd(), "/web/app/build/*"), profilepath)
 
         # copy json data
-        copyanything(os.path.join(outdir, "/data"), profilepath)
+        copy_path(os.path.join(outdir, "/data"), profilepath)
 
         git_add(profilepath, repopath)
         git_commit(username, name, repopath)
@@ -144,35 +135,37 @@ def create_output_directory(outdir):
 
 def main():
 
+    # collect user args
     args = handle_args()
+
+    # setup logging based on args
     handle_logging(args["verbose"])
 
     tracedir = args["tracedir"]
     outdir = args["outdir"]
-
     outdatadir = create_output_directory(outdir)
 
-    # write general site JSON
-    site = {"name": args["name"], "timestamp": str(datetime.datetime.now())}
-    logger.debug(f"Writing site JSON to file: {outdatadir}")
-    write_site_json(site, outdatadir)
-    logger.debug(f"Finished writing site JSON file")
+    write_site_json(
+        {"name": args["name"], "timestamp": str(datetime.datetime.now())}, outdatadir
+    )
 
     # the only requested analysis is a load balance at the root level
     analyses = [LoadBalance(None, outdatadir)]
 
     logger.info(f"Processing trace: {tracedir}")
     trace = Trace.from_path(tracedir, analyses)
-    logger.debug(f"Processing trace complete")
+    logger.debug("Processing trace complete")
 
     # indicate to the analyses that all events have been processed
-    logger.info(f"Generating profile")
+    logger.info("Generating profile")
     for analysis in analyses:
         analysis.finish()
-    logger.debug(f"Finishing analyses complete")
+    logger.debug("Finishing analyses complete")
 
     if args["push"] is not None:
-        push_to_repo(url=args["push"], outdir=outdir, name=args["name"])
+        push_to_repo(
+            url=args["push"], outdir=os.path.abspath(outdir), name=args["name"]
+        )
 
 
 if __name__ == "__main__":
