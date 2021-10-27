@@ -15,10 +15,10 @@ jobs:
           report_name: 'test-from-generate-web'
   
       - name: Store output
-        uses: actions/download-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: report_output
-          path: ${{ github.workspace }}/traces/**/*
+          path: ${{ github.workspace }}/traces
           if-no-files-found: error
           retention-days: 7
         
