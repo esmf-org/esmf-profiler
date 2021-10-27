@@ -22,12 +22,20 @@ logger = logging.getLogger(__name__)
 
 # output some general JSON data
 # to be used on the site
-def write_site_json(data, dir):
-    outfile = os.path.join(dir, "site.json")
-    logger.debug(f"Writing site JSON to file: {outfile}")
-    with open(outfile, "w") as outfile:
-        json.dump(data, outfile)
-    logger.debug(f"Finished writing site JSON file")
+def write_json_to_file(output_file_name, json_data):
+    logger.debug(f"Writing load {type(json_data)}to file: {output_file_name}")
+    with open(output_file_name, "w") as output_file_name:
+        json.dump(json_data, output_file_name)
+    logger.debug(f"Finished writing load balance JSON file")
+
+
+def copy_web_template(destination_path):
+    logger.debug(f"copying web template")
+    cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
+    cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [destination_path]
+    logger.debug(f"CMD: {' '.join(cmd)}")
+    stat = subprocess.run(cmd, cwd=cwd, check=True)
+    logger.debug(f"finish copying web template")
 
 
 def push_to_repo(url, outdir, name):
@@ -72,12 +80,11 @@ def push_to_repo(url, outdir, name):
     Path(profilepath).mkdir(parents=True, exist_ok=True)
 
     # copy static site
-    # TODO:  need a more robust way to get a handle on the esmf-profiler root path
-    # either that or we need to bundle the static site files into the Python install
+    # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
     cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
     cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [profilepath]
     logger.debug(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir)
+    stat = subprocess.run(cmd, cwd=tmpdir, check=True)
 
     # copy json data
     cmd = ["cp", "-r", outdir + "/data", profilepath]
@@ -119,7 +126,7 @@ def main():
 
     # write general site JSON
     site = {"name": args["name"], "timestamp": str(datetime.datetime.now())}
-    write_site_json(site, outdatadir)
+    write_json_to_file(os.path.join(outdatadir, "site.json"), site)
 
     # the only requested analysis is a load balance at the root level
     analyses = [LoadBalance(None, outdatadir)]
@@ -131,7 +138,10 @@ def main():
     # indicate to the analyses that all events have been processed
     logger.info(f"Generating profile")
     for analysis in analyses:
-        analysis.finish()
+        json_dict = analysis.finish()
+        write_json_to_file(os.path.join(outdatadir, "load_balance.json"), json_dict)
+    copy_web_template(outdir)
+
     logger.debug(f"Finishing analyses complete")
 
     if args["push"] is not None:

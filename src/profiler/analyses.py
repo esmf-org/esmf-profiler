@@ -9,8 +9,8 @@ import pprint
 import os
 
 logger = logging.getLogger(__name__)
-#_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-#logging.basicConfig(level=logging.DEBUG, format=_format)
+# _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
+# logging.basicConfig(level=logging.DEBUG, format=_format)
 
 # class to represent as a tree the timing
 # information in the RegionProfile events
@@ -323,13 +323,7 @@ class LoadBalance(Analysis):
             yvalsjson = [{"name": n, "data": totals} for n, totals in yvals.items()]
             jsondict[r] = {"xvals": xvals, "yvals": yvalsjson}
 
-        outfile = os.path.join(self._outdir, "load_balance.json")
-        logger.debug(f"Writing load balance JSON to file: {outfile}")
-        with open(outfile, "w") as outfile:
-            json.dump(jsondict, outfile)
-        logger.debug(f"Finished writing load balance JSON file")
-
-        pass
+        return jsondict
 
     def _full_tree_load_balance(
         self, prefix: str, node: MultiPETTimingNode, results: Dict[str, tuple]
