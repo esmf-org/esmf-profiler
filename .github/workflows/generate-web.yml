@@ -10,7 +10,7 @@ jobs:
     name: Generates a web report from binary traces in the current directory
     steps:
       - name: Generate report
-        uses: esmf-org/profiler-action@v1.32
+        uses: esmf-org/profiler-action@v1.33
         with: 
           report_name: 'test-from-generate-web'
   
@@ -18,7 +18,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: report_output
-          path: ${{ github.workspace }}/traces/**
+          path: ${{ github.workspace }}/**/*
           if-no-files-found: error
           retention-days: 7
         
