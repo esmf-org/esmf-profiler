@@ -144,7 +144,7 @@ def main():
 
     # write site.json 
     write_site_json(
-        {"name": args["name"], "timestamp": str(datetime.datetime.now())}, outdatadir
+        {"name": args.name, "timestamp": str(datetime.datetime.now())}, outdatadir
     )
 
     # the only requested analysis is a load balance at the root level
