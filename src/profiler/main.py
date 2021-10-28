@@ -8,7 +8,6 @@
 
 import datetime
 import errno
-import glob
 import json
 import logging
 import os
@@ -16,8 +15,8 @@ import shutil
 import subprocess
 import tempfile
 
-from profiler.git import git_add, git_clone, git_commit, git_pull, git_push
 from profiler.analyses import LoadBalance
+from profiler.git import git_add, git_commit, git_pull, git_push
 from profiler.trace import Trace
 from profiler.view import handle_args as _handle_args
 
@@ -42,22 +41,22 @@ def _write_json_to_file(data, _path):
 
 
 def _command_safe(cmd, cwd=os.getcwd()):
+    """ Ensures a command that fails throws an exceptions """
     return subprocess.run(
         cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
     )
 
 def _create_temp_dir():
+    """ Create and returns a temp directory within a context """
     with tempfile.TemporaryDirectory() as tmpdir:
         return tmpdir
 
 
 def _whoami():
+    """ Returns the "whoami" command """
     return _command_safe(["whoami"]).stdout.strip()
-
-
+    
 def _push_to_repo(url, outdir, name):
-    logger.info("Pushing to repository: %s", url)
-
     with tempfile.TemporaryDirectory() as tmpdir:
 
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
@@ -77,7 +76,8 @@ def _push_to_repo(url, outdir, name):
         git_push(tmpdir)
 
 
-def _handle_logging(verbosity):
+def _handle_logging(verbosity=0):
+    """ handles logging level based on passed in verbosity """
     if verbosity > 0:
         _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
         logging.basicConfig(level=logging.DEBUG, format=_format)
@@ -87,6 +87,7 @@ def _handle_logging(verbosity):
 
 
 def _create_directory(paths):
+    """ Create a directory tree from the paths list """
     _path = os.path.join(*paths)
     os.makedirs(_path, exist_ok=True)
     return _path
