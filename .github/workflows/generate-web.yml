@@ -13,6 +13,8 @@ jobs:
         uses: esmf-org/profiler-action@v1.33
         with: 
           report_name: 'test-from-generate-web'
+      - name: Debug
+        run: "pwd && ls -lah"
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.1.3
