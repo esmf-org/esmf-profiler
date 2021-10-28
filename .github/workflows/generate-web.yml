@@ -13,35 +13,7 @@ jobs:
         uses: esmf-org/profiler-action@v1.33
         with: 
           report_name: 'test-from-generate-web'
-  
-      - name: Commit files
-        id: commit
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "github-actions"
-          git add --all
-          if [-z "$(git status --porcelain)"]; then
-             echo "::set-output name=push::false"
-          else
-             git commit -m "Add changes" -a
-            echo "::set-output name=push::true"
-          fi
-        shell: bash
-
-      - name: Push changes
-        if: steps.commit.outputs.push == 'true'
-        uses: ad-m/github-push-action@master
-        # with:
-        #    github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Store output
-        uses: actions/upload-artifact@v2
-        with:
-          name: report_output
-          path: "/home/esmf-profiler/traces/*"
-          if-no-files-found: error
-          retention-days: 7
-      
+        
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.1.3
         with:
