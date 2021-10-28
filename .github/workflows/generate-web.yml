@@ -14,7 +14,7 @@ jobs:
         with: 
           report_name: 'test-from-generate-web'
       - name: Debug
-        run: "pwd && ls -lah"
+        run: "pwd && ls -lah /github/workspace"
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.1.3
