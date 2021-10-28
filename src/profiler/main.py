@@ -7,11 +7,14 @@
 
 
 import datetime
+import errno
 import glob
 import json
 import logging
 import os
+import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 from profiler.analyses import LoadBalance
@@ -20,132 +23,147 @@ from profiler.view import handle_args
 
 logger = logging.getLogger(__name__)
 
+
+def copy_path(src, dst):
+    """copy_path copy one path to another including contents
+
+    Args:
+        src (str):
+        dst (str):
+    """
+    try:
+        shutil.copytree(src, dst)
+    except OSError as exc:  # python >2.5
+        if exc.errno in (errno.ENOTDIR, errno.EINVAL):
+            shutil.copy(src, dst)
+        else:
+            raise
+
+
 # output some general JSON data
 # to be used on the site
-def write_json_to_file(output_file_name, json_data):
-    with open(output_file_name, "w") as output_file_name:
-        json.dump(json_data, output_file_name)
-    logger.info(f"Finished writing load balance JSON file")
+def write_site_json(data, _dir, file_name="site.json"):
+    with open(os.path.join(_dir, file_name), "w", encoding="utf-8") as _file:
+        json.dump(data, _file)
 
 
-def copy_web_template(destination_path):
-    logger.info(f"copying web template")
-    cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
-    cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [destination_path]
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=cwd, check=True)
-    logger.info(f"finish copying web template")
+def command_safe(cmd, cwd=os.getcwd()):
+    return subprocess.run(
+        cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
+    )
+
+
+def git_add(profilepath, repopath):
+    cmd = ["git", "add"] + glob.glob(profilepath + "/*")
+    return command_safe(cmd, repopath)
+
+
+def git_commit(username, name, repopath):
+    cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
+    return command_safe(cmd, repopath)
+
+
+def git_pull(repopath):
+    cmd = ["git", "pull", "origin"]
+    return command_safe(cmd, repopath)
+
+
+def git_push(repopath):
+    cmd = ["git", "push", "origin"]
+    return command_safe(cmd, repopath)
+
+
+def git_clone(url, tmpdir):
+    cmd = ["git", "clone", url, "tmprepo"]
+    return command_safe(cmd, tmpdir)
+
+
+def create_profile_path(repopath, username, name):
+    profilepath = os.path.abspath(os.path.join(repopath, username, name))
+    Path(profilepath).mkdir(parents=True, exist_ok=True)
+    return profilepath
+
+
+def create_temp_dir():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        return tmpdir
+
+
+def _whoami():
+    return command_safe(["whoami"]).stdout.strip()
 
 
 def push_to_repo(url, outdir, name):
-    logger.info(f"Pushing to repository: {url}")
+    logger.info("Pushing to repository: %s", url)
 
-    tmpdir = "./.pushtmp"
-    Path(tmpdir).mkdir(parents=True, exist_ok=True)
-    if not os.path.isdir(tmpdir):
-        print(
-            f"Cannot push to remote repo.  Failed to create temporary directory: {tmpdir}"
-        )
-        return
+    with tempfile.TemporaryDirectory() as tmpdir:
 
-    # TODO: this deletes/reclones every time which can be inefficient if the repo is large
-    # instead we want to check whether it exists already and see if we can git pull
-    cmd = ["rm", "-rf", "tmprepo"]
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir)
+        # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
+        username = _whoami()
 
-    cmd = ["git", "clone", url, "tmprepo"]
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir)
+        profilepath = create_profile_path(tmpdir, username, name)
 
-    cmd = ["whoami"]
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir, stdout=subprocess.PIPE, encoding="utf-8")
-    username = str(stat.stdout).strip()
-    logger.info(f"CMD: whoami returned: {username}")
+        # copy static site
+        # TODO:  need a more robust way to get a handle on the esmf-profiler root path
+        # either that or we need to bundle the static site files into the Python install
+        git_pull(tmpdir)
+        copy_path(os.path.join(os.getcwd(), "/web/app/build/*"), profilepath)
 
-    outdir = os.path.abspath(outdir)
+        # copy json data
+        copy_path(os.path.join(outdir, "/data"), profilepath)
 
-    # now = datetime.datetime.now()
-    # timestamp = now.strftime("%Y%m%d-%H%M%S")
-
-    repopath = os.path.join(tmpdir, "tmprepo")
-    repopath = os.path.abspath(repopath)
-    logger.info(f"Repo path: {repopath}")
-
-    profilepath = os.path.join(repopath, username, name)
-    profilepath = os.path.abspath(profilepath)
-    logger.info(f"Profile path: {profilepath}")
-    Path(profilepath).mkdir(parents=True, exist_ok=True)
-
-    # copy static site
-    # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
-    cwd = os.getcwd()  # assumes we are running from esmf-profiler directory
-    cmd = ["cp", "-r"] + glob.glob(cwd + "/web/app/build/*") + [profilepath]
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir, check=True)
-
-    # copy json data
-    cmd = ["cp", "-r", outdir + "/data", profilepath]
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=tmpdir)
-
-    cmd = ["git", "add"] + glob.glob(profilepath + "/*")
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
-
-    cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
-
-    cmd = ["git", "push", "origin"]
-    logger.info(f"CMD: {' '.join(cmd)}")
-    stat = subprocess.run(cmd, cwd=repopath)
+        git_add(profilepath, tmpdir)
+        git_commit(username, name, tmpdir)
+        git_push(tmpdir)
 
 
-def main():
-
-    args = handle_args()
-
-    if args["verbose"] > 0:
+def handle_logging(verbosity):
+    if verbosity > 0:
         _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
         logging.basicConfig(level=logging.DEBUG, format=_format)
     else:
         _format = "%(name)s : %(message)s"
         logging.basicConfig(level=logging.INFO, format=_format)
 
-    tracedir = args["tracedir"]
-    outdir = args["outdir"]
-    outdatadir = os.path.join(outdir, "data")
-    Path(outdatadir).mkdir(parents=True, exist_ok=True)
 
-    if not os.path.isdir(outdatadir):
-        print(f"Failed to create output directory: {outdir}")
-        return
+def create_directory(paths):
+    _path = os.path.join(*paths)
+    Path(_path).mkdir(parents=True, exist_ok=True)
+    return _path
 
-    # write general site JSON
-    site = {"name": args["name"], "timestamp": str(datetime.datetime.now())}
-    write_json_to_file(os.path.join(outdatadir, "site.json"), site)
+
+def main():
+    # collect user args
+    args = handle_args()
+
+    # setup logging based on args.verbose
+    handle_logging(args.verbose)
+
+    outdatadir = create_directory([args.outdir, "data"])
+
+    # write site.json
+    write_site_json(
+        {"name": args.name, "timestamp": str(datetime.datetime.now())}, outdatadir
+    )
 
     # the only requested analysis is a load balance at the root level
+
     analyses = [LoadBalance(None, outdatadir)]
 
-    logger.info(f"Processing trace: {tracedir}")
-    trace = Trace.from_path(tracedir, analyses)
-    logger.info(f"Processing trace complete")
+    logger.info("Processing trace: %s", args.tracedir)
+    Trace.from_path(args.tracedir, analyses)
+    logger.debug("Processing trace complete")
 
     # indicate to the analyses that all events have been processed
-    logger.info(f"Generating profile")
+    logger.info("Generating profile")
     for analysis in analyses:
-        json_dict = analysis.finish()
-        write_json_to_file(os.path.join(outdatadir, "load_balance.json"), json_dict)
-    logger.info(f"copying web templates to {outdir}")
-    copy_web_template(outdir)
+        analysis.finish()
+    logger.debug("Finishing analyses complete")
 
-    logger.info(f"Finishing analyses complete")
-
-    if args["push"] is not None:
-        push_to_repo(url=args["push"], outdir=outdir, name=args["name"])
+    if args.push is not None:
+        push_to_repo(
+            url=args["push"], outdir=os.path.abspath(args.outdir), name=args["name"]
+        )
 
 
 if __name__ == "__main__":
