@@ -15,9 +15,8 @@ import os
 import shutil
 import subprocess
 import tempfile
-from git import git_add, git_clone, git_commit, git_pull, git_push
 
-
+from profiler.git import git_add, git_clone, git_commit, git_pull, git_push
 from profiler.analyses import LoadBalance
 from profiler.trace import Trace
 from profiler.view import handle_args as _handle_args
