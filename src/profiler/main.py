@@ -15,22 +15,17 @@ import os
 import shutil
 import subprocess
 import tempfile
-from pathlib import Path
+from git import git_add, git_clone, git_commit, git_pull, git_push
+
 
 from profiler.analyses import LoadBalance
 from profiler.trace import Trace
-from profiler.view import handle_args
+from profiler.view import handle_args as _handle_args
 
 logger = logging.getLogger(__name__)
 
 
-def copy_path(src, dst):
-    """copy_path copy one path to another including contents
-
-    Args:
-        src (str):
-        dst (str):
-    """
+def _copy_path(src, dst):
     try:
         shutil.copytree(src, dst)
     except OSError as exc:  # python >2.5
@@ -42,83 +37,48 @@ def copy_path(src, dst):
 
 # output some general JSON data
 # to be used on the site
-def write_site_json(data, _dir, file_name="site.json"):
-    with open(os.path.join(_dir, file_name), "w", encoding="utf-8") as _file:
+def _write_json_to_file(data, _path):
+    with open(_path, "w", encoding="utf-8") as _file:
         json.dump(data, _file)
 
 
-def command_safe(cmd, cwd=os.getcwd()):
+def _command_safe(cmd, cwd=os.getcwd()):
     return subprocess.run(
         cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
     )
 
-
-def git_add(profilepath, repopath):
-    cmd = ["git", "add"] + glob.glob(profilepath + "/*")
-    return command_safe(cmd, repopath)
-
-
-def git_commit(username, name, repopath):
-    cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
-    return command_safe(cmd, repopath)
-
-
-def git_pull(repopath):
-    cmd = ["git", "pull", "origin"]
-    return command_safe(cmd, repopath)
-
-
-def git_push(repopath):
-    cmd = ["git", "push", "origin"]
-    return command_safe(cmd, repopath)
-
-
-def git_clone(url, tmpdir):
-    cmd = ["git", "clone", url, "tmprepo"]
-    return command_safe(cmd, tmpdir)
-
-
-def create_profile_path(repopath, username, name):
-    profilepath = os.path.abspath(os.path.join(repopath, username, name))
-    Path(profilepath).mkdir(parents=True, exist_ok=True)
-    return profilepath
-
-
-def create_temp_dir():
+def _create_temp_dir():
     with tempfile.TemporaryDirectory() as tmpdir:
         return tmpdir
 
 
 def _whoami():
-    return command_safe(["whoami"]).stdout.strip()
+    return _command_safe(["whoami"]).stdout.strip()
 
 
-def push_to_repo(url, outdir, name):
+def _push_to_repo(url, outdir, name):
     logger.info("Pushing to repository: %s", url)
 
     with tempfile.TemporaryDirectory() as tmpdir:
 
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
         username = _whoami()
+        profilepath = _create_directory([tmpdir, username, name])
 
-    
-        profilepath = create_profile_path(tmpdir, username, name)
-
+        # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
         # copy static site
-        # TODO:  need a more robust way to get a handle on the esmf-profiler root path
-        # either that or we need to bundle the static site files into the Python install
         git_pull(tmpdir)
-        copy_path(os.path.join(os.getcwd(), "/web/app/build/*"), profilepath)
+        _copy_path(os.path.join(os.getcwd(), "/web/app/build/*"), profilepath)
 
         # copy json data
-        copy_path(os.path.join(outdir, "/data"), profilepath)
+        _copy_path(os.path.join(outdir, "/data"), profilepath)
 
         git_add(profilepath, tmpdir)
         git_commit(username, name, tmpdir)
         git_push(tmpdir)
 
 
-def handle_logging(verbosity):
+def _handle_logging(verbosity):
     if verbosity > 0:
         _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
         logging.basicConfig(level=logging.DEBUG, format=_format)
@@ -127,29 +87,32 @@ def handle_logging(verbosity):
         logging.basicConfig(level=logging.INFO, format=_format)
 
 
-def create_directory(paths):
+def _create_directory(paths):
     _path = os.path.join(*paths)
-    Path(_path).mkdir(parents=True, exist_ok=True)
+    os.makedirs(_path, exist_ok=True)
     return _path
 
-
 def main():
+    OUTPUT_DATA_PATH = "data"
+    SITE_FILE_NAME = "site.json"
+    DATA_FILE_NAME = "load_balance.json"
+
     # collect user args
-    args = handle_args()
+    args = _handle_args()
 
     # setup logging based on args.verbose
-    handle_logging(args.verbose)
+    _handle_logging(args.verbose)
 
-    outdatadir = create_directory([args.outdir, "data"])
+    output_data_path = _create_directory([args.outdir, OUTPUT_DATA_PATH])
 
-    # write site.json 
-    write_site_json(
-        {"name": args.name, "timestamp": str(datetime.datetime.now())}, outdatadir
+    # write site.json
+    _write_json_to_file(
+        {"name": args.name, "timestamp": str(datetime.datetime.now())}, os.path.join(output_data_path, SITE_FILE_NAME)
     )
 
     # the only requested analysis is a load balance at the root level
-    
-    analyses = [LoadBalance(None, outdatadir)]
+
+    analyses = [LoadBalance(None, output_data_path)]
 
     logger.info("Processing trace: %s", args.tracedir)
     Trace.from_path(args.tracedir, analyses)
@@ -158,11 +121,12 @@ def main():
     # indicate to the analyses that all events have been processed
     logger.info("Generating profile")
     for analysis in analyses:
-        analysis.finish()
+        data = analysis.finish()
+        _write_json_to_file(data, os.path.join(output_data_path, DATA_FILE_NAME))
     logger.debug("Finishing analyses complete")
 
     if args.push is not None:
-        push_to_repo(
+        _push_to_repo(
             url=args["push"], outdir=os.path.abspath(args.outdir), name=args["name"]
         )
 
