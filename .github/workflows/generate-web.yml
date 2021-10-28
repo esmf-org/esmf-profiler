@@ -22,4 +22,4 @@ jobs:
           # Artifact name
           name: web-report
           # A file, directory or wildcard pattern that describes what to upload
-          path: ./traces/output
+          path: ./traces/data
