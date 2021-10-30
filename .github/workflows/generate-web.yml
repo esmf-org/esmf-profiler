@@ -14,7 +14,7 @@ jobs:
         with: 
           report_name: 'test-from-generate-web'
       - name: Debug
-        run: "ls -lah && pwd"
+        run: "ls -lah /home/output"
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
