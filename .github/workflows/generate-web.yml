@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Generates a web report from binary traces in the current directory
     steps:
-      - name: Debug pre
-        run: "tree"
       - name: Generate report
         uses: esmf-org/profiler-action@main
         with: 
