@@ -14,7 +14,7 @@ jobs:
         with: 
           report_name: 'test-from-generate-web'
       - name: Debug
-        run: "tree >> output.txt"
+        run: "cd / && tree >> output.txt"
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
         with:
