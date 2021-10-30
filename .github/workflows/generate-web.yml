@@ -14,11 +14,11 @@ jobs:
         with: 
           report_name: 'test-from-generate-web'
       - name: Debug
-        run: "cd ~ && tree >> output.txt"
+        run: "cd ~ && tree >> ~/output.txt"
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
         with:
           # Artifact name
           name: web-report
           # A file, directory or wildcard pattern that describes what to upload
-          path: output.txt
+          path: ~/output.txt
