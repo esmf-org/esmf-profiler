@@ -10,7 +10,7 @@ jobs:
     name: Generates a web report from binary traces in the current directory
     steps:
       - name: Generate report
-        uses: esmf-org/profiler-action@v1.40
+        uses: esmf-org/profiler-action@main
         with: 
           report_name: 'test-from-generate-web'
       - name: Debug
