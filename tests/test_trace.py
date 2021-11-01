@@ -1,28 +1,41 @@
-from profiler.trace import Trace
+"""
+Tests
+"""
+
+import os
+import tempfile
+
+from profiler.main import create_site_file, run_analsysis
 
 
-def testTrace_whenInstantiatedFromDirectory_IsCorrect():
-    trace = Trace.from_path("./tests/fixtures", [], [])
-    assert trace.__class__.__name__ == "Trace"
+def test_createSiteFile_createsSiteFileCorrectly():
+    with tempfile.TemporaryDirectory() as _temp:
+        create_site_file("test", _temp, "site.json")
 
-    _trace = trace
-    msg = next(iter(_trace))
+        file_path = os.path.join(_temp, "site.json")
+        assert os.path.exists(file_path)
 
-    assert (
-        str(msg)
-        == "Comp[PET_1]{'vmid': 0, 'baseid': 0, 'name': 'esm', 'IPM': 'IPDv02p1=2||IPDv02p3=3||IPDv02p5=4||ExternalAdvertise=5||ExternalRealize=6||ExternalDataInitialize=7', 'RPM': 'RunPhase1=1', 'FPM': 'FinalizePhase1=1||ExternalFinalizeReset=2'}"
-    )
+        with open(file_path, "r") as _file:
+            contents = _file.read()
+            assert "name" in contents
+            assert "test" in contents
+            assert "timestamp" in contents
 
-    print(msg)
 
-    # trace = list(trace.filter(lambda x: isinstance(x, RegionProfile)))
-    # summary = RegionSummary(trace)
-    # print(summary.pet_count())
-    # print(summary.count_each())
+def test_runAnalysis_givesTheCorrectOutput():
+    with tempfile.TemporaryDirectory() as _temp:
+        run_analsysis(_temp, "tests/fixtures/test-traces", "load_balance.json")
 
-    for msg in trace:
-        print(str(msg))
-        print(msg.get("id"))
-        print(msg.get("parentid"))
-        print(msg.get("par"))
-        exit()
+        file_path = os.path.join(_temp, "load_balance.json")
+        assert os.path.exists(file_path)
+
+        with open(file_path, "r") as _file:
+            with open("tests/fixtures/test-traces/expected.json") as _expected:
+                contents = _file.read()
+                expected = _expected.read()
+
+                assert contents == expected
+
+
+if __name__ == "__main__":
+    pass

@@ -3,10 +3,10 @@ See:
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
 """
 
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
-from setuptools.command.install import install
 from os import path
+
+# Always prefer setuptools over distutils
+from setuptools import find_packages, setup
 
 here = path.abspath(path.dirname(__file__))
 
@@ -29,7 +29,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name="esmf_profiler",  # Required
+    name="profiler",  # Required
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
     #
@@ -126,8 +126,8 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-    #    "python-config==0.1.2",  # TODO not 100% if we need this
-    #    "python-dev-tools==2020.9.10",
+        #    "python-config==0.1.2",  # TODO not 100% if we need this
+        #    "python-dev-tools==2020.9.10",
     ],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
