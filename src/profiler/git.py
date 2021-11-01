@@ -1,12 +1,21 @@
+"""
+Git commands module
+author: Ryan Long <ryan.long@noaa.gov>
+"""
 
+import glob
 import os
 import subprocess
-import glob
+
 
 def _command_safe(cmd, cwd=os.getcwd()):
+    """_command_safe ensures commands are run safely and raise exceptions
+    on error
+    """
     return subprocess.run(
         cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
     )
+
 
 def git_add(profilepath, repopath):
     cmd = ["git", "add"] + glob.glob(profilepath + "/*")
