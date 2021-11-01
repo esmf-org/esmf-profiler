@@ -144,7 +144,7 @@ def main():
     # setup logging based on args.verbose
     _handle_logging(args.verbose)
 
-    output_data_path = _create_directory([args.outdir, OUTPUT_DATA_PATH])
+    output_data_path = _create_directory([args.outdir])
 
     # write site.json
     create_site_file(args.name, output_data_path, SITE_FILE_NAME)
