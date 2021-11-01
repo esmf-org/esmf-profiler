@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 def _copy_path(src, dst):
     try:
-        shutil.copytree(src, dst)
+        shutil.copytree(src, dst, dirs_exist_ok=True)
     except OSError as exc:  # python >2.5
         if exc.errno in (errno.ENOTDIR, errno.EINVAL):
             shutil.copy(src, dst)
@@ -79,6 +79,10 @@ def _create_directory(paths):
     _path = os.path.join(*paths)
     os.makedirs(_path, exist_ok=True)
     return _path
+
+def _copy_gui_template(output_path):
+    """Copies the pre-gen template into the output path"""
+    _copy_path(os.path.join("./web/app/build/static"), output_path)
 
 
 def create_site_file(name, output_path, site_file_name="site.json"):
@@ -138,6 +142,11 @@ def main():
 
     # the only requested analysis is a load balance at the root level
     run_analsysis(output_data_path, args.tracedir, DATA_FILE_NAME)
+
+    # inject web gui files
+    _copy_gui_template(output_data_path)
+
+
 
     if args.push is not None:
         # TODO Do we need args.push?
