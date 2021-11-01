@@ -6,6 +6,14 @@
 
 The ESMF-Profiler project is designed to take trace binary output and display it in a web based GUI.
 
+## Getting a Binary Trace
+To collect a binary trace, set the environment variables to the values below:
+
+```bash
+export ESMF_RUNTIME_PROFILE=ON
+export ESMF_RUNTIME_PROFILE_OUTPUT="BINARY SUMMARY"
+```
+
 ## Quickstart
 
 ### Local Install:
