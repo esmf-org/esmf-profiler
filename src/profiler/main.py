@@ -12,11 +12,10 @@ import json
 import logging
 import os
 import shutil
-import subprocess
 import tempfile
 
 from profiler.analyses import LoadBalance
-from profiler.git import git_add, git_commit, git_pull, git_push
+from profiler.git import git_add, git_commit, git_pull, git_push, _command_safe
 from profiler.trace import Trace
 from profiler.view import handle_args as _handle_args
 
@@ -40,23 +39,12 @@ def _write_json_to_file(data, _path):
         json.dump(data, _file)
 
 
-def _command_safe(cmd, cwd=os.getcwd()):
-    """ Ensures a command that fails throws an exceptions """
-    return subprocess.run(
-        cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
-    )
-
-def _create_temp_dir():
-    """ Create and returns a temp directory within a context """
-    with tempfile.TemporaryDirectory() as tmpdir:
-        return tmpdir
-
-
 def _whoami():
-    """ Returns the "whoami" command """
+    """Returns the "whoami" command"""
     return _command_safe(["whoami"]).stdout.strip()
-    
-def _push_to_repo(url, outdir, name):
+
+
+def _push_to_repo(outdir, name):
     with tempfile.TemporaryDirectory() as tmpdir:
 
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
@@ -77,7 +65,7 @@ def _push_to_repo(url, outdir, name):
 
 
 def _handle_logging(verbosity=0):
-    """ handles logging level based on passed in verbosity """
+    """handles logging level based on passed in verbosity"""
     if verbosity > 0:
         _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
         logging.basicConfig(level=logging.DEBUG, format=_format)
@@ -87,10 +75,49 @@ def _handle_logging(verbosity=0):
 
 
 def _create_directory(paths):
-    """ Create a directory tree from the paths list """
+    """Create a directory tree from the paths list"""
     _path = os.path.join(*paths)
     os.makedirs(_path, exist_ok=True)
     return _path
+
+
+def create_site_file(name, output_path, site_file_name="site.json"):
+    """create_site_file creates a json file containing site information
+
+    Args:
+        name (str): name to give to the site
+        output_path (str): path
+        site_file_name (str, optional): The file name. Defaults to "site.json".
+    """
+    _write_json_to_file(
+        {"name": name, "timestamp": str(datetime.datetime.now())},
+        os.path.join(output_path, site_file_name),
+    )
+
+
+def run_analsysis(output_path, tracedir, data_file_name):
+    """run_analsysis runs an analysis on a directory containing binary traces files and outputs
+    the results to data_file_name
+
+    Args:
+        output_path (str): path
+        tracedir (str): path containing the binary traces
+        data_file_name (str): name to give the output file
+    """
+    # the only requested analysis is a load balance at the root level
+    analyses = [LoadBalance(None, output_path)]
+
+    logger.info("Processing trace: %s", tracedir)
+    Trace.from_path(tracedir, analyses)
+    logger.debug("Processing trace complete")
+
+    # indicate to the analyses that all events have been processed
+    logger.info("Generating profile")
+    for analysis in analyses:
+        data = analysis.finish()
+        _write_json_to_file(data, os.path.join(output_path, data_file_name))
+    logger.debug("Finishing analyses complete")
+
 
 def main():
     OUTPUT_DATA_PATH = "data"
@@ -106,29 +133,14 @@ def main():
     output_data_path = _create_directory([args.outdir, OUTPUT_DATA_PATH])
 
     # write site.json
-    _write_json_to_file(
-        {"name": args.name, "timestamp": str(datetime.datetime.now())}, os.path.join(output_data_path, SITE_FILE_NAME)
-    )
+    create_site_file(args.name, output_data_path, SITE_FILE_NAME)
 
     # the only requested analysis is a load balance at the root level
-
-    analyses = [LoadBalance(None, output_data_path)]
-
-    logger.info("Processing trace: %s", args.tracedir)
-    Trace.from_path(args.tracedir, analyses)
-    logger.debug("Processing trace complete")
-
-    # indicate to the analyses that all events have been processed
-    logger.info("Generating profile")
-    for analysis in analyses:
-        data = analysis.finish()
-        _write_json_to_file(data, os.path.join(output_data_path, DATA_FILE_NAME))
-    logger.debug("Finishing analyses complete")
+    run_analsysis(output_data_path, args.tracedir, DATA_FILE_NAME)
 
     if args.push is not None:
-        _push_to_repo(
-            url=args["push"], outdir=os.path.abspath(args.outdir), name=args["name"]
-        )
+        # TODO Do we need args.push?
+        _push_to_repo(outdir=os.path.abspath(args.outdir), name=args["name"])
 
 
 if __name__ == "__main__":
