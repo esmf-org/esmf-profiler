@@ -99,14 +99,7 @@ class TraceEventEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class RegionProfilesEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, RegionProfiles):
-            results = []
-            for item in obj:
-                results.append(item.toJSON())
-            return results
-        return json.JSONEncoder.default(self, obj)
+
 
 
 class Comp(TraceEvent):
