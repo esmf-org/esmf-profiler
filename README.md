@@ -1,6 +1,9 @@
 # esmf-profiler
 
+[![Python application](https://github.com/esmf-org/esmf-profiler/actions/workflows/python-app.yml/badge.svg?branch=development)](https://github.com/esmf-org/esmf-profiler/actions/workflows/python-app.yml)
+
 ## Description
+
 The ESMF-Profiler project is designed to take trace binary output and display it in a web based GUI.
 
 ## Quickstart
