@@ -91,7 +91,7 @@ def _create_directory(paths):
 
 def _copy_gui_template(output_path):
     """Copies the pre-gen template into the output path"""
-    _copy_path(os.path.join("./web/app/build/static"), output_path)
+    _copy_path(os.path.join("./web/app/build"), output_path)
 
 
 def create_site_file(name, output_path, site_file_name="site.json"):
