@@ -41,13 +41,33 @@ python -m pytest
 esmf-profiler
 ```
 
+### Install with Docker
 
+A [Dockerfile]() is included in the repository to allow users using Docker to install the application with ease.
 
+1. Clone the [latest stable branch](https://github.com/esmf-org/esmf-profiler.git) from the [esmf-profiler repository](https://github.com/esmf-org/esmf-profiler).
 
+2. cd into the appliction path
+```bash
+cd esmf-profiler
+```
 
-5.  
+3. Build the image
+```bash
+docker build -t esmf-profiler-image .
+```
 
+4. Run the application in the image.  For example, assuming your [binary traces](https://github.com/esmf-org/esmf-profiler/tree/main/tests/fixtures/test-traces/atm-ocn) are in ```./traces```
+```bash
+docker run -it -v $(pwd)/traces:/home/traces esmf-profiler-image esmf-profiler -t /home/traces -n 'profilename' -o /home/traces/output
+```
 
+This will spin up an *esmf-profiler-image* and mount ```./traces``` from client to host.  
+
+Here, output is being directed to ```/home/traces/output```.  
+
+#### IMPORTANT
+Be sure the output path you pass to the ```esmf-profiler``` command has your client folder as it's root (```./traces``` *in the example*).  Otherwise, the output will not persist to your client machine after the application has run.
 
 ## Dependencies
 ### Install Babeltrace2
