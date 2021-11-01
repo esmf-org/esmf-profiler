@@ -5,7 +5,6 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
-from setuptools.command.install import install
 from os import path
 
 here = path.abspath(path.dirname(__file__))
@@ -29,7 +28,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name="esmf_profiler",  # Required
+    name="profiler",  # Required
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
     #
