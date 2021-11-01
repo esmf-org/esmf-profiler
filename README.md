@@ -76,7 +76,7 @@ Be sure the output path you pass to the ```esmf-profiler``` command has your cli
 
 ## Dependencies
 
-:info: 
+:information_source: 
 All dependencies are installed using any of the installation methods in Quick Start section.  This section is primarly for reference and historical purposes.
 
 ### Install Babeltrace2
