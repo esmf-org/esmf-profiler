@@ -22,7 +22,16 @@ from profiler.view import handle_args as _handle_args
 logger = logging.getLogger(__name__)
 
 
-def _copy_path(src, dst):
+def _copy_path(src, dst, symlinks=False, ignore=None):
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            shutil.copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)
+
+def _copy_path_old(src, dst):
     try:
         shutil.copytree(src, dst, dirs_exist_ok=True)
     except OSError as exc:  # python >2.5
