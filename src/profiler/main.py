@@ -120,6 +120,7 @@ def run_analsysis(output_path, tracedir, data_file_name):
 
 
 def main():
+    """main execution"""
     OUTPUT_DATA_PATH = "data"
     SITE_FILE_NAME = "site.json"
     DATA_FILE_NAME = "load_balance.json"
