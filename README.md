@@ -4,7 +4,49 @@
 The ESMF-Profiler project is designed to take trace binary output and display it in a web based GUI.
 
 ## Quickstart
-The quickest way to visually display your data is to ...
+
+### Local Install:
+
+1. Clone the [latest stable branch](https://github.com/esmf-org/esmf-profiler.git) from the [esmf-profiler repository](https://github.com/esmf-org/esmf-profiler).
+
+2. cd into the appliction path
+```bash
+cd esmf-profiler
+```
+
+3.  Ensure that the ```install_dependencies.sh``` and ```install.sh``` have executable permissions
+```bash
+chmod +x ./install_dependencies.sh 
+chmod +x ./install.sh
+```
+
+4.  Execute both scripts as shown below.  A ```venv``` folder will be created on success.
+```bash
+./install_dependencies.sh && ./install.sh
+```
+
+5.  Activate the [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/).
+```bash
+source ./venv/bin/activate
+```
+
+6.  For pre-release, install the *esmf-profiler* using *pip* in developer mode.
+```bash
+pip install -e .[test]
+```
+
+7.  Confirm the installation was successful.  If so, you should now be able to type ```esmf-profiler``` into your terminal and see the help output.
+```bash
+python -m pytest
+esmf-profiler
+```
+
+
+
+
+
+5.  
+
 
 
 ## Dependencies
