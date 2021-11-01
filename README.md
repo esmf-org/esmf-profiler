@@ -30,20 +30,20 @@ chmod +x ./install.sh
 source ./venv/bin/activate
 ```
 
-6.  For pre-release, install the *esmf-profiler* using *pip* in developer mode.
+6.  For pre-release, install the *esmf-profiler* using [pip editable install](https://pip.pypa.io/en/latest/cli/pip_install/#editable-installs).  Running tests require access to [PyPi Public Repositories](https://pypi.org/).  This step is optional, but encouraged.  
 ```bash
-pip install -e .[test]
+pip install -e . or pip install -e .[test] // to run tests
 ```
 
 7.  Confirm the installation was successful.  If so, you should now be able to type ```esmf-profiler``` into your terminal and see the help output.
 ```bash
-python -m pytest
+python -m pytest // optional, to run tests
 esmf-profiler
 ```
 
 ### Install with Docker
 
-A [Dockerfile]() is included in the repository to allow users using Docker to install the application with ease.
+A [Dockerfile](https://docs.docker.com/engine/reference/builder/#:~:text=A%20Dockerfile%20is%20a%20text,command%2Dline%20instructions%20in%20succession.) is included in the repository to allow users using Docker to install the application with ease.
 
 1. Clone the [latest stable branch](https://github.com/esmf-org/esmf-profiler.git) from the [esmf-profiler repository](https://github.com/esmf-org/esmf-profiler).
 
@@ -66,10 +66,16 @@ This will spin up an *esmf-profiler-image* and mount ```./traces``` from client 
 
 Here, output is being directed to ```/home/traces/output```.  
 
-#### IMPORTANT
+:warning: 
 Be sure the output path you pass to the ```esmf-profiler``` command has your client folder as it's root (```./traces``` *in the example*).  Otherwise, the output will not persist to your client machine after the application has run.
 
+
+
 ## Dependencies
+
+:info: 
+All dependencies are installed using any of the installation methods in Quick Start section.  This section is primarly for reference and historical purposes.
+
 ### Install Babeltrace2
 
 #### Use a Package Manager
