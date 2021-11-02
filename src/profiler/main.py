@@ -23,15 +23,17 @@ logger = logging.getLogger(__name__)
 
 def _copy_path(src, dst, symlinks=False, ignore=None):
     """Safe copytree replacement"""
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
+
     for item in os.listdir(src):
-        s = os.path.join(src, item)
-        d = os.path.join(dst, item)
-        if os.path.isdir(s):
-            shutil.copytree(s, d, symlinks, ignore)
-        else:
-            shutil.copy2(s, d)
+        try:
+            s = os.path.join(src, item)
+            d = os.path.join(dst, item)
+            if os.path.isdir(s):
+                shutil.copytree(s, d, symlinks, ignore)
+            else:
+                shutil.copy2(s, d)
+        except FileExistsError:
+            continue
 
 
 def _write_json_to_file(data, _path):
@@ -50,7 +52,7 @@ def _push_to_repo(input_path, name):
 
     # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
     username = _whoami()
-    profilepath = _create_directory([username, name])
+    profilepath = _create_directory([os.getcwd(), username, name])
 
     # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
     git_pull()
@@ -77,7 +79,7 @@ def _create_directory(paths):
     """Create a directory tree from the paths list"""
     _path = os.path.join(*paths)
     os.makedirs(_path, exist_ok=True)
-    return _path
+    return os.path.abspath(_path)
 
 
 def _copy_gui_template(output_path):
@@ -135,20 +137,22 @@ def main():
     # setup logging based on args.verbose
     _handle_logging(args.verbose)
 
-    output_data_path = _create_directory([args.outdir])
+    output_path = _create_directory([args.outdir])
+
+    if not os.path.exists(os.path.join(output_path, "data")):
+        os.makedirs(os.path.join(output_path, "data"))
 
     # write site.json
-    create_site_file(args.name, output_data_path, SITE_FILE_NAME)
-
+    create_site_file(args.name, os.path.join(output_path, "data"), SITE_FILE_NAME)
     # the only requested analysis is a load balance at the root level
-    run_analsysis(output_data_path, args.tracedir, DATA_FILE_NAME)
+    run_analsysis(os.path.join(output_path, "data"), args.tracedir, DATA_FILE_NAME)
 
     # inject web gui files
-    _copy_gui_template(output_data_path)
+    _copy_gui_template(output_path)
 
     if args.push is not None:
         # TODO Do we need args.push?
-        _push_to_repo(input_path=output_data_path, name=args.name)
+        _push_to_repo(input_path=output_path, name=args.name)
 
 
 if __name__ == "__main__":
