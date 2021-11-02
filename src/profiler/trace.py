@@ -13,8 +13,8 @@ from profiler.analyses import Analysis
 from profiler.event import TraceEvent, RegionProfile, DefineRegion
 
 logger = logging.getLogger(__name__)
-#_format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-#logging.basicConfig(level=logging.DEBUG, format=_format)
+# _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
+# logging.basicConfig(level=logging.DEBUG, format=_format)
 
 
 class Trace:
@@ -28,7 +28,7 @@ class Trace:
         yield from filter(fx, self._msgs)
 
     @staticmethod
-    def from_path(_path: str, analyses: List[Analysis]):
+    def from_path(_path: str, analyses):
         logger.debug(f"fetching traces from path: {_path}")
 
         # hard code for now - eventually query each Analysis
@@ -44,13 +44,11 @@ class Trace:
                     logger.debug(f"Processed {tmp_count} events")
 
                 eventName = msg.event.name
-                if (eventName in includes):
+                if eventName in includes:
                     event = TraceEvent.Of(msg)
                     # allow each analysis to process the event
                     # however it needs to
                     for analysis in analyses:
                         analysis.process_event(event)
-
-
 
         logger.debug(f"exiting from_path")
