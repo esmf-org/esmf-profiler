@@ -27,13 +27,6 @@ htmlcov/
 
 # pycharm files
 .idea/
+.pytest_cache
 
-# JS
 node_modules/
-
-# Dependencies
-dependencies/*/
-*/bt2
-*/swig
-
-traces/traceout

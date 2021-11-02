@@ -1,10 +1,10 @@
-# Getting Started with Create React App
+#ESMF Profiler
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### [Kanban Board](https://github.com/esmf-org/esmf-profiler/projects/1)
+Status of issues
 
-## Available Scripts
-
-In the project directory, you can run:
+### [Discussion Board](https://github.com/esmf-org/esmf-profiler/discussions)
+Discuss and request new features or enhancements.
 
 ### `npm start`
 
