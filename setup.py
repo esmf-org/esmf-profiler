@@ -1,17 +1,17 @@
-"""A setuptools based setup module.
+"""ESMF Profiler.
 See:
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
-https://github.com/pypa/sampleproject
 """
 
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
 from os import path
+
+# Always prefer setuptools over distutils
+from setuptools import find_packages, setup
 
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, "README.md"), encoding="utf-8") as f:
+with open(path.join(here, "README.md")) as f:
     long_description = f.read()
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
@@ -22,14 +22,14 @@ setup(
     # package, this name will be registered for you. It will determine how
     # users can install this project, e.g.:
     #
-    # $ pip install sampleproject
+    # $ pip install esmf_profiler
     #
-    # And where it will live on PyPI: https://pypi.org/project/sampleproject/
+    # And where it will live on PyPI: https://pypi.org/project/esmf_profiler/
     #
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name="esmf_profiler",  # Required
+    name="profiler",  # Required
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
     #
@@ -91,10 +91,10 @@ setup(
         # checked by 'pip install'. See instead 'python_requires' below.
         # 'Programming Language :: Python :: 3',
         # 'Programming Language :: Python :: 3.5',
-        # 'Programming Language :: Python :: 3.6',
+        "Programming Language :: Python :: 3.6",
         # 'Programming Language :: Python :: 3.7',
         # 'Programming Language :: Python :: 3.8',
-        # 'Programming Language :: Python :: 3 :: Only',
+        "Programming Language :: Python :: 3 :: Only",
     ],
     # This field adds keywords for your project which will appear on the
     # project page. What does your project relate to?
@@ -118,19 +118,22 @@ setup(
     # 'Programming Language' classifiers above, 'pip install' will check this
     # and refuse to install the project if the version does not match. See
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-    python_requires=">=3.5, <4",
+    python_requires=">=3.6, <4",
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
     # installed, so they must be valid existing projects.
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=[],  # Optional
+    install_requires=[
+        #    "python-config==0.1.2",  # TODO not 100% if we need this
+        #    "python-dev-tools==2020.9.10",
+    ],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
     # syntax, for example:
     #
-    #   $ pip install sampleproject[dev]
+    #   $ pip install esmf_profiler[dev]
     #
     # Similar to `install_requires` above, these must be valid existing
     # projects.
@@ -158,7 +161,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         "console_scripts": [
-            "profiler=profiler.main:main",
+            "esmf-profiler=profiler.main:main",
         ],
     },
     # List additional URLs that are relevant to your project as a dict.
@@ -171,8 +174,7 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        "Bug Reports": "https://github.com/saltycatfish/sampleproject/issues",
-        "Funding": "https://donate.pypi.org",
-        "Source": "https://github.com/saltycatfish/sampleproject/",
+        "Bug Reports": "https://github.com/esmf-org/esmf-profiler/issues/",
+        "Source": "https://github.com/esmf-org/esmf-profiler/",
     },
 )

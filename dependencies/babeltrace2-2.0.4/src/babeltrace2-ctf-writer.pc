@@ -1,0 +1,10 @@
+prefix=/home/rlong/Sandbox/esmf-profiler/dependencies/babeltrace2-2.0.4/../INSTALL/babeltrace2-2.0.4
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Babeltrace 2 CTF writer library
+Description: Common Trace Format (CTF) writer library from Babeltrace 2
+Version: 2.0.4
+Libs: -L${libdir} -lbabeltrace2-ctf-writer
+Cflags: -I${includedir}
