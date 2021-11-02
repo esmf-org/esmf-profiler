@@ -23,7 +23,7 @@ RUN ./install_dependencies.sh
 
 # TODO 
 # Set envs for Python and LD_Library
-ENV PYTHONPATH="/home/esmf-profiler/dependencies/INSTALL/babeltrace2-2.0.4/lib/python3.8/site-packages:$PYTHONPATH"
+ENV PYTHONPATH="/home/esmf-profiler/dependencies/INSTALL/babeltrace2-2.0.4/lib/python3.9/site-packages:$PYTHONPATH"
 ENV LD_LIBRARY_PATH="/home/esmf-profiler/dependencies/INSTALL/babeltrace2-2.0.4/lib:$LD_LIBRARY_PATH"
 
 # Install the profiler via local PIP
