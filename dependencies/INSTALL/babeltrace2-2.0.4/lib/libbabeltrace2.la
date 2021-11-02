@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/rlong/Sandbox/esmf-profiler/dependencies/babeltrace2-2.0.4/../INSTALL/babeltrace2-2.0.4/lib'
+libdir='/home/rocky/esmfdev/esmf-profiler.v1/dependencies/babeltrace2-2.0.4/../INSTALL/babeltrace2-2.0.4/lib'

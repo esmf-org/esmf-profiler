@@ -2,7 +2,7 @@ datarootdir = ${prefix}/share
 srcdir=.
 
 
-prefix=/home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2/../INSTALL/swig-4.0.2
+prefix=/home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2/../INSTALL/swig-4.0.2
 exec_prefix=${prefix}
 bindir=${exec_prefix}/bin
 mandir=${datarootdir}/man

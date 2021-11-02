@@ -17,7 +17,7 @@ old_library='plugin-sfs.a'
 inherited_linker_flags=' -pthread'
 
 # Libraries that this one depends upon.
-dependency_libs=' /home/rlong/Sandbox/esmf-profiler/dependencies/babeltrace2-2.0.4/../INSTALL/babeltrace2-2.0.4/lib/libbabeltrace2.la -lgmodule-2.0 -lglib-2.0'
+dependency_libs=' /home/rocky/esmfdev/esmf-profiler.v1/dependencies/babeltrace2-2.0.4/../INSTALL/babeltrace2-2.0.4/lib/libbabeltrace2.la -lgmodule-2.0 -lglib-2.0'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''

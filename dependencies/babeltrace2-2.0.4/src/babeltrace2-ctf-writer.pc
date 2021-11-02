@@ -1,4 +1,4 @@
-prefix=/home/rlong/Sandbox/esmf-profiler/dependencies/babeltrace2-2.0.4/../INSTALL/babeltrace2-2.0.4
+prefix=/home/rocky/esmfdev/esmf-profiler.v1/dependencies/babeltrace2-2.0.4/../INSTALL/babeltrace2-2.0.4
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

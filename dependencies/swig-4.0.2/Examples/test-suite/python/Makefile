@@ -10,7 +10,7 @@ endif
 
 LANGUAGE     = python
 PYTHON       = $(PYBIN)
-PYCODESTYLE       = pycodestyle
+PYCODESTYLE       = 
 PYCODESTYLE_FLAGS = --ignore=E252,E30,E402,E501,E731,E741,W291,W391
 
 #*_runme.py for Python 2.x, *_runme3.py for Python 3.x

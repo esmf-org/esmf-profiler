@@ -15,7 +15,7 @@ SO = .so
 srcdir         = .
 top_srcdir     = ../../..
 top_builddir   = ../../..
-abs_top_srcdir = /home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2
+abs_top_srcdir = /home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2
 
 CPP_TEST_CASES = \
 	go_inout \

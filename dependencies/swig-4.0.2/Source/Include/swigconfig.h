@@ -74,7 +74,7 @@
 #define SWIG_CXX "g++"
 
 /* Directory for SWIG system-independent libraries */
-#define SWIG_LIB "/home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2/../INSTALL/swig-4.0.2/share/swig/4.0.2"
+#define SWIG_LIB "/home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2/../INSTALL/swig-4.0.2/share/swig/4.0.2"
 
 /* Directory for SWIG system-independent libraries (Unix install on native
    Windows) */

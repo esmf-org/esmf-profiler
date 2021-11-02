@@ -23,7 +23,7 @@ CXXFLAGS   =
 LDFLAGS    =
 LINKFLAGS = 
 
-ROOT_DIR = /home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2
+ROOT_DIR = /home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2
 JSINCLUDES =  
 JSDYNAMICLINKING =  
 JSV8ENABLED = 

@@ -4,6 +4,6 @@
 # Intended for ad-hoc usage and not by the test-suite or examples.
 
 builddir=`dirname "$0"`
-SWIG_LIB='/home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2/Lib'
+SWIG_LIB='/home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2/Lib'
 export SWIG_LIB
 exec "$builddir/swig" "$@"

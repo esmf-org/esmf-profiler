@@ -4,7 +4,7 @@
 
 .PHONY: ccache source swig
 
-prefix      = /home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2/../INSTALL/swig-4.0.2
+prefix      = /home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2/../INSTALL/swig-4.0.2
 exec_prefix = ${prefix}
 srcdir      = .
 datarootdir = ${prefix}/share
@@ -419,10 +419,10 @@ $(srcdir)/Lib/swigwarn.swg: $(srcdir)/Source/Include/swigwarn.h
 # TARGETS: install & friends
 #####################################################################
 
-INSTALL         = /home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2/Tools/config/install-sh -c
+INSTALL         = /home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2/Tools/config/install-sh -c
 INSTALL_DATA    = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL} -m 755
-MKINSTDIRS      = /home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2/Tools/config/install-sh -m 0755 -d
+MKINSTDIRS      = /home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2/Tools/config/install-sh -m 0755 -d
 # Use standard autoconf approach to transform executable name using --program-prefix and --program-suffix
 transform	= s,x,x,
 

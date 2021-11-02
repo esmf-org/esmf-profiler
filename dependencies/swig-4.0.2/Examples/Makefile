@@ -49,7 +49,7 @@ CPPFLAGS   = $(SRCDIR_INCLUDE)
 CFLAGS     = 
 CXXFLAGS   = -I/include/boost-0 
 LDFLAGS    =
-prefix     = /home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2/../INSTALL/swig-4.0.2
+prefix     = /home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2/../INSTALL/swig-4.0.2
 exec_prefix= ${prefix}
 SRCS       =
 INCLUDES   =
@@ -229,7 +229,7 @@ tcl_clean:
 # files "perl.h", "EXTERN.h" and "XSUB.h".   With Perl5.003, it's
 # usually something like /usr/local/lib/perl5/arch-osname/5.003/CORE.
 
-PERL5_INCLUDE= /usr/lib/x86_64-linux-gnu/perl/5.30/CORE
+PERL5_INCLUDE= /usr/lib/x86_64-linux-gnu/perl/5.32/CORE
 
 # Extra Perl specific dynamic linking options
 PERL5_DLNK   = 
@@ -313,7 +313,7 @@ ifeq (,$(PY3))
   PYTHON_LIB    = 
   PYTHON        =  $(PYTHON_FLAGS)
 else
-  PYTHON_INCLUDE= $(DEFS) -I/usr/include/python3.8 -I/usr/include/python3.8
+  PYTHON_INCLUDE= $(DEFS) -I/usr/include/python3.9 -I/usr/include/python3.9
   PYTHON_LIB    = 
   PYTHON        =  $(PYTHON_FLAGS)
 endif
@@ -324,7 +324,7 @@ ifeq (,$(PY3))
   PYTHON_LINK   = 
 else
   PYTHON_DLNK   = 
-  PYTHON_LINK   = -lpython3.8
+  PYTHON_LINK   = -lpython3.9
 endif
 PYTHON_SO     = .so
 
@@ -335,7 +335,7 @@ else
   SWIGOPTPY3 = -py3
 endif
 
-PYCODESTYLE       = pycodestyle
+PYCODESTYLE       = 
 PYCODESTYLE_FLAGS = --ignore=E252,E30,E402,E501,E731,W291,W391
 
 # ----------------------------------------------------------------
@@ -673,7 +673,7 @@ java_clean:
 # There is a common makefile, 'Examples/javascript/js_example.mk' to simplify
 # create a configuration for a new example.
 
-ROOT_DIR = /home/rlong/Sandbox/esmf-profiler/dependencies/swig-4.0.2
+ROOT_DIR = /home/rocky/esmfdev/esmf-profiler.v1/dependencies/swig-4.0.2
 JSINCLUDES =  
 JSDYNAMICLINKING =  
 NODEJS = 
