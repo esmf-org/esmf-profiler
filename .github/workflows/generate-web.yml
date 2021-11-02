@@ -10,5 +10,5 @@ jobs:
     name: Generates a web report from binary traces in the current directory
     steps:
       - name: Generate
-        uses: esmf-org/esmf-profiler
+        uses: esmf-org/esmf-profiler@main
         

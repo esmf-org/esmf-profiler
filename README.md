@@ -1,6 +1,6 @@
 # esmf-profiler
 
-[![Python application](https://github.com/esmf-org/esmf-profiler/actions/workflows/python-app.yml/badge.svg?branch=development)](https://github.com/esmf-org/esmf-profiler/actions/workflows/python-app.yml)
+[![Python application](https://github.com/esmf-org/esmf-profiler/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/esmf-org/esmf-profiler/actions/workflows/python-app.yml)
 ### [Kanban Board](https://github.com/esmf-org/esmf-profiler/projects/1)
 
 Status of issues
