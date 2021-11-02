@@ -7,7 +7,6 @@
 
 
 import datetime
-import errno
 import json
 import logging
 import os
@@ -15,7 +14,7 @@ import shutil
 import tempfile
 
 from profiler.analyses import LoadBalance
-from profiler.git import git_add, git_commit, git_pull, git_push, _command_safe
+from profiler.git import _command_safe, git_add, git_commit, git_pull, git_push
 from profiler.trace import Trace
 from profiler.view import handle_args as _handle_args
 
@@ -23,6 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 def _copy_path(src, dst, symlinks=False, ignore=None):
+    """Safe copytree replacement"""
+    if os.path.exists(dst):
+        shutil.rmtree(dst)
     for item in os.listdir(src):
         s = os.path.join(src, item)
         d = os.path.join(dst, item)
@@ -31,46 +33,34 @@ def _copy_path(src, dst, symlinks=False, ignore=None):
         else:
             shutil.copy2(s, d)
 
-def _copy_path_old(src, dst):
-    try:
-        shutil.copytree(src, dst, dirs_exist_ok=True)
-    except OSError as exc:  # python >2.5
-        if exc.errno in (errno.ENOTDIR, errno.EINVAL):
-            shutil.copy(src, dst)
-        else:
-            raise
 
-
-# output some general JSON data
-# to be used on the site
 def _write_json_to_file(data, _path):
+    """Dumps json to file"""
     with open(_path, "w", encoding="utf-8") as _file:
         json.dump(data, _file)
 
 
 def _whoami():
-    """Returns the "whoami" command"""
+    """Returns the "whoami" command stdout"""
     return _command_safe(["whoami"]).stdout.strip()
 
 
-def _push_to_repo(outdir, name):
-    with tempfile.TemporaryDirectory() as tmpdir:
+def _push_to_repo(input_path, name):
+    # TODO No
 
-        # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
-        username = _whoami()
-        profilepath = _create_directory([tmpdir, username, name])
+    # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
+    username = _whoami()
+    profilepath = _create_directory([username, name])
 
-        # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
-        # copy static site
-        git_pull(tmpdir)
-        _copy_path(os.path.join(os.getcwd(), "/web/app/build/*"), profilepath)
+    # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
+    git_pull()
 
-        # copy json data
-        _copy_path(os.path.join(outdir, "/data"), profilepath)
+    # copy json data
+    _copy_path(input_path, profilepath)
 
-        git_add(profilepath, tmpdir)
-        git_commit(username, name, tmpdir)
-        git_push(tmpdir)
+    git_add(profilepath)
+    git_commit(username, name)
+    git_push()
 
 
 def _handle_logging(verbosity=0):
@@ -88,6 +78,7 @@ def _create_directory(paths):
     _path = os.path.join(*paths)
     os.makedirs(_path, exist_ok=True)
     return _path
+
 
 def _copy_gui_template(output_path):
     """Copies the pre-gen template into the output path"""
@@ -155,11 +146,9 @@ def main():
     # inject web gui files
     _copy_gui_template(output_data_path)
 
-
-
     if args.push is not None:
         # TODO Do we need args.push?
-        _push_to_repo(outdir=os.path.abspath(args.outdir), name=args["name"])
+        _push_to_repo(input_path=output_data_path, name=args.name)
 
 
 if __name__ == "__main__":

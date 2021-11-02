@@ -17,22 +17,22 @@ def _command_safe(cmd, cwd=os.getcwd()):
     )
 
 
-def git_add(profilepath, repopath):
+def git_add(profilepath, repopath=os.getcwd()):
     cmd = ["git", "add"] + glob.glob(profilepath + "/*")
     return _command_safe(cmd, repopath)
 
 
-def git_commit(username, name, repopath):
+def git_commit(username, name, repopath=os.getcwd()):
     cmd = ["git", "commit", "-a", "-m", f"'Commit profile {username}/{name}'"]
     return _command_safe(cmd, repopath)
 
 
-def git_pull(repopath, destination="origin"):
+def git_pull(repopath=os.getcwd(), destination="origin"):
     cmd = ["git", "pull", destination]
     return _command_safe(cmd, repopath)
 
 
-def git_push(repopath, destination="origin"):
+def git_push(repopath=os.getcwd(), destination="origin"):
     cmd = ["git", "push", destination]
     return _command_safe(cmd, repopath)
 
