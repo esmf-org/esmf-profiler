@@ -1,0 +1,1 @@
+git tag -a v$(python setup.py --version) -m 'description of version'
