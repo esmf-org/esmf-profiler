@@ -14,7 +14,14 @@ import shutil
 import tempfile
 
 from profiler.analyses import LoadBalance
-from profiler.git import _command_safe, git_add, git_commit, git_pull, git_push
+from profiler.git import (
+    _command_safe,
+    git_add,
+    git_commit,
+    git_pull,
+    git_push,
+    git_clone,
+)
 from profiler.trace import Trace
 from profiler.view import handle_args as _handle_args
 
@@ -46,21 +53,22 @@ def _whoami():
 
 
 def _push_to_repo(input_path, name):
-    # TODO No
+    with tempfile.TemporaryDirectory() as _temp:
+        # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
+        username = _whoami()
+        profilepath = _create_directory([_temp, username, name])
 
-    # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
-    username = _whoami()
-    profilepath = _create_directory([username, name])
+        # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
+        url = "git@github.com:esmf-org/esmf-profiler.git"
+        git_clone(url, _temp)
+        git_pull(_temp)
 
-    # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
-    git_pull()
+        # copy json data
+        _copy_path(input_path, profilepath)
 
-    # copy json data
-    _copy_path(input_path, profilepath)
-
-    git_add(profilepath)
-    git_commit(username, name)
-    git_push()
+        git_add(profilepath)
+        git_commit(username, name)
+        git_push()
 
 
 def _handle_logging(verbosity=0):
@@ -125,7 +133,7 @@ def run_analsysis(output_path, tracedir, data_file_name):
 
 def main():
     """main execution"""
-    OUTPUT_DATA_PATH = "data"
+
     SITE_FILE_NAME = "site.json"
     DATA_FILE_NAME = "load_balance.json"
 
