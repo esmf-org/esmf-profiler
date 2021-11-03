@@ -52,11 +52,10 @@ def _whoami():
     return _command_safe(["whoami"]).stdout.strip()
 
 
-def _push_to_repo(input_path, name):
+def _push_to_repo(input_path, name, url):
     with tempfile.TemporaryDirectory() as _temp:
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
         username = _whoami()
-        url = "git@github.com:esmf-org/esmf-profiler.git"
         git_clone(url, _temp)
 
         profilepath = _create_directory([_temp, username, name])
@@ -67,9 +66,9 @@ def _push_to_repo(input_path, name):
         # copy json data
         _copy_path(input_path, profilepath)
 
-        git_add(profilepath)
-        git_commit(username, name)
-        git_push()
+        git_add(profilepath, _temp)
+        git_commit(username, name, _temp)
+        git_push(_temp)
 
 
 def _handle_logging(verbosity=0):
@@ -157,7 +156,7 @@ def main():
 
     if args.push is not None:
         # TODO Do we need args.push?
-        _push_to_repo(input_path=output_data_path, name=args.name)
+        _push_to_repo(input_path=output_data_path, name=args.name, url=args.push)
 
 
 if __name__ == "__main__":
