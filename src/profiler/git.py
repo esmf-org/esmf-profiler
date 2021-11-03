@@ -12,9 +12,12 @@ def _command_safe(cmd, cwd=os.getcwd()):
     """_command_safe ensures commands are run safely and raise exceptions
     on error
     """
-    return subprocess.run(
-        cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
-    )
+    try:
+        return subprocess.run(
+            cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
+        )
+    except Exception as e:
+        print(f"Subprocess error: {e}")
 
 
 def git_add(profilepath, repopath=os.getcwd()):
@@ -38,5 +41,5 @@ def git_push(repopath=os.getcwd(), destination="origin"):
 
 
 def git_clone(url, tmpdir):
-    cmd = ["git", "clone", url, "tmprepo"]
+    cmd = ["git", "clone", url, tmpdir]
     return _command_safe(cmd, tmpdir)
