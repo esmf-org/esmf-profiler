@@ -18,6 +18,7 @@ def _command_safe(cmd, cwd=os.getcwd()):
         )
     except Exception as e:
         print(f"Subprocess error: {e}")
+        raise
 
 
 def git_add(profilepath, repopath=os.getcwd()):
