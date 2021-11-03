@@ -56,11 +56,12 @@ def _push_to_repo(input_path, name):
     with tempfile.TemporaryDirectory() as _temp:
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
         username = _whoami()
+        url = "git@github.com:esmf-org/esmf-profiler.git"
+        git_clone(url, _temp)
+
         profilepath = _create_directory([_temp, username, name])
 
         # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
-        url = "git@github.com:esmf-org/esmf-profiler.git"
-        git_clone(url, _temp)
         git_pull(_temp)
 
         # copy json data
