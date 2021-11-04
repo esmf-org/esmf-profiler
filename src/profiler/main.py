@@ -67,7 +67,19 @@ def _commit_profile(username, name, repopath=os.getcwd()):
     return git_commit(f"'Commit profile {username}/{name}'", repopath)
 
 
-def _push_to_repo(input_path, name, url):
+def push_profile_to_repo(input_path, name, url):
+    """push_profile_to_repo pushes the generated profile to a remote repository
+
+    A temp directory is created.  The remote repo is cloned into temp.
+
+    The generated report files are copied into the clone repository, added,
+    committed with a canned message, and push to the remote repository.
+
+    Args:
+        input_path (str): location of the generated profile
+        name (str): name of the profile
+        url (str): repository url
+    """
     with tempfile.TemporaryDirectory() as _temp:
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
         username = _whoami()
@@ -86,8 +98,12 @@ def _push_to_repo(input_path, name, url):
         git_push(_temp)
 
 
-def _handle_logging(verbosity=0):
-    """handles logging level based on passed in verbosity"""
+def handle_logging(verbosity=0):
+    """handle_logging sets up logging based on a verbosity level
+
+    Args:
+        verbosity (int, optional): Defaults to 0 (INFO).
+    """
     if verbosity > 0:
         _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
         logging.basicConfig(level=logging.DEBUG, format=_format)
@@ -96,20 +112,34 @@ def _handle_logging(verbosity=0):
         logging.basicConfig(level=logging.INFO, format=_format)
 
 
-def _create_directory(paths):
-    """Create a directory tree from the paths list"""
+def safe_create_directory(paths):
+    """safe_create_directory creates a nested directory top-down in order
+    of array.
+
+    Args:
+        paths (str, [str]): directory to create, with paths[0] being root and so on.
+
+    Returns:
+        str: path to the created directory
+    """
     _path = os.path.join(*paths)
     os.makedirs(_path, exist_ok=True)
     return _path
 
 
-def _copy_gui_template(output_path):
-    """Copies the pre-gen template into the output path"""
-    _copy_path(
-        os.path.join("./web/app/build"),
-        output_path,
-        ignore=shutil.ignore_patterns("/data"),
-    )
+def copy_gui_template(output_path, input_path="./web/app/build", _ignore="/data"):
+    """copy_gui_template copies the Web GUI template files
+
+    Ignores any existing /data file in input_path
+
+    Args:
+        output_path (str):
+        input_path (str, optional): Defaults to "./web/app/build".
+        _ignore (str || [str] , optional): Patterns to ignore. Defaults to "/data".
+
+    Raises:
+        FileNotFoundError: if input_path not found
+    """
 
 
 def create_site_file(name, output_path, site_file_name="site.json"):
@@ -160,10 +190,10 @@ def main():
     args = _handle_args()
 
     # setup logging based on args.verbose
-    _handle_logging(args.verbose)
+    handle_logging(args.verbose)
 
-    output_path = _create_directory([args.outdir])
-    output_data_path = _create_directory([output_path, "data"])
+    output_path = safe_create_directory([args.outdir])
+    output_data_path = safe_create_directory([output_path, "data"])
 
     # write site.json
     create_site_file(args.name, output_data_path, SITE_FILE_NAME)
@@ -172,11 +202,10 @@ def main():
     run_analsysis(output_data_path, args.tracedir, DATA_FILE_NAME)
 
     # inject web gui files
-    _copy_gui_template(output_path)
+    copy_gui_template(output_path)
 
     if args.push is not None:
-        # TODO Do we need args.push?
-        _push_to_repo(input_path=output_path, name=args.name, url=args.push)
+        push_profile_to_repo(input_path=output_path, name=args.name, url=args.push)
 
 
 if __name__ == "__main__":
