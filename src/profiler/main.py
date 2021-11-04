@@ -23,7 +23,7 @@ from profiler.git import (
     git_clone,
 )
 from profiler.trace import Trace
-from profiler.view import handle_args as _handle_args
+from profiler.view import handle_args
 
 logger = logging.getLogger(__name__)
 
@@ -203,7 +203,7 @@ def main():
     DATA_FILE_NAME = "load_balance.json"
 
     # collect user args
-    args = _handle_args()
+    args = handle_args()
 
     # setup logging based on args.verbose
     handle_logging(args.verbose)
