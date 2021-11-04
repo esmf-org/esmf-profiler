@@ -85,12 +85,11 @@ def push_profile_to_repo(input_path, name, url):
         username = _whoami()
         git_clone(url, _temp)
 
-        profilepath = _create_directory([_temp, username, name])
-
         # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
         git_pull(_temp)
 
         # copy json data
+        profilepath = safe_create_directory([_temp, username, name])
         _copy_path(input_path, profilepath)
 
         git_add(profilepath, _temp)
