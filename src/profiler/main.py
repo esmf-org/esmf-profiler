@@ -30,15 +30,16 @@ logger = logging.getLogger(__name__)
 
 def _copy_path(src, dst, symlinks=False, ignore=None):
     """Safe copytree replacement"""
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
     for item in os.listdir(src):
         s = os.path.join(src, item)
         d = os.path.join(dst, item)
-        if os.path.isdir(s):
-            shutil.copytree(s, d, symlinks, ignore)
-        else:
-            shutil.copy2(s, d)
+        try:
+            if os.path.isdir(s):
+                shutil.copytree(s, d, symlinks, ignore)
+            else:
+                shutil.copy2(s, d)
+        except FileExistsError as _:
+            continue
 
 
 def _write_json_to_file(data, _path):
@@ -104,7 +105,11 @@ def _create_directory(paths):
 
 def _copy_gui_template(output_path):
     """Copies the pre-gen template into the output path"""
-    _copy_path(os.path.join("./web/app/build"), output_path)
+    _copy_path(
+        os.path.join("./web/app/build"),
+        output_path,
+        ignore=shutil.ignore_patterns("/data"),
+    )
 
 
 def create_site_file(name, output_path, site_file_name="site.json"):
@@ -138,7 +143,7 @@ def run_analsysis(output_path, tracedir, data_file_name):
     logger.debug("Processing trace complete")
 
     # indicate to the analyses that all events have been processed
-    logger.info("Generating profile")
+    logger.info("Generating %s profiles", len(analyses))
     for analysis in analyses:
         data = analysis.finish()
         _write_json_to_file(data, os.path.join(output_path, data_file_name))
@@ -157,7 +162,8 @@ def main():
     # setup logging based on args.verbose
     _handle_logging(args.verbose)
 
-    output_data_path = _create_directory([args.outdir])
+    output_path = _create_directory([args.outdir])
+    output_data_path = _create_directory([output_path, "data"])
 
     # write site.json
     create_site_file(args.name, output_data_path, SITE_FILE_NAME)
@@ -166,11 +172,11 @@ def main():
     run_analsysis(output_data_path, args.tracedir, DATA_FILE_NAME)
 
     # inject web gui files
-    _copy_gui_template(output_data_path)
+    _copy_gui_template(output_path)
 
     if args.push is not None:
         # TODO Do we need args.push?
-        _push_to_repo(input_path=output_data_path, name=args.name, url=args.push)
+        _push_to_repo(input_path=output_path, name=args.name, url=args.push)
 
 
 if __name__ == "__main__":
