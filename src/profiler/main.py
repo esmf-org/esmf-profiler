@@ -38,7 +38,7 @@ def _copy_path(src, dst, symlinks=False, ignore=None):
                 shutil.copytree(s, d, symlinks, ignore)
             else:
                 shutil.copy2(s, d)
-        except FileExistsError as _:
+        except FileExistsError as _:  # We don't get this flag until Python 3.8
             continue
 
 
