@@ -140,6 +140,9 @@ def copy_gui_template(output_path, input_path="./web/app/build", _ignore="/data"
     Raises:
         FileNotFoundError: if input_path not found
     """
+    if not os.path.exists(input_path):
+        raise FileNotFoundError()
+    _copy_path(input_path, output_path, ignore=shutil.ignore_patterns(_ignore))
 
 
 def create_site_file(name, output_path, site_file_name="site.json"):
