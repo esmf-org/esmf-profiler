@@ -52,6 +52,20 @@ def _whoami():
     return _command_safe(["whoami"]).stdout.strip()
 
 
+def _commit_profile(username, name, repopath=os.getcwd()):
+    """git_commit
+
+    Args:
+        username (str):
+        name (str): name of report to commit
+        repopath (str, optional): local repository path if not cwd. Defaults to os.getcwd().
+
+    Returns:
+        CompletedProcess:
+    """
+    return git_commit(f"'Commit profile {username}/{name}'", repopath)
+
+
 def _push_to_repo(input_path, name, url):
     with tempfile.TemporaryDirectory() as _temp:
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
@@ -67,7 +81,7 @@ def _push_to_repo(input_path, name, url):
         _copy_path(input_path, profilepath)
 
         git_add(profilepath, _temp)
-        git_commit(username, name, _temp)
+        _commit_profile(username, name, _temp)
         git_push(_temp)
 
 
