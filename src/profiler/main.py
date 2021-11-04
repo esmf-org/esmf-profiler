@@ -46,6 +46,8 @@ def _write_json_to_file(data, _path):
     """Dumps json to file"""
     with open(_path, "w", encoding="utf-8") as _file:
         json.dump(data, _file)
+    if not os.path.exists(_path):
+        raise FileNotFoundError(f"failed to write output to {_path}")
 
 
 def _whoami():
