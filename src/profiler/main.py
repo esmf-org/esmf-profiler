@@ -75,19 +75,23 @@ def push_profile_to_repo(input_path, name, url):
     The generated report files are copied into the clone repository, added,
     committed with a canned message, and push to the remote repository.
 
+    We should be running `pull` after `clone` based on this answer for now:
+    https://stackoverflow.com/questions/55941908/do-i-have-to-run-git-pull-after-git-clone
+
+    #TODO: https://github.com/esmf-org/esmf-profiler/issues/42
+
     Args:
         input_path (str): location of the generated profile
         name (str): name of the profile
         url (str): repository url
     """
     with tempfile.TemporaryDirectory() as _temp:
-        # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
-        username = _whoami()
         git_clone(url, _temp)
-        git_pull(_temp) #https://stackoverflow.com/questions/55941908/do-i-have-to-run-git-pull-after-git-clone 
-        
-        # copy json data
+        git_pull(_temp)
+
+        username = _whoami()
         profilepath = safe_create_directory([_temp, username, name])
+
         _copy_path(input_path, profilepath)
 
         git_add(profilepath, _temp)
