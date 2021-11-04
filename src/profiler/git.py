@@ -28,7 +28,7 @@ def _command_safe(cmd, cwd=os.getcwd()):
         raise
 
 
-def git_add(_path, repopath=os.getcwd()):
+def add(_path, repopath=os.getcwd()):
     """git_add
 
     Args:
@@ -42,7 +42,7 @@ def git_add(_path, repopath=os.getcwd()):
     return _command_safe(cmd, repopath)
 
 
-def git_commit(message, repopath=os.getcwd()):
+def commit(message, repopath=os.getcwd()):
     """git_commit
 
     Args:
@@ -57,7 +57,7 @@ def git_commit(message, repopath=os.getcwd()):
     return _command_safe(cmd, repopath)
 
 
-def git_pull(destination="origin", repopath=os.getcwd()):
+def pull(destination="origin", repopath=os.getcwd()):
     """git_pull
 
     Args:
@@ -72,7 +72,7 @@ def git_pull(destination="origin", repopath=os.getcwd()):
     return _command_safe(cmd, repopath)
 
 
-def git_push(destination="origin", repopath=os.getcwd()):
+def push(destination="origin", repopath=os.getcwd()):
     """git_push
 
     Args:
@@ -86,7 +86,7 @@ def git_push(destination="origin", repopath=os.getcwd()):
     return _command_safe(cmd, repopath)
 
 
-def git_clone(url, target_path):
+def clone(url, target_path):
     """git_clone
 
     Args:

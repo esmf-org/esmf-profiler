@@ -14,14 +14,7 @@ import shutil
 import tempfile
 
 from profiler.analyses import LoadBalance
-from profiler.git import (
-    _command_safe,
-    git_add,
-    git_commit,
-    git_pull,
-    git_push,
-    git_clone,
-)
+from profiler import git
 from profiler.trace import Trace
 from profiler.view import handle_args
 
@@ -52,7 +45,7 @@ def _write_json_to_file(data, _path):
 
 def _whoami():
     """Returns the "whoami" command stdout"""
-    return _command_safe(["whoami"]).stdout.strip()
+    return git._command_safe(["whoami"]).stdout.strip()
 
 
 def _commit_profile(username, name, repopath=os.getcwd()):
@@ -66,7 +59,7 @@ def _commit_profile(username, name, repopath=os.getcwd()):
     Returns:
         CompletedProcess:
     """
-    return git_commit(f"'Commit profile {username}/{name}'", repopath)
+    return git.commit(f"'Commit profile {username}/{name}'", repopath)
 
 
 def push_profile_to_repo(input_path, name, url):
@@ -88,17 +81,17 @@ def push_profile_to_repo(input_path, name, url):
         url (str): repository url
     """
     with tempfile.TemporaryDirectory() as _temp:
-        git_clone(url, _temp)
-        git_pull(_temp)
+        git.clone(url, _temp)
+        git.pull(_temp)
 
         username = _whoami()
         profilepath = safe_create_directory([_temp, username, name])
 
         _copy_path(input_path, profilepath)
 
-        git_add(profilepath, _temp)
+        git.add(profilepath, _temp)
         _commit_profile(username, name, _temp)
-        git_push(_temp)
+        git.push(_temp)
 
 
 def handle_logging(verbosity=0):
