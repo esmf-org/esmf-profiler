@@ -153,11 +153,16 @@ def create_site_file(name, output_path, site_file_name="site.json"):
         name (str): name to give to the site
         output_path (str): path
         site_file_name (str, optional): The file name. Defaults to "site.json".
+
+    Returns:
+        str: the path of the created site file
     """
+    output_file_path = os.path.join(output_path, site_file_name)
     _write_json_to_file(
         {"name": name, "timestamp": str(datetime.datetime.now())},
-        os.path.join(output_path, site_file_name),
+        output_file_path,
     )
+    return output_file_path
 
 
 def run_analsysis(output_path, tracedir, data_file_name):
@@ -168,6 +173,9 @@ def run_analsysis(output_path, tracedir, data_file_name):
         output_path (str): path
         tracedir (str): path containing the binary traces
         data_file_name (str): name to give the output file
+
+    Returns:
+        str: path off the output file
     """
     # the only requested analysis is a load balance at the root level
     analyses = [LoadBalance(None, output_path)]
@@ -178,10 +186,12 @@ def run_analsysis(output_path, tracedir, data_file_name):
 
     # indicate to the analyses that all events have been processed
     logger.info("Generating %s profiles", len(analyses))
+    output_file_path = os.path.join(output_path, data_file_name)
     for analysis in analyses:
         data = analysis.finish()
-        _write_json_to_file(data, os.path.join(output_path, data_file_name))
+        _write_json_to_file(data, output_file_path)
     logger.debug("Finishing analyses complete")
+    return output_file_path
 
 
 def main():
