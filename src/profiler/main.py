@@ -84,10 +84,8 @@ def push_profile_to_repo(input_path, name, url):
         # TODO: https://github.com/esmf-org/esmf-profiler/issues/42
         username = _whoami()
         git_clone(url, _temp)
-
-        # TODO:  https://github.com/esmf-org/esmf-profiler/issues/39
-        git_pull(_temp)
-
+        git_pull(_temp) #https://stackoverflow.com/questions/55941908/do-i-have-to-run-git-pull-after-git-clone 
+        
         # copy json data
         profilepath = safe_create_directory([_temp, username, name])
         _copy_path(input_path, profilepath)
