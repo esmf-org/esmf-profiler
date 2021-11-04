@@ -1,8 +1,18 @@
+""" CLI View Layer
+
+author: Ryan Long <ryan.long@noaa.gov>
+
+```python
+args = handle_args()
+args.name // access args as named properties
+```
+
+"""
 import argparse
 import os
 
 
-def alphanumberic(value):
+def _alphanumberic(value):
     if not value.isalnum():
         raise ValueError(
             f"name argument must contain only letters and numbers: {value}"
@@ -10,19 +20,29 @@ def alphanumberic(value):
     return value
 
 
-def directory(value):
+def _directory(value):
     if not os.path.isdir(value):
         raise ValueError(f"{os.path.isdir} is not a valid directory")
     return value
 
 
 def handle_args():
+    """handle_args returns an object whose properties correspond to named arguments
+
+    ```python
+    args = handle_args()
+    args.name // access args as named properties
+    ```
+
+    Returns:
+        object: property accessor
+    """
     parser = argparse.ArgumentParser(description="ESMF Profiler")
     parser.add_argument(
         "-t",
         "--tracedir",
         help="directory containing the ESMF trace",
-        type=directory,
+        type=_directory,
         required=True,
     )
     parser.add_argument(
@@ -30,7 +50,7 @@ def handle_args():
         "--name",
         help="name to use for the generated profile",
         required=True,
-        type=alphanumberic,
+        type=_alphanumberic,
     )
     parser.add_argument(
         "-o", "--outdir", help="path to output directory", required=True
