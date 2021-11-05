@@ -57,6 +57,7 @@ make clean
 make -j6
 make install
 cd ..
+# rm -rf $SWIG
 export PATH=$PWD/INSTALL/$SWIG/bin:$PATH
 
 echo "Installing ${BT2}"
@@ -71,6 +72,14 @@ make clean
 make -j6
 make install
 cd ..
+
+echo "Removing install directories"
+# rm -rf $BT2
+# rm -rf $PWD/INSTALL/$SWIG
+
+echo "SUCCESS"
+exit 0;
+
 
 
 
