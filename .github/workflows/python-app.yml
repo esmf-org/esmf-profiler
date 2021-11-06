@@ -11,9 +11,11 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        python-version: ['3.x']
+    name: Python ${{ matrix.python-version }} Test
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.9
