@@ -68,5 +68,11 @@ def handle_args():
         action="count",
         default=0,
     )
+    parser.add_argument(
+        "-s",
+        "--serve",
+        help="start a local server to host the profile results",
+        action="store_true",
+    )
 
     return parser.parse_args()
