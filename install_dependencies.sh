@@ -75,7 +75,7 @@ cd ..
 
 echo "Removing install directories"
 # rm -rf $BT2
-# rm -rf $PWD/INSTALL/$SWIG
+rm -rf $PWD/INSTALL/$SWIG
 
 echo "SUCCESS"
 exit 0;
