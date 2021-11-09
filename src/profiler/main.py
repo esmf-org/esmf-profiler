@@ -52,6 +52,7 @@ def _whoami():
 
 
 def _start_server(build_path, url="localhost:8000"):
+    logger.info("Starting local server port 8000")
     subprocess.call(
         ["python", "-m", "http.server", "--directory", build_path],
         stdout=PIPE,
@@ -94,7 +95,6 @@ def push_profile_to_repo(input_path, name, url):
     """
     with tempfile.TemporaryDirectory() as _temp:
         git.clone(url, _temp)
-        git.pull(_temp)
 
         username = _whoami()
         profilepath = safe_create_directory([_temp, username, name])
