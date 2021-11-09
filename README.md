@@ -164,3 +164,4 @@ export LD_LIBRARY_PATH=/glade/u/home/dunlap/bt/INSTALL/babeltrace2-2.0.4/lib:$LD
 ## Resources
 https://docs.pytest.org/en/6.2.x/
 https://code.visualstudio.com/docs/python/testing
+http://www.swig.org/Doc4.0/SWIGDocumentation.html
