@@ -17,6 +17,9 @@ from profiler.analyses import LoadBalance
 from profiler import git
 from profiler.trace import Trace
 from profiler.view import handle_args
+from subprocess import Popen, PIPE
+import subprocess
+import webbrowser
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +49,16 @@ def _write_json_to_file(data, _path):
 def _whoami():
     """Returns the "whoami" command stdout"""
     return git._command_safe(["whoami"]).stdout.strip()
+
+
+def _start_server(build_path, url="localhost:8000"):
+    logger.info("Starting local server port 8000")
+    subprocess.call(
+        ["python", "-m", "http.server", "--directory", build_path],
+        stdout=PIPE,
+        stderr=PIPE,
+    )
+    webbrowser.open(url, new=2, autoraise=True)
 
 
 def _commit_profile(username, name, repopath=os.getcwd()):
@@ -82,7 +95,6 @@ def push_profile_to_repo(input_path, name, url):
     """
     with tempfile.TemporaryDirectory() as _temp:
         git.clone(url, _temp)
-        git.pull(_temp)
 
         username = _whoami()
         profilepath = safe_create_directory([_temp, username, name])
@@ -215,6 +227,9 @@ def main():
 
     if args.push is not None:
         push_profile_to_repo(input_path=output_path, name=args.name, url=args.push)
+
+    if args.serve:
+        _start_server(output_path)
 
 
 if __name__ == "__main__":
