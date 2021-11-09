@@ -46,19 +46,14 @@ BT2='babeltrace2-2.0.4'
 
 cd ./dependencies
 
-echo "Installing ${SWIG}"
+echo "Bootstrapping ${SWIG}"
 if [ ! -e ${SWIG}.tar.gz ]; then
   exit 1;
 fi
 tar -xovzf ${SWIG}.tar.gz || exit 1
 cd $SWIG
-./configure --prefix=$PWD/../INSTALL/$SWIG --without-go --without-r --without-lua --without-csharp --without-ocaml --without-ruby --without-mzscheme --without-java --without-javascript --without-octave --without-scilab
-make clean
-make -j6
-make install
+./preinst-swig -python -copyright || exit 1
 cd ..
-# rm -rf $SWIG
-export PATH=$PWD/INSTALL/$SWIG/bin:$PATH
 
 echo "Installing ${BT2}"
 if [ ! -e ${BT2}.tar.bz2 ]; then
@@ -75,6 +70,7 @@ cd ..
 
 echo "Removing install directories"
 # rm -rf $BT2
+rm -rf $SWIG
 rm -rf $PWD/INSTALL/$SWIG
 
 echo "SUCCESS"
