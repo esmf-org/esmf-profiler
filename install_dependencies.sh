@@ -55,8 +55,10 @@ cd $SWIG
 ./configure --prefix=$PWD/../INSTALL/$SWIG --without-go --without-r --without-lua --without-csharp --without-ocaml --without-ruby --without-mzscheme --without-java --without-javascript --without-octave --without-scilab
 make clean
 make -j6
-./preinst-swig -python -copyright || exit 1
+make install
 cd ..
+
+export PATH=$PWD/INSTALL/$SWIG/bin:$PATH
 
 echo "Installing ${BT2}"
 if [ ! -e ${BT2}.tar.bz2 ]; then
@@ -65,7 +67,7 @@ fi
 tar -xojvf ${BT2}.tar.bz2 || exit 1
 cd $BT2
 
-./configure --prefix=$PWD/../INSTALL/$BT2 --enable-shared --enable-python-bindings --enable-python-plugins --disable-man-pages --disable-debug-info
+./configure --prefix=$PWD/../INSTALL/$BT2 --enable-static --enable-python-bindings --enable-python-plugins --disable-man-pages --disable-debug-info
 make clean
 make -j6
 make install
