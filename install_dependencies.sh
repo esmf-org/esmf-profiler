@@ -52,6 +52,9 @@ if [ ! -e ${SWIG}.tar.gz ]; then
 fi
 tar -xovzf ${SWIG}.tar.gz || exit 1
 cd $SWIG
+./configure --prefix=$PWD/../INSTALL/$SWIG --without-go --without-r --without-lua --without-csharp --without-ocaml --without-ruby --without-mzscheme --without-java --without-javascript --without-octave --without-scilab
+make clean
+make -j6
 ./preinst-swig -python -copyright || exit 1
 cd ..
 
