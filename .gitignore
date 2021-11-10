@@ -32,6 +32,3 @@ htmlcov/
 node_modules/
 
 dependencies/**/
-
-web/app/build
-weg/app/public
