@@ -23,16 +23,17 @@ function Report() {
   }, []);
 
   const _fetchData = (path) => {
-    axios
-      .get("data/load_balance.json")
-      .then((resp) => setData(() => resp.data))
+    fetch("data/load_balance.json")
+      .then((resp) => resp.json())
+      .then((data) => setData(() => data))
       .catch((err) => console.log(err));
   };
 
   const _fetchSite = (path) => {
     axios
       .get("data/site.json")
-      .then((resp) => setSite(() => resp.data))
+      .then((resp) => resp.json())
+      .then((data) => setSite(() => data))
       .catch((err) => console.log(err));
   };
 
