@@ -52,7 +52,7 @@ def _whoami():
 
 
 def _start_server(build_path, url="localhost:8000"):
-    logger.info("Starting local server port 8000")
+    logger.info("Starting local server port 8000 (CTRL+C to close)")
     subprocess.call(
         ["python", "-m", "http.server", "--directory", build_path],
         stdout=PIPE,
