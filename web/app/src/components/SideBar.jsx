@@ -63,7 +63,7 @@ export default function Sidebar() {
               ESMF Profiler{" "}
               <div>
                 {/* TODO Add JS to dynamically update version based on tag */}
-                <img src="https://img.shields.io/badge/version-0.1.0-success"></img>
+                <img src="https://img.shields.io/badge/version-0.1.1-success"></img>
               </div>
             </div>
           </div>
