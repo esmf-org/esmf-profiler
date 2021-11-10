@@ -2,7 +2,6 @@ import ChartContainer from "./ChartContainer";
 import Stacked from "../charts/Stacked";
 import Sidebar from "./SideBar";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 
 import { Helmet } from "react-helmet-async";
 
@@ -12,10 +11,6 @@ function Report() {
     name: "",
     timestamp: "",
   });
-
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-  };
 
   useEffect(() => {
     _fetchData();
@@ -30,8 +25,7 @@ function Report() {
   };
 
   const _fetchSite = (path) => {
-    axios
-      .get("data/site.json")
+    fetch("data/site.json")
       .then((resp) => resp.json())
       .then((data) => setSite(() => data))
       .catch((err) => console.log(err));
