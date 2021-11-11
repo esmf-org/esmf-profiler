@@ -13,10 +13,10 @@ import os
 import shutil
 import tempfile
 
-from profiler.analyses import LoadBalance
-from profiler import git
-from profiler.trace import Trace
-from profiler.view import handle_args
+from esmf_profiler.analyses import LoadBalance
+from esmf_profiler import git
+from esmf_profiler.trace import Trace
+from esmf_profiler.view import handle_args
 from subprocess import Popen, PIPE
 import subprocess
 import webbrowser

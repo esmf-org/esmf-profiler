@@ -8,9 +8,9 @@ import logging
 
 import bt2
 
-from profiler.utils import print_execution_time
-from profiler.analyses import Analysis
-from profiler.event import TraceEvent, RegionProfile, DefineRegion
+from esmf_profiler.utils import print_execution_time
+from esmf_profiler.analyses import Analysis
+from esmf_profiler.event import TraceEvent, RegionProfile, DefineRegion
 
 logger = logging.getLogger(__name__)
 # _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"

@@ -1,4 +1,4 @@
-from profiler.event import TraceEvent, DefineRegion, RegionProfile
+from esmf_profiler.event import TraceEvent, DefineRegion, RegionProfile
 from typing import Dict
 from abc import ABC, abstractproperty
 import logging

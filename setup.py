@@ -92,9 +92,9 @@ setup(
         # 'Programming Language :: Python :: 3',
         # 'Programming Language :: Python :: 3.5',
         "Programming Language :: Python :: 3.6",
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3 :: Only",
     ],
     # This field adds keywords for your project which will appear on the
@@ -167,7 +167,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         "console_scripts": [
-            "esmf-profiler=profiler.main:main",
+            "esmf-profiler=esmf_profiler.main:main",
         ],
     },
     # List additional URLs that are relevant to your project as a dict.
