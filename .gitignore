@@ -32,3 +32,5 @@ htmlcov/
 node_modules/
 
 dependencies/**/
+
+output/data
