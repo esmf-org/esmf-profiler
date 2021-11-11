@@ -8,7 +8,7 @@ import glob
 import tempfile
 import pytest
 
-from profiler.main import (
+from esmf_profiler.main import (
     create_site_file,
     run_analsysis,
     safe_create_directory,
