@@ -52,7 +52,7 @@ chmod +x ./install.sh
 source ./venv/bin/activate
 ```
 
-6.  For pre-release, install the *esmf-profiler* using [pip editable install](https://pip.pypa.io/en/latest/cli/pip_install/#editable-installs).  Running tests require access to [PyPi Public Repositories](https://pypi.org/).  This step is optional, but encouraged.  
+6.  For pre-release, install the *esmf-profiler* using [pip editable install](https://pip.pypa.io/en/latest/cli/pip_install/#editable-installs).  Running tests require access to [PyPi Public Repositories](https://pypi.org/).  This step is optional, but encouraged.  Some HPC platforms do not have open internet access, so will not be able to install the tests.
 ```bash
 pip install -e . or pip install -e .[test] // to run tests
 ```
