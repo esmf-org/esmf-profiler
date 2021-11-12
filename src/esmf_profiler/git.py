@@ -17,15 +17,24 @@ logger = logging.getLogger(__name__)
 def _command_safe(cmd, cwd=os.getcwd()):
     """_command_safe ensures commands are run safely and raise exceptions
     on error
+
+    https://stackoverflow.com/questions/4917871/does-git-return-specific-return-error-codes
     """
     try:
         logger.debug("running '%s' in '%s'", cmd, cwd)
         return subprocess.run(
-            cmd, cwd=cwd, check=True, stdout=subprocess.PIPE, encoding="utf-8"
+            cmd,
+            cwd=cwd,
+            capture_output=True,
+            check=True,
+            encoding="utf-8",
         )
-    except Exception as error:
-        logger.error("Subprocess error: %s", error)
-        raise
+    except subprocess.CalledProcessError as error:
+        logger.info(error.stdout)
+        if error.stderr:
+            logger.error(error.stderr)
+            raise
+        return
 
 
 def add(_path, repopath=os.getcwd()):
