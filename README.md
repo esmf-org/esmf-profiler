@@ -9,10 +9,6 @@ Status of issues
 
 Features, bugs, and enhancements.
 
-## Install Jinja2 into your Python environment
-
-https://jinja.palletsprojects.com/en/3.0.x/intro/#installation
-
 ## Description
 
 The ESMF-Profiler project is designed to take trace binary output and display it in a web based GUI.
