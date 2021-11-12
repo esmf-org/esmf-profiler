@@ -87,7 +87,63 @@ Here, output is being directed to ```/home/traces/output```.
 :warning: 
 Be sure the output path you pass to the ```esmf-profiler``` command has your client folder as it's root (```./traces``` *in the example*).  Otherwise, the output will not persist to your client machine after the application has run.
 
+## Generating and Viewing Profiles
+```bash
 
+You can see the help menu displayed below after installation by running ```esmf-profiler``` with no arguments.
+
+usage: esmf-profiler [-h] -t TRACEDIR -n NAME -o OUTDIR [-p PUSH] [-v] [-s]
+
+ESMF Profiler
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t TRACEDIR, --tracedir TRACEDIR
+                        directory containing the ESMF trace
+  -n NAME, --name NAME  name to use for the generated profile
+  -o OUTDIR, --outdir OUTDIR
+                        path to output directory
+  -p PUSH, --push PUSH  git url of remote repository where to push profile
+  -v, --verbose         enable verbose output
+  -s, --serve           start a local server to host the profile results
+```
+
+### Examples
+
+```bash
+esmf-profiler -t ./fresh_traces -n "build_abc123" -o "output" -s
+```
+This is the most common way to use the profiler.  It requires some simple user permissions on the server you're running the application on.  
+
+You're telling the application to:
+- **-t ./freshtraces** The traces to run on are contained in **fresh_traces**, a subdirectory of the current working directory
+- **-n "build_abc123** Name the output (the profile) "build_abc123".  This will be used for titles, directories, links, etc. in the GUI and file structure.
+- **-o "output"** Send the output to **output** a directory that will be created (if no already exists) in the current working directory.  All output will be sent there.
+- **-s** On success, start an ultra-light-weight python native web server at 0.0.0.0:8000
+
+```bash
+esmf-profiler -t ./fresh_traces -n "build_abc123" -o "output" -p 'git@github.com:user_name/repo_name.git'
+```
+This example will run the processing work locally as the first example, but then publish the results to the repository at ```git@github.com:user_name/repo_name.git```.
+
+Refer to the [Quickstart for Github Pages]("https://docs.github.com/en/pages/quickstart") to learn about using github to automatically publish your results into a public, viewable page on github.io.
+
+```bash
+docker build -t esmf-profiler-image .
+
+docker run -it -v $(pwd)/traces:/home/traces esmf-profiler-image esmf-profiler -t /home/traces -n 'my_profile' -o /home/traces/output
+```
+This example utitilizes the [Dockerfile] for those leveraging Docker.
+
+The image is built first, then ```<current_working_directory>/traces``` is mounted to ```/home/traces``` on the virtual machine.
+
+Commands are the same for local and docker installations.
+
+Here, we're telling the application to:
+- **-t ./freshtraces** The traces to run on are contained in /home/traces (locally, $pwd and traces)
+- **-n "build_abc123** Name the output (the profile) "my_profile".
+- **-o "/home/traces/output** The target for the output of the applications.  **This must be a directory mounted via the ```docker run``` command
+as discussed above.  Otherwise, the results will not persists after the docker run command has completed.
 
 ## Dependencies
 
