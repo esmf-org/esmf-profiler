@@ -1,8 +1,5 @@
 """ Main point of execution
 
-    Notes:
-
-    * Remove any 'print_execution_time' calls before going to prod
 """
 
 
@@ -29,7 +26,6 @@ def bootstrap():
 
     bt2_lib_path = None
     for root, dir, _ in os.walk(os.getcwd(), followlinks=True):
-        print(dir)
         if "site-packages" in dir:
             bt2_lib_path = os.path.join(root, "site-packages", "lib")
             sys.path.append(bt2_lib_path)
