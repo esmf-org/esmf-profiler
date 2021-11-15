@@ -21,6 +21,7 @@ import webbrowser
 
 logger = logging.getLogger(__name__)
 
+
 def _copy_path(src, dst, symlinks=False, ignore=None):
     """Safe copytree replacement"""
     for item in os.listdir(src):
@@ -203,8 +204,6 @@ def main():
 
     SITE_FILE_NAME = "site.json"
     DATA_FILE_NAME = "load_balance.json"
-
-    bootstrap()
 
     # collect user args
     args = handle_args()
