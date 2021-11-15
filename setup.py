@@ -3,15 +3,33 @@ See:
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
 """
 
-from os import path
+import os, sys
 
 # Always prefer setuptools over distutils
 from setuptools import find_packages, setup
 
-here = path.abspath(path.dirname(__file__))
+here = os.path.abspath(os.path.dirname(__file__))
+
+
+def bootstrap():
+
+    bt2_lib_path = None
+    for root, dir, _ in os.walk(os.getcwd(), followlinks=True):
+        if "site-packages" in dir:
+            bt2_lib_path = os.path.join(root, "site-packages", "lib")
+            sys.path.append(bt2_lib_path)
+            break
+
+    os.environ["LD_LIBRARY_PATH"] = os.path.join(
+        os.getcwd(), "dependencies", "INSTALL", "babeltrace2-2.0.4", "lib"
+    )
+
+
+bootstrap()
+
 
 # Get the long description from the README file
-with open(path.join(here, "README.md")) as f:
+with open(os.path.join(here, "README.md")) as f:
     long_description = f.read()
 
 # Arguments marked as "Required" below must be included for upload to PyPI.

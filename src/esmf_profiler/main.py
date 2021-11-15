@@ -21,21 +21,6 @@ import webbrowser
 
 logger = logging.getLogger(__name__)
 
-
-def bootstrap():
-
-    bt2_lib_path = None
-    for root, dir, _ in os.walk(os.getcwd(), followlinks=True):
-        if "site-packages" in dir:
-            bt2_lib_path = os.path.join(root, "site-packages", "lib")
-            sys.path.append(bt2_lib_path)
-            break
-
-    os.environ["LD_LIBRARY_PATH"] = os.path.join(
-        os.getcwd(), "dependencies", "INSTALL", "babeltrace2-2.0.4", "lib"
-    )
-
-
 def _copy_path(src, dst, symlinks=False, ignore=None):
     """Safe copytree replacement"""
     for item in os.listdir(src):
