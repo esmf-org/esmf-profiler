@@ -11,21 +11,22 @@ from setuptools import find_packages, setup
 here = os.path.abspath(os.path.dirname(__file__))
 
 
-def bootstrap():
+# TODO Revist
+# def bootstrap():
 
-    bt2_lib_path = None
-    for root, dir, _ in os.walk(os.getcwd(), followlinks=True):
-        if "site-packages" in dir:
-            bt2_lib_path = os.path.join(root, "site-packages", "lib")
-            sys.path.append(bt2_lib_path)
-            break
+#     bt2_lib_path = None
+#     for root, dir, _ in os.walk(os.getcwd(), followlinks=True):
+#         if "site-packages" in dir:
+#             bt2_lib_path = os.path.join(root, "site-packages", "lib")
+#             sys.path.append(bt2_lib_path)
+#             break
 
-    os.environ["LD_LIBRARY_PATH"] = os.path.join(
-        os.getcwd(), "dependencies", "INSTALL", "babeltrace2-2.0.4", "lib"
-    )
+#     os.environ["LD_LIBRARY_PATH"] = os.path.join(
+#         os.getcwd(), "dependencies", "INSTALL", "babeltrace2-2.0.4", "lib"
+#     )
 
 
-bootstrap()
+# bootstrap()
 
 
 # Get the long description from the README file
