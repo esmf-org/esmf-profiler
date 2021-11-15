@@ -20,9 +20,9 @@ fi
 
 echo "Adding BT2/lib to PYTHONPATH"
 echo "export PYTHONPATH=$BT2PYTHON:$PYTHONPATH" >> ./venv/bin/activate
-echo "set PYTHONPATH $BT2PYTHON:$PYTHONPATH" >> ./venv/bin/activate.csh
+echo "set PYTHONPATH=$PYTHONPATH:$BT2PYTHON" >> ./venv/bin/activate.csh
 
 echo "Adding BT2/lib to LD_LIBRARY_PATH" 
 
 echo "export LD_LIBRARY_PATH=$PWD/dependencies/INSTALL/$BT2/lib:$LD_LIBRARY_PATH" >> ./venv/bin/activate
-echo "set LD_LIBRARY_PATH $PWD/dependencies/INSTALL/$BT2/lib:$LD_LIBRARY_PATH" >> ./venv/bin/activate.csh
+echo "set LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/dependencies/INSTALL/$BT2/lib" >> ./venv/bin/activate.csh
