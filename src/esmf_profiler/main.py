@@ -6,6 +6,7 @@
 """
 
 
+import sys
 import datetime
 import json
 import logging
@@ -17,11 +18,26 @@ from esmf_profiler.analyses import LoadBalance
 from esmf_profiler import git
 from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
-from subprocess import Popen, PIPE
+from subprocess import PIPE
 import subprocess
 import webbrowser
 
 logger = logging.getLogger(__name__)
+
+
+def bootstrap():
+
+    bt2_lib_path = None
+    for root, dir, _ in os.walk(os.getcwd(), followlinks=True):
+        print(dir)
+        if "site-packages" in dir:
+            bt2_lib_path = os.path.join(root, "site-packages", "lib")
+            sys.path.append(bt2_lib_path)
+            break
+
+    os.environ["LD_LIBRARY_PATH"] = os.path.join(
+        os.getcwd(), "dependencies", "INSTALL", "babeltrace2-2.0.4", "lib"
+    )
 
 
 def _copy_path(src, dst, symlinks=False, ignore=None):
@@ -206,6 +222,8 @@ def main():
 
     SITE_FILE_NAME = "site.json"
     DATA_FILE_NAME = "load_balance.json"
+
+    bootstrap()
 
     # collect user args
     args = handle_args()
