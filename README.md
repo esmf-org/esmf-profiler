@@ -25,6 +25,9 @@ export ESMF_RUNTIME_PROFILE_OUTPUT="BINARY SUMMARY"
 
 ### Local Install:
 
+:warning:
+At the time of this release IntelPython is not compatible.
+
 1. Clone the [latest stable branch](https://github.com/esmf-org/esmf-profiler.git) from the [esmf-profiler repository](https://github.com/esmf-org/esmf-profiler).
 
 2. cd into the appliction path
@@ -58,6 +61,9 @@ pip install -e . or pip install -e .[test] // to run tests
 python -m pytest // optional, to run tests
 esmf-profiler
 ```
+
+:information_source: 
+If using **C-Shell**, deactivate then reactivate the virtual environment to run the applicication.
 
 ### Install with Docker
 
