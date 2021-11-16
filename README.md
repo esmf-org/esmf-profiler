@@ -1,3 +1,5 @@
+![alt text](https://i.imgur.com/69q9VuJ.png)
+
 # esmf-profiler
 
 [![Python application](https://github.com/esmf-org/esmf-profiler/actions/workflows/python-app.yml/badge.svg?branch=development)](https://github.com/esmf-org/esmf-profiler/actions/workflows/python-app.yml)
