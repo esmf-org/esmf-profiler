@@ -14,7 +14,7 @@ RUN apt-get install -y -q git build-essential libssl-dev libffi-dev python3 pyth
 # Clone profiler
 # TODO: Specifiying a branch here, should be main once we get into prod
 WORKDIR /home
-RUN git clone https://github.com/esmf-org/esmf-profiler.git
+RUN git clone -b main https://github.com/esmf-org/esmf-profiler.git
 WORKDIR /home/esmf-profiler
 
 # TODO find out about depth 1 flag for speed
