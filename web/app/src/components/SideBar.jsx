@@ -1,17 +1,15 @@
-import React from "react";
-import { useState } from "react";
-
-import Nav from "react-bootstrap/Nav";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHubspot } from "@fortawesome/free-brands-svg-icons";
 import {
   faBox,
-  faClock,
   faChartBar,
-  faProjectDiagram,
+  faClock,
   faHdd,
+  faProjectDiagram,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from "react";
+import Nav from "react-bootstrap/Nav";
+
 // import styled from "styled-components";
 
 // const open = styled.div`
