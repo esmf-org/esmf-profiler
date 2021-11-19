@@ -2,8 +2,6 @@
 
 """
 
-
-import sys
 import datetime
 import json
 import logging
@@ -20,6 +18,9 @@ import subprocess
 import webbrowser
 
 import time
+#import cProfile, pstats
+#from pycallgraph import PyCallGraph
+#from pycallgraph.output import GraphvizOutput
 
 logger = logging.getLogger(__name__)
 
@@ -198,9 +199,14 @@ def run_analysis(output_path, tracedir, data_file_name, xopts):
         except ValueError:
             logger.info(f"Invalid chunksize: {xopts['chunksize']} - using default value of {chunksize}")
 
+    #profiler = cProfile.Profile()
+
     logger.info("Processing trace: %s", tracedir)
     start = time.time()
+    #profiler.enable()
+    #with PyCallGraph(output=GraphvizOutput()):
     Trace.from_path_chunk(tracedir, analyses=analyses, chunksize=chunksize)
+    #profiler.disable()
     end = time.time()
     logger.debug(f"TOTAL TIME for chunk size {chunksize} = {end - start}")
 
@@ -213,6 +219,10 @@ def run_analysis(output_path, tracedir, data_file_name, xopts):
         data = analysis.finish()
         _write_json_to_file(data, output_file_path)
     logger.debug("Finishing analyses complete")
+
+    #stats = pstats.Stats(profiler).sort_stats('tottime')
+    #stats.print_stats()
+
     return output_file_path
 
 

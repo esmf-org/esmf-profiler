@@ -37,18 +37,18 @@ class TraceEvent(ABC):
         return ""
 
     def get(self, key):
-        try:
-            if str(key).lower() in self.keys:
-                return self.payload[str(key).lower()]
-        except KeyError:
-            if key in dir(self):
-                return getattr(self, key)
+        return self._msg.event.payload_field[key]
+        #try:
+        #    if str(key).lower() in self.keys:
+        #        return self.payload[str(key).lower()]
+        #except KeyError:
+        #    if key in dir(self):
+        #        return getattr(self, key)
+        #raise AttributeError(f"Key '{key}' does not exist on {self.__class__.__name__}")
 
-        raise AttributeError(f"Key '{key}' does not exist on {self.__class__.__name__}")
-
-    @property
-    def payload(self):
-        return self._msg.event.payload_field
+    #@property
+    #def payload(self):
+    #    return self._msg.event.payload_field
 
     @property
     def pet(self):

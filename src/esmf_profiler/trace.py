@@ -98,11 +98,11 @@ class Trace:
             if type(msg) is bt2._EventMessageConst:
                 eventName = msg.event.name
                 if eventName in includes:
-                    event = TraceEvent.Of(msg)
+                    #event = TraceEvent.Of(msg)
                     # allow each analysis to process the event
                     # however it needs to
                     for analysis in analyses:
-                        analysis.process_event(event)
+                        analysis.process_event(msg)
 
 
         for chunk in range(MAX_CHUNKS):

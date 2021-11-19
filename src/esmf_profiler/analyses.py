@@ -1,12 +1,9 @@
-from esmf_profiler.event import TraceEvent, DefineRegion, RegionProfile
 from typing import Dict
 from abc import ABC, abstractproperty
 import logging
 import sys
 import collections
-import json
-import pprint
-import os
+import bt2
 
 logger = logging.getLogger(__name__)
 # _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
@@ -27,6 +24,11 @@ class SinglePETTimingNode:
         self._mean = 0
         self._count = 0
         self._children = []  # List[SinglePETTimingTreeNode]
+
+        # only the root maintains a cache (self._id = 0)
+        self._child_cache = {}  # id -> SinglePetTimingTreeNode
+        if self._id == 0:
+            self._child_cache[self._id] = self
 
     @property
     def name(self):
@@ -85,16 +87,11 @@ class SinglePETTimingNode:
         return self._children
 
     # add child node to the node with give parentid
+    # must be called only from root SinglePETTimingNode
     def add_child(self, parentid, child: "SinglePETTimingNode"):
-        if self._id == parentid:
-            self._children.append(child)
-            return True
-        else:
-            for c in self._children:
-                if c.add_child(parentid, child):
-                    return True
-        return False
-
+        self._child_cache[parentid]._children.append(child)
+        self._child_cache[child._id] = child
+        return True
 
 class MultiPETTimingNode:
     def __init__(self):
@@ -250,7 +247,7 @@ class Analysis(ABC):
         pass
 
     @abstractproperty
-    def process_event(self):
+    def process_event(self, msg: bt2._EventMessageConst):
         raise NotImplementedError(
             f"{self.__class__.__name__} requires a process_event method"
         )
@@ -276,19 +273,18 @@ class LoadBalance(Analysis):
         # map pet -> root of timing tree
         self._timingTrees = {}
 
-    def process_event(self, event: TraceEvent):
+    def process_event(self, msg: bt2._EventMessageConst):
 
-        if isinstance(event, DefineRegion):
-            pet = event.pet
-            regionid = event.get("id")
-            name = event.get("name")
-            # logger.debug(f"found DefineRegion pet = {pet}, id = {regionid}, name = {name}")
+        if msg.event.name == "define_region":
+            pet = msg.event.packet.context_field["pet"]
+            regionid = msg.event.payload_field["id"]
+            name = msg.event.payload_field["name"]
             self._regionIdToNameMap.setdefault(pet, {})[regionid] = name
 
-        if isinstance(event, RegionProfile):
-            pet = event.pet
-            regionid = event.get("id")
-            parentid = event.get("parentid")
+        elif msg.event.name == "region_profile":
+            pet = msg.event.packet.context_field["pet"]
+            regionid = msg.event.payload_field["id"]
+            parentid = msg.event.payload_field["parentid"]
 
             if regionid == 1:
                 # special case for outermost timed region
@@ -300,10 +296,10 @@ class LoadBalance(Analysis):
             # logger.debug(f"found RegionProfile pet = {pet}, id = {regionid}, parentid = {parentid}, name = {name}")
 
             node = SinglePETTimingNode(regionid, pet, name)
-            node.total = event.get("total")
-            node.count = event.get("count")
-            node.min = event.get("min")
-            node.max = event.get("max")
+            node.total = msg.event.payload_field["total"]
+            node.count = msg.event.payload_field["count"]
+            node.min = msg.event.payload_field["min"]
+            node.max = msg.event.payload_field["max"]
 
             # add child to the timing tree for the given pet
             root = self._timingTrees.setdefault(
