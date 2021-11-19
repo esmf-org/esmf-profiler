@@ -5,6 +5,8 @@ import sys
 import collections
 import bt2
 
+
+
 logger = logging.getLogger(__name__)
 # _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
 # logging.basicConfig(level=logging.DEBUG, format=_format)
@@ -276,15 +278,15 @@ class LoadBalance(Analysis):
     def process_event(self, msg: bt2._EventMessageConst):
 
         if msg.event.name == "define_region":
-            pet = msg.event.packet.context_field["pet"]
-            regionid = msg.event.payload_field["id"]
-            name = msg.event.payload_field["name"]
+            pet = int(msg.event.packet.context_field["pet"])
+            regionid = int(msg.event.payload_field["id"])
+            name = str(msg.event.payload_field["name"])
             self._regionIdToNameMap.setdefault(pet, {})[regionid] = name
 
         elif msg.event.name == "region_profile":
-            pet = msg.event.packet.context_field["pet"]
-            regionid = msg.event.payload_field["id"]
-            parentid = msg.event.payload_field["parentid"]
+            pet = int(msg.event.packet.context_field["pet"])
+            regionid = int(msg.event.payload_field["id"])
+            parentid = int(msg.event.payload_field["parentid"])
 
             if regionid == 1:
                 # special case for outermost timed region
@@ -296,10 +298,10 @@ class LoadBalance(Analysis):
             # logger.debug(f"found RegionProfile pet = {pet}, id = {regionid}, parentid = {parentid}, name = {name}")
 
             node = SinglePETTimingNode(regionid, pet, name)
-            node.total = msg.event.payload_field["total"]
-            node.count = msg.event.payload_field["count"]
-            node.min = msg.event.payload_field["min"]
-            node.max = msg.event.payload_field["max"]
+            node.total = int(msg.event.payload_field["total"])
+            node.count = int(msg.event.payload_field["count"])
+            node.min = int(msg.event.payload_field["min"])
+            node.max = int(msg.event.payload_field["max"])
 
             # add child to the timing tree for the given pet
             root = self._timingTrees.setdefault(
