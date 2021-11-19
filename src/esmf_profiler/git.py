@@ -34,7 +34,7 @@ def _command_safe(cmd, cwd=os.getcwd()):
         if error.stderr:
             logger.error(error.stderr)
             raise
-        return
+    return
 
 
 def add(_path, repopath=os.getcwd()):

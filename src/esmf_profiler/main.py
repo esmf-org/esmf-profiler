@@ -3,21 +3,22 @@
 """
 
 
-import sys
 import datetime
 import json
 import logging
 import os
 import shutil
+import signal
+import subprocess
+import sys
 import tempfile
+import webbrowser
+from subprocess import PIPE
 
-from esmf_profiler.analyses import LoadBalance
 from esmf_profiler import git
+from esmf_profiler.analyses import LoadBalance
 from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
-from subprocess import PIPE
-import subprocess
-import webbrowser
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +26,8 @@ logger = logging.getLogger(__name__)
 def _copy_path(src, dst, symlinks=False, ignore=None):
     """Safe copytree replacement"""
     for item in os.listdir(src):
-        s = os.path.join(src, item)
-        d = os.path.join(dst, item)
+        s = os.path.join(src, item)  # pylint: disable=invalid-name
+        d = os.path.join(dst, item)  # pylint: disable=invalid-name
         try:
             if os.path.isdir(s):
                 shutil.copytree(s, d, symlinks, ignore)
@@ -201,6 +202,12 @@ def run_analsysis(output_path, tracedir, data_file_name):
 
 def main():
     """main execution"""
+
+    def signal_handler(sig, frame):  # pylint: disable=unused-argument
+        logger.info("Closing local server")
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
 
     SITE_FILE_NAME = "site.json"
     DATA_FILE_NAME = "load_balance.json"
