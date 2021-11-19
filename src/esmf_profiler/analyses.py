@@ -171,6 +171,17 @@ class MultiPETTimingNode:
     def children(self):
         return self._children
 
+    # sort children by total time
+    # works recursively down the tree
+    def sort_children(self):
+        sd = collections.OrderedDict(
+            sorted(self._children.items(), key=lambda item: item[1].total_sum, reverse=True)
+        )
+        self._children = sd
+
+        for c in self._children:
+            self._children[c].sort_children()
+
     # Returns a list of the SinglePETTimingNodes that were
     # used to create the timing statistics in this node.
     @property
@@ -311,6 +322,8 @@ class LoadBalance(Analysis):
         multiPETTree = MultiPETTimingNode()
         for pet, t in self._timingTrees.items():
             multiPETTree.merge(t)
+
+        multiPETTree.sort_children()
 
         # collect load balance timing results for all levels of the full tree
         results = {}

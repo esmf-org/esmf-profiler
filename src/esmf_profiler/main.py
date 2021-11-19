@@ -13,14 +13,15 @@ import tempfile
 
 from esmf_profiler.analyses import LoadBalance
 from esmf_profiler import git
-from esmf_profiler.trace import Trace
+from esmf_profiler.trace import Trace, DEFAULT_CHUNK_SIZE
 from esmf_profiler.view import handle_args
 from subprocess import PIPE
 import subprocess
 import webbrowser
 
-logger = logging.getLogger(__name__)
+import time
 
+logger = logging.getLogger(__name__)
 
 def _copy_path(src, dst, symlinks=False, ignore=None):
     """Safe copytree replacement"""
@@ -29,10 +30,13 @@ def _copy_path(src, dst, symlinks=False, ignore=None):
         d = os.path.join(dst, item)
         try:
             if os.path.isdir(s):
+                #logger.debug(f"copytree {s} -> {d}")
                 shutil.copytree(s, d, symlinks, ignore)
             else:
+                #logger.debug(f"copy2 {s} -> {d}")
                 shutil.copy2(s, d)
         except FileExistsError as _:  # We don't get this flag until Python 3.8
+            #logger.debug(f"FileExistsError: {_}")
             continue
 
 
@@ -170,14 +174,15 @@ def create_site_file(name, output_path, site_file_name="site.json"):
     return output_file_path
 
 
-def run_analsysis(output_path, tracedir, data_file_name):
-    """run_analsysis runs an analysis on a directory containing binary traces files and outputs
+def run_analysis(output_path, tracedir, data_file_name, xopts):
+    """run_analysis runs an analysis on a directory containing binary traces files and outputs
     the results to data_file_name
 
     Args:
         output_path (str): path
         tracedir (str): path containing the binary traces
         data_file_name (str): name to give the output file
+        xopts (dict): extra options from the user to customize behavior
 
     Returns:
         str: path off the output file
@@ -185,8 +190,20 @@ def run_analsysis(output_path, tracedir, data_file_name):
     # the only requested analysis is a load balance at the root level
     analyses = [LoadBalance(None, output_path)]
 
+    chunksize = DEFAULT_CHUNK_SIZE
+    if xopts is not None and "chunksize" in xopts:
+        try:
+            chunksize = int(xopts["chunksize"])
+            logger.info(f"Using custom chunksize of {chunksize}")
+        except ValueError:
+            logger.info(f"Invalid chunksize: {xopts['chunksize']} - using default value of {chunksize}")
+
     logger.info("Processing trace: %s", tracedir)
-    Trace.from_path(tracedir, analyses)
+    start = time.time()
+    Trace.from_path_chunk(tracedir, analyses=analyses, chunksize=chunksize)
+    end = time.time()
+    logger.debug(f"TOTAL TIME for chunk size {chunksize} = {end - start}")
+
     logger.debug("Processing trace complete")
 
     # indicate to the analyses that all events have been processed
@@ -211,6 +228,15 @@ def main():
     # setup logging based on args.verbose
     handle_logging(args.verbose)
 
+    xopts = None
+    if args.xopts is not None:
+        # format:  key1=value1:key2=value2:key3=value3
+        try:
+            xopts = dict(x.split("=") for x in args.xopts.split(":"))
+        except ValueError:
+            logger.info("Incorrect format for -x/--xopts command line argument")
+            return
+
     output_path = safe_create_directory([args.outdir])
     output_data_path = safe_create_directory([output_path, "data"])
 
@@ -218,7 +244,7 @@ def main():
     create_site_file(args.name, output_data_path, SITE_FILE_NAME)
 
     # the only requested analysis is a load balance at the root level
-    run_analsysis(output_data_path, args.tracedir, DATA_FILE_NAME)
+    run_analysis(output_data_path, args.tracedir, DATA_FILE_NAME, xopts)
 
     # inject web gui files
     copy_gui_template(output_path)

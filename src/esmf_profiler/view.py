@@ -74,5 +74,11 @@ def handle_args():
         help="start a local server to host the profile results",
         action="store_true",
     )
+    parser.add_argument(
+        "-x",
+        "--xopts",
+        help="extra options to customize the behavior of the profiler",
+        required=False,
+    )
 
     return parser.parse_args()
