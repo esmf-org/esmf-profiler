@@ -9,20 +9,73 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import Nav from "react-bootstrap/Nav";
+import styled from "styled-components";
 
-// import styled from "styled-components";
+export default function Sidebar() {
+  const [show, setShow] = useState(true);
 
-// const open = styled.div`
-//   text-decoration: none;
-//   font-size: 1.1rem;
-//   padding: 1.5rem 1rem;
-//   text-align: center;
-//   letter-spacing: 0.05rem;
-// `;
+  const toggleSidebar = () => {
+    if (!show) {
+      document.body.classList.add("sidebar-toggled");
+    } else {
+      document.body.classList.remove("sidebar-toggled");
+    }
+    setShow(!show);
+  };
 
-// const closed = styled.div`
-//   width: 10px;
-// `;
+  return (
+    <React.Fragment>
+      <br />
+
+      <Wrapper toggle={toggleSidebar} show={show}>
+        <Divider />
+
+        <Section title="Application Info">
+          <Button name="Component Configuration" icon={faBox} muted />
+        </Section>
+
+        <Section title="Timing">
+          <Button name="Timing Summary" icon={faClock} muted />
+          <Button name="Load Balance" icon={faChartBar} />
+          <Button name="MPI Profiler" icon={faProjectDiagram} muted />
+        </Section>
+
+        <Section title="Memory">
+          <Button name="Memory Profile" icon={faHubspot} muted />
+        </Section>
+
+        <Section title="I/O">
+          <Button name="NetCDF Profile" icon={faHdd} muted />
+        </Section>
+      </Wrapper>
+    </React.Fragment>
+  );
+}
+
+const Button = (props) => (
+  <React.Fragment>
+    <StyledNavItem>
+      <li className="nav-item">
+        <StyledButton className={`nav-link ${props.muted ? "text-muted" : ""}`}>
+          <FontAwesomeIcon icon={props.icon} />
+          <span>{` ${props.name}`}</span>
+        </StyledButton>
+      </li>
+    </StyledNavItem>
+  </React.Fragment>
+);
+
+const StyledButton = styled.button`
+  background-color: #5a5c69;
+  background-size: contain;
+  border: 0;
+`;
+
+const StyledNavItem = styled.div`
+  font-size: 1em;
+  border: 0px;
+  color: #858796;
+`;
 
 function ToggleButton(props) {
   return (
@@ -47,12 +100,12 @@ function Wrapper(props) {
       <Nav className="flex-column" bg="gradient-dark">
         <ul
           data-toggle="collapse"
-          className={`navbar-nav bg-gradient-dark sidebar sidebar-dark accordion ${
+          className={`navbar-nav bg-dark sidebar sidebar-dark accordion ${
             props.show ? "" : "toggled"
           }`}
           id="accordionSidebar"
         >
-          <SidebarBrand />
+          <Brand />
           {props.children}
           <ToggleButton click={props.toggle} />
         </ul>
@@ -65,14 +118,14 @@ function Wrapper(props) {
 function Section(props) {
   return (
     <React.Fragment>
-      <SidebarHeading name={props.title} />
+      <Heading name={props.title} />
       {props.children}
-      <SidebarDivider />
+      <Divider />
     </React.Fragment>
   );
 }
 
-function SidebarBrand(props) {
+function Brand(props) {
   return (
     <React.Fragment>
       <div className="sidebar-brand d-flex align-items-center justify-content-center">
@@ -92,63 +145,10 @@ function SidebarBrand(props) {
   );
 }
 
-function SidebarHeading(props) {
+function Heading(props) {
   return <div className="sidebar-heading">{props.name}</div>;
 }
 
-function SidebarDivider() {
+function Divider() {
   return <hr className="sidebar-divider my-10" />;
-}
-
-function SidebarButton(props) {
-  return (
-    <React.Fragment>
-      <li className="nav-item">
-        <button className="nav-link text-muted">
-          <FontAwesomeIcon icon={props.icon} />
-          <span>{` ${props.name}`}</span>
-        </button>
-      </li>
-    </React.Fragment>
-  );
-}
-
-export default function Sidebar() {
-  const [show, setShow] = useState(true);
-
-  const toggleSidebar = () => {
-    if (!show) {
-      document.body.classList.add("sidebar-toggled");
-    }
-    document.body.classList.remove("sidebar-toggled");
-    setShow(!show);
-  };
-
-  return (
-    <React.Fragment>
-      <br />
-
-      <Wrapper toggle={toggleSidebar} show={show}>
-        <SidebarDivider />
-
-        <Section title="Application Info">
-          <SidebarButton name="Component Configuration" icon={faBox} />
-        </Section>
-
-        <Section title="Timing">
-          <SidebarButton name="Timing Summary" icon={faClock} />
-          <SidebarButton name="Load Balance" icon={faChartBar} />
-          <SidebarButton name="MPI Profiler" icon={faProjectDiagram} />
-        </Section>
-
-        <Section title="Memory">
-          <SidebarButton name="Memory Profile" icon={faHubspot} />
-        </Section>
-
-        <Section title="I/O">
-          <SidebarButton name="NetCDF Profile" icon={faHdd} />
-        </Section>
-      </Wrapper>
-    </React.Fragment>
-  );
 }
