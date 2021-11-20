@@ -232,6 +232,7 @@ def main():
 
     if args.push is not None:
         push_profile_to_repo(input_path=output_path, name=args.name, url=args.push)
+        logger.info("Succesfully pushed %s to %s", output_path, args.push)
 
     if args.serve:
         _start_server(output_path)
