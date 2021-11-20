@@ -39,7 +39,7 @@ function Content(props) {
     <React.Fragment>
       <div className="row">
         {props.data && (
-          <ChartContainer>
+          <ChartContainer size={12}>
             <Stacked options={props.data} />
           </ChartContainer>
         )}

@@ -1,35 +1,54 @@
 import React from "react";
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   overflow: auto;
   min-height: 75vh;
-  margin: 25px;
+  margin: 10px;
 `;
 
-export default class ChartContainer extends React.Component {
-  render() {
-    return (
-      <div className="col-xl-12 col-lg-12">
-        {/* Card Header - Dropdown */}
-        <div
-          className="
+const StyledTitle = styled.h6`
+  color: #5a5c69 !important;
+  margin-bottom: 0 !important;
+`;
+
+function Header(props) {
+  return (
+    <React.Fragment>
+      <div
+        className="
                       card-header
-                      py-3
+                      py-0
                       d-flex
                       flex-row
                       align-items-center
                       bg-white
                       justify-content-between
                       "
-        >
-          <h6 className="m-0 text-dark">Load Balance</h6>
-        </div>
-        {/* Card Body */}
-        <Container>
-          <div className="chart-area">{this.props.children}</div>
-        </Container>
+      >
+        {props.children}
       </div>
-    );
-  }
+    </React.Fragment>
+  );
+}
+
+function Container(props) {
+  return (
+    <React.Fragment>
+      <div className={`col-xl-${props.size || 12} col-lg-${props.size || 12}`}>
+        {props.children}
+      </div>
+    </React.Fragment>
+  );
+}
+
+export default function ChartContainer(props) {
+  return (
+    <Container>
+      <Header>
+        <StyledTitle>{props.title ? props.title : ""}</StyledTitle>
+      </Header>
+      <StyledContainer>{props.children}</StyledContainer>
+    </Container>
+  );
 }
