@@ -8,8 +8,8 @@ import HC_exporting from "highcharts/modules/exporting";
 import { useState, useEffect, useRef } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Breadcrumb from "react-bootstrap/Breadcrumb";
 import AlertDismissible from "./../components/alerts/AlertDismissible";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 HC_exporting(Highcharts);
 //Boost(Highcharts);
@@ -65,57 +65,49 @@ function Stacked(props) {
 
   const [error, setError] = useState("");
   const [level, setLevel] = useState(["/TOP"]);
-  const prevLevel = useRef(["/TOP"])
+  const prevLevel = useRef(["/TOP"]);
   const [options, setOptions] = useState(chartOptions);
   const chartComponent = useRef(null);
 
   useEffect(() => {
-    prevLevel.current = level;
-    updateLevel();
-  }, [level]);
+    if (prevLevel.current !== level) {
+      prevLevel.current = level;
+      setError("");
 
-  const updateLevel = () => {
+      const key = level.join("/");
 
-    setError("");
+      if (!props.options[key]) {
+        setError(`No detail timing data for ${key}`);
+        return;
+      }
 
-    const key = level.join("/");
+      let _new = {
+        xAxis: {
+          categories: [...props.options[key].xvals],
+        },
+        series: props.options[key].yvals.map((y) => {
+          return { name: y.name, visible: true, data: [...y.data] };
+        }),
+      };
 
-    if (!props.options[key]) {
-      setError(`No detail timing data for ${key}`);
-      return;
+      setOptions((prevOptions) => {
+        return { ...prevOptions, ..._new };
+      });
     }
-
-    let _new = {
-      xAxis: {
-        categories: [...(props.options[key].xvals)]
-      },
-      series:
-        props.options[key].yvals.map(
-            (y) => { return {name: y.name, visible: true, data: [...y.data]};}),
-    };
-
-    //console.debug("...yvals = ", [...(props.options[key].yvals)])
-    //console.debug("_new = ", _new)
-
-    setOptions((prevOptions) => {
-      return { ...prevOptions, ..._new };
-    });
-  };
+  }, [level, props]);
 
   const toggle = (show) => {
     const chart = chartComponent.current.chart;
     if (show) {
-        chart.series.map((s) => s.setVisible(true, false));
+      chart.series.map((s) => s.setVisible(true, false));
+    } else {
+      chart.series.map((s) => s.setVisible(false, false));
     }
-    else {
-        chart.series.map((s) => s.setVisible(false, false));
-    }
-    chart.redraw()
-  }
-
+    chart.redraw();
+  };
 
   const hasData = (check) => {
-    const key = check.join("/")
+    const key = check.join("/");
     if (!props.options[key]) {
       return false;
     }
@@ -127,9 +119,8 @@ function Stacked(props) {
 
     if (!hasData([...prevLevel.current, _level])) {
       setError(`No detail timing data for ${_level}`);
-    }
-    else {
-        setLevel((current) => [...current, _level]);
+    } else {
+      setLevel((current) => [...current, _level]);
     }
   };
 
@@ -140,25 +131,14 @@ function Stacked(props) {
 
   return (
     <React.Fragment>
-      {error && <AlertDismissible message={error}/>}
+      {error && <AlertDismissible message={error} />}
 
-      <Breadcrumb>
-        {level?.map
-          ? level.map((_level, idx) => {
-              return (
-                <Breadcrumb.Item
-                  key={idx}
-                  onClick={() => clickCrumb(idx, _level)}
-                  href=""
-                >
-                  {_level}
-                </Breadcrumb.Item>
-              );
-            })
-          : ""}
-      </Breadcrumb>
-
-      <HighchartsReact highcharts={Highcharts} options={options} ref={chartComponent}/>
+      <Breadcrumbs click={clickCrumb} level={level} />
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        ref={chartComponent}
+      />
 
       <div className="d-flex justify-content-center">
         <ButtonGroup size="sm" className="me-2">
