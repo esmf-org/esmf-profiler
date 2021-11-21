@@ -44,7 +44,7 @@ function Container(props) {
 
 export default function ChartContainer(props) {
   return (
-    <Container>
+    <Container size={props.size ? props.size : 12}>
       <Header>
         <StyledTitle>{props.title ? props.title : ""}</StyledTitle>
       </Header>
