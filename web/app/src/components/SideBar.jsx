@@ -89,7 +89,6 @@ function ToggleButton(props) {
           }}
         ></button>
       </div>
-      ;
     </React.Fragment>
   );
 }
@@ -110,7 +109,6 @@ function Wrapper(props) {
           <ToggleButton click={props.toggle} />
         </ul>
       </Nav>
-      ;
     </React.Fragment>
   );
 }
@@ -125,7 +123,7 @@ function Section(props) {
   );
 }
 
-function Brand(props) {
+function Brand() {
   return (
     <React.Fragment>
       <div className="sidebar-brand d-flex align-items-center justify-content-center">
@@ -140,7 +138,6 @@ function Brand(props) {
           </div>
         </div>
       </div>
-      ;
     </React.Fragment>
   );
 }
