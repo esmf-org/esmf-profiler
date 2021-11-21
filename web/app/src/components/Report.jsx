@@ -37,14 +37,9 @@ function Content(props) {
   // TODO: Dyamically change charts
   return (
     <React.Fragment>
-      <div className="row">
-        {props.data && (
-          <ChartContainer size={12}>
-            <Stacked options={props.data} />
-          </ChartContainer>
-        )}
-      </div>
-      ;
+      <ChartContainer size={props.size ? props.size : 12}>
+        <Stacked options={props.data} />
+      </ChartContainer>
     </React.Fragment>
   );
 }
@@ -84,7 +79,9 @@ function Report() {
         <Sidebar />
         <ContentContainer>
           <Header name={site.name} timestamp={site.timestamp} />
-          <Content data={data} />
+          <div className="row">
+            <Content data={data} size={12} />
+          </div>
         </ContentContainer>
       </Page>
     </div>
