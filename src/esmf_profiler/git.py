@@ -25,7 +25,8 @@ def _command_safe(cmd, cwd=os.getcwd()):
         return subprocess.run(
             cmd,
             cwd=cwd,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             check=True,
             encoding="utf-8",
         )
