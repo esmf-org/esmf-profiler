@@ -1,5 +1,5 @@
 from typing import Dict
-from abc import ABC, abstractproperty
+from abc import ABC, abstractproperty, abstractmethod
 import logging
 import sys
 import collections
@@ -248,32 +248,35 @@ class Analysis(ABC):
     def __init__(self):
         pass
 
-    @abstractproperty
+    @abstractmethod
     def process_event(self, msg: bt2._EventMessageConst):
         raise NotImplementedError(
             f"{self.__class__.__name__} requires a process_event method"
         )
 
-    @abstractproperty
+    # When threading is used, several instances of the Analyses
+    # subclasses will be used, one per thread.  This method
+    # merges those instances together and should be called
+    # before calling finish().
+    def merge(self, other: 'Analysis'):
+        pass
+
+    # Return a new instance of the analysis class
+    # to be used to create multiple instances
+    # for separate threads
+    def new_instance(self):
+        pass
+
+    @abstractmethod
     def finish(self):
         raise NotImplementedError(f"{self.__class__.__name__} requires a finish method")
 
 
 class LoadBalance(Analysis):
 
-    # rootRegionName is the name of the region to be used as
-    # the root for the load balance plot
-    # if None, then use the top level
-    # outdir = output location  TODO:  consider moving outdir to Analysis class since it is a common param
-    def __init__(self, rootRegionName, outdir):
-        self._rootRegionName = rootRegionName
-        self._outdir = outdir
-        # two level mapping
-        # { pet -> { region_id -> region name } }
-        self._regionIdToNameMap = {}
-
-        # map pet -> root of timing tree
-        self._timingTrees = {}
+    def __init__(self):
+        self._regionIdToNameMap = {}  # { pet -> { region_id -> region name } }
+        self._timingTrees = {}        # { pet -> root of timing tree }
 
     def process_event(self, msg: bt2._EventMessageConst):
 
@@ -311,6 +314,17 @@ class LoadBalance(Analysis):
                 raise RuntimeError(
                     f"{self.__class__.__name__} child not added to tree pet = {pet}, regionid = {regionid}, parentid = {parentid}, name = {name}"
                 )
+
+    def new_instance(self):
+        return LoadBalance()
+
+    def merge(self, other: 'LoadBalance'):
+        assert isinstance(other, LoadBalance)
+        # merge in the SinglePETTimingTrees from the other instance
+        for p in other._timingTrees:
+            logger.debug(f"Merging PET into timing tree: {p}")
+            self._timingTrees[p] = other.timingTrees[p]
+
 
     def finish(self):
         # all events have been processed, so now we have a complete

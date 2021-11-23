@@ -189,7 +189,7 @@ def run_analysis(output_path, tracedir, data_file_name, xopts):
         str: path off the output file
     """
     # the only requested analysis is a load balance at the root level
-    analyses = [LoadBalance(None, output_path)]
+    analyses = [LoadBalance()]
 
     chunksize = DEFAULT_CHUNK_SIZE
     if xopts is not None and "chunksize" in xopts:
@@ -238,6 +238,7 @@ def main():
     # setup logging based on args.verbose
     handle_logging(args.verbose)
 
+    # TODO: this section should probably be in handle_args()
     xopts = None
     if args.xopts is not None:
         # format:  key1=value1:key2=value2:key3=value3

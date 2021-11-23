@@ -1,18 +1,17 @@
+import concurrent.futures
 import json
+import math
 import textwrap
 from abc import ABC, abstractproperty
 from collections import namedtuple
 from statistics import mean
 from typing import Any, Generator, Iterator, List
 import logging
-
 import bt2
-
-from esmf_profiler.utils import print_execution_time
-from esmf_profiler.analyses import Analysis
 from esmf_profiler.event import TraceEvent, RegionProfile, DefineRegion
+from esmf_profiler.analyses import Analysis
 
-import time
+#from guppy import hpy
 
 logger = logging.getLogger(__name__)
 # _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
@@ -21,7 +20,6 @@ logger = logging.getLogger(__name__)
 ctf_plugin = bt2.find_plugin("ctf")
 utils_plugin = bt2.find_plugin("utils")
 
-MAX_CHUNKS = 1000000       # maximum number of file chunks during trace read
 DEFAULT_CHUNK_SIZE = 250   # default size (number of PETs) to read per chunk
 
 @bt2.plugin_component_class
@@ -42,14 +40,9 @@ class MessageSink(bt2._UserSinkComponent):
 
 
 class Trace:
-    def __init__(self, msgs: Generator[TraceEvent, None, None]):
-        self._msgs = msgs
 
-    def __iter__(self):
-        yield from self._msgs
-
-    def filter(self, fx):
-        yield from filter(fx, self._msgs)
+    def __init__(self):
+        pass
 
     @staticmethod
     def from_path(_path: str, analyses):
@@ -83,51 +76,66 @@ class Trace:
 
         logger.debug(f"Loading trace from path: {_path}")
 
-        _msg_count = 0
-
-        # hard code for now - eventually query each Analysis
+         # hard code for now - eventually query each Analysis
         # for what events need to be included
         includes = ["define_region", "region_profile"]
 
-        def _process_msg(msg):
-            nonlocal _msg_count
-            _msg_count = _msg_count + 1
-            if _msg_count % 10000 == 0:
-                logger.debug(f"Processed {_msg_count} events")
+        #h = hpy()
 
-            if type(msg) is bt2._EventMessageConst:
-                eventName = msg.event.name
-                if eventName in includes:
-                    #event = TraceEvent.Of(msg)
-                    # allow each analysis to process the event
-                    # however it needs to
-                    for analysis in analyses:
-                        analysis.process_event(msg)
+        def _process_chunk(chunk, analyses: List[Analysis]):
+            _msg_count = 0
 
+            def _process_msg(msg):
+                nonlocal _msg_count
+                _msg_count = _msg_count + 1
+                if _msg_count % 10000 == 0:
+                    # h.heap()
+                    logger.debug(f"Thread {chunk} processed {_msg_count} events")
 
-        for chunk in range(MAX_CHUNKS):
+                if type(msg) is bt2._EventMessageConst:
+                    eventName = msg.event.name
+                    if eventName in includes:
+                        for analysis in analyses:
+                            analysis.process_event(msg)
+
             g = bt2.Graph()
             source = g.add_component(ctf_plugin.source_component_classes["fs"],
                                      "source",
                                      params={"inputs": [_path]})
 
-            muxer = g.add_component(utils_plugin.filter_component_classes["muxer"], "muxer")
-
-            start_port = chunk*chunksize
+            start_port = chunk * chunksize
             end_port = start_port + chunksize - 1
             oports = [x[1] for x in filter(lambda x: x[0] >= start_port and x[0] <= end_port,
                                            enumerate(source.output_ports))]
-            if len(oports) == 0:
-                break
+            assert len(oports) > 0
+            logger.debug(f"Thread chunk {chunk} processing {start_port} to {end_port}")
 
-            logger.debug(f"Processing streams {start_port} to {end_port}")
+            muxer = g.add_component(utils_plugin.filter_component_classes["muxer"], "muxer")
+
+            #logger.debug(f"Processing streams {start_port} to {end_port}")
             for idx, oport in enumerate(oports):
                 g.connect_ports(source.output_ports[oport], muxer.input_ports["in" + str(idx)])
-                #logger.debug(f"connected ports: {oport} -> in{idx}")
+                # logger.debug(f"connected ports: {oport} -> in{idx}")
 
             sink = g.add_component(MessageSink, "sink", obj=_process_msg)
             g.connect_ports(muxer.output_ports["out"], sink.input_ports["in"])
 
             g.run()
+
+
+
+        g = bt2.Graph()
+        source = g.add_component(ctf_plugin.source_component_classes["fs"],
+                                 "source",
+                                 params={"inputs": [_path]})
+        total_ports = len(source.output_ports)
+        logger.debug(f"Total output ports = {total_ports}")
+        g = None
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+            for chunk in range(math.ceil(total_ports/chunksize)):
+                logger.debug(f"Start thread for chunk {chunk}")
+                executor.submit(_process_chunk, chunk, [a.new_instance() for a in analyses])
+
 
         logger.debug(f"Finished processing trace")
