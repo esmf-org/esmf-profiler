@@ -11,7 +11,7 @@ import tempfile
 
 from esmf_profiler.analyses import LoadBalance
 from esmf_profiler import git
-from esmf_profiler.trace import Trace, DEFAULT_CHUNK_SIZE
+from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
 from subprocess import PIPE
 import subprocess
@@ -191,7 +191,7 @@ def run_analysis(output_path, tracedir, data_file_name, xopts):
     # the only requested analysis is a load balance at the root level
     analyses = [LoadBalance()]
 
-    chunksize = DEFAULT_CHUNK_SIZE
+    chunksize = Trace.DEFAULT_CHUNK_SIZE
     if xopts is not None and "chunksize" in xopts:
         try:
             chunksize = int(xopts["chunksize"])
@@ -202,23 +202,25 @@ def run_analysis(output_path, tracedir, data_file_name, xopts):
     #profiler = cProfile.Profile()
 
     logger.info("Processing trace: %s", tracedir)
+
     start = time.time()
     #profiler.enable()
     #with PyCallGraph(output=GraphvizOutput()):
-    Trace.from_path_chunk(tracedir, analyses=analyses, chunksize=chunksize)
-    #profiler.disable()
-    end = time.time()
-    logger.debug(f"TOTAL TIME for chunk size {chunksize} = {end - start}")
 
-    logger.debug("Processing trace complete")
+    Trace.from_path(tracedir, analyses=analyses, chunksize=chunksize)
 
     # indicate to the analyses that all events have been processed
-    logger.info("Generating %s profiles", len(analyses))
+    logger.info("Generating profile")
     output_file_path = os.path.join(output_path, data_file_name)
     for analysis in analyses:
         data = analysis.finish()
         _write_json_to_file(data, output_file_path)
     logger.debug("Finishing analyses complete")
+
+    #profiler.disable()
+
+    end = time.time()
+    logger.info(f"Trace processing time: {round(end - start, 2)}s")
 
     #stats = pstats.Stats(profiler).sort_stats('tottime')
     #stats.print_stats()
@@ -245,7 +247,7 @@ def main():
         try:
             xopts = dict(x.split("=") for x in args.xopts.split(":"))
         except ValueError:
-            logger.info("Incorrect format for -x/--xopts command line argument")
+            logger.error("Incorrect format for -x/--xopts command line argument")
             return
 
     output_path = safe_create_directory([args.outdir])

@@ -1,15 +1,14 @@
+import threading
 from typing import Dict
-from abc import ABC, abstractproperty, abstractmethod
+from abc import ABC, abstractmethod
 import logging
 import sys
 import collections
 import bt2
-
-
+import queue
 
 logger = logging.getLogger(__name__)
-# _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-# logging.basicConfig(level=logging.DEBUG, format=_format)
+
 
 # class to represent as a tree the timing
 # information in the RegionProfile events
@@ -94,6 +93,7 @@ class SinglePETTimingNode:
         self._child_cache[parentid]._children.append(child)
         self._child_cache[child._id] = child
         return True
+
 
 class MultiPETTimingNode:
     def __init__(self):
@@ -254,19 +254,6 @@ class Analysis(ABC):
             f"{self.__class__.__name__} requires a process_event method"
         )
 
-    # When threading is used, several instances of the Analyses
-    # subclasses will be used, one per thread.  This method
-    # merges those instances together and should be called
-    # before calling finish().
-    def merge(self, other: 'Analysis'):
-        pass
-
-    # Return a new instance of the analysis class
-    # to be used to create multiple instances
-    # for separate threads
-    def new_instance(self):
-        pass
-
     @abstractmethod
     def finish(self):
         raise NotImplementedError(f"{self.__class__.__name__} requires a finish method")
@@ -274,11 +261,73 @@ class Analysis(ABC):
 
 class LoadBalance(Analysis):
 
+    # Number of messages to buffer from the trace
+    # before handling them in a batch
+    MESSAGE_BUFFER_SIZE = 2500
+
+    # Maximum number of outstanding batches of
+    # messages allowed.  When reached, the trace
+    # read will block until the queue has open slots.
+    MESSAGE_QUEUE_MAXSIZE = 100
+
     def __init__(self):
+        self._event_queue = queue.Queue(maxsize=LoadBalance.MESSAGE_QUEUE_MAXSIZE)
+        self._thread = None
+        self._msg_buffer = []
+
         self._regionIdToNameMap = {}  # { pet -> { region_id -> region name } }
         self._timingTrees = {}        # { pet -> root of timing tree }
 
+        # start thread that listens for events
+        self._start()
+
+    def _start(self):
+
+        def _listen_buffer():
+            while True:
+                msg_buffer = self._event_queue.get(block=True)
+                for msg in msg_buffer:
+                    if msg is None:
+                        self._event_queue.task_done()
+                        return
+                    self._handle_event(msg)
+
+                self._event_queue.task_done()
+
+        # this implementation is for single messages instead of batches
+        # def _listen():
+        #    while True:
+        #        msg = self._event_queue.get(block=True)
+        #        if msg is None:
+        #            self._event_queue.task_done()
+        #            return
+        #        self._handle_event(msg)
+        #        self._event_queue.task_done()
+
+        self._thread = threading.Thread(target=_listen_buffer, daemon=True)
+        self._thread.start()
+
+    def _join(self):
+        logger.debug(f"{self.__class__.__name__}: Waiting for queue to join")
+        self.process_event(None)  # signal we are done
+        self._event_queue.join()
+        self._thread.join()
+        logger.debug(f"{self.__class__.__name__}: Queue join complete")
+
+    def queue_size(self):
+        return self._event_queue.qsize()
+
     def process_event(self, msg: bt2._EventMessageConst):
+        self._msg_buffer.append(msg)
+        if len(self._msg_buffer) == LoadBalance.MESSAGE_BUFFER_SIZE or msg is None:
+            self._event_queue.put(self._msg_buffer, block=True)
+            self._msg_buffer = []
+
+    # this implementation for handling single messages instead of batches
+    # def process_event(self, msg: bt2._EventMessageConst):
+    #    self._event_queue.put(msg, block=True)
+
+    def _handle_event(self, msg: bt2._EventMessageConst):
 
         if msg.event.name == "define_region":
             pet = int(msg.event.packet.context_field["pet"])
@@ -298,8 +347,6 @@ class LoadBalance(Analysis):
                 map = self._regionIdToNameMap[pet]
                 name = map[regionid]  # should already be there
 
-            # logger.debug(f"found RegionProfile pet = {pet}, id = {regionid}, parentid = {parentid}, name = {name}")
-
             node = SinglePETTimingNode(regionid, pet, name)
             node.total = int(msg.event.payload_field["total"])
             node.count = int(msg.event.payload_field["count"])
@@ -315,20 +362,15 @@ class LoadBalance(Analysis):
                     f"{self.__class__.__name__} child not added to tree pet = {pet}, regionid = {regionid}, parentid = {parentid}, name = {name}"
                 )
 
-    def new_instance(self):
-        return LoadBalance()
-
-    def merge(self, other: 'LoadBalance'):
-        assert isinstance(other, LoadBalance)
-        # merge in the SinglePETTimingTrees from the other instance
-        for p in other._timingTrees:
-            logger.debug(f"Merging PET into timing tree: {p}")
-            self._timingTrees[p] = other.timingTrees[p]
-
-
     def finish(self):
+
+        # wait for message handling thread to complete
+        self._join()
+
         # all events have been processed, so now we have a complete
         # list of timing trees, one per PET in self._timingTrees
+
+        logger.info(f"Completing analysis: {self.__class__.__name__}")
 
         # merge all the SinglePETTimingNodes into a single tree
         multiPETTree = MultiPETTimingNode()
