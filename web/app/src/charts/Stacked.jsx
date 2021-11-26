@@ -8,11 +8,32 @@ import HC_exporting from "highcharts/modules/exporting";
 import { useState, useEffect, useRef } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import { Form } from "react-bootstrap";
 import AlertDismissible from "./../components/alerts/AlertDismissible";
 import Breadcrumbs from "../components/Breadcrumbs";
 
 HC_exporting(Highcharts);
 //Boost(Highcharts);
+
+function CheckBox(props) {
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleChange = (e) => {
+    setIsChecked(!isChecked);
+    props.handleChange(isChecked);
+  };
+
+  return (
+    <React.Fragment>
+      <Form.Check
+        checked={isChecked}
+        onChange={handleChange}
+        type="checkbox"
+        label={props.label}
+      />
+    </React.Fragment>
+  );
+}
 
 function Stacked(props) {
   const chartOptions = {
@@ -32,8 +53,6 @@ function Stacked(props) {
       },
     },
     yAxis: {
-      // type: "logarithmic",
-
       title: {
         text: "Total Time (s)",
       },
@@ -163,9 +182,11 @@ function Stacked(props) {
             Select None
           </Button>
         </ButtonGroup>
-        <Button onClick={() => toggleLogarithimic()} className="m-1">
-          Logarithmic
-        </Button>
+        <CheckBox
+          label="Logarithmic Y-Axis"
+          handleChange={() => toggleLogarithimic()}
+          clicked
+        />
       </div>
     </React.Fragment>
   );
