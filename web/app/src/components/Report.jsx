@@ -35,13 +35,16 @@ function ContentContainer(props) {
 
 function Content(props) {
   // TODO: Dyamically change charts
-  return (
-    <React.Fragment>
-      <ChartContainer size={props.size ? props.size : 12}>
-        <Stacked options={props.data} />
-      </ChartContainer>
-    </React.Fragment>
-  );
+  if (props.data) {
+    return (
+      <React.Fragment>
+        <ChartContainer size={props.size ? props.size : 12}>
+          <Stacked options={props.data} />
+        </ChartContainer>
+      </React.Fragment>
+    );
+  }
+  return null;
 }
 
 function Report() {
