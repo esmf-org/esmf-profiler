@@ -32,8 +32,8 @@ function Stacked(props) {
       },
     },
     yAxis: {
-      min: 0,
-      allowDecimals: true,
+      // type: "logarithmic",
+
       title: {
         text: "Total Time (s)",
       },
@@ -96,6 +96,21 @@ function Stacked(props) {
     }
   }, [level, props]);
 
+  const toggleLogarithimic = () => {
+    console.debug("toggleLogarithimic");
+    const chart = chartComponent.current.chart;
+    const currentChartType = chart.yAxis[0].userOptions.type;
+    if (currentChartType === "logarithmic") {
+      chart.yAxis[0].update({
+        type: "linear",
+      });
+    } else {
+      chart.yAxis[0].update({
+        type: "logarithmic",
+      });
+    }
+  };
+
   const toggle = (show) => {
     const chart = chartComponent.current.chart;
     if (show) {
@@ -103,7 +118,6 @@ function Stacked(props) {
     } else {
       chart.series.map((s) => s.setVisible(false, false));
     }
-    chart.redraw();
   };
 
   const hasData = (check) => {
@@ -149,6 +163,9 @@ function Stacked(props) {
             Select None
           </Button>
         </ButtonGroup>
+        <Button onClick={() => toggleLogarithimic()} className="m-1">
+          Logarithmic
+        </Button>
       </div>
     </React.Fragment>
   );
