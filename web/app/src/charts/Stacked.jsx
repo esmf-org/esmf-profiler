@@ -8,8 +8,11 @@ import HC_exporting from "highcharts/modules/exporting";
 import { useState, useEffect, useRef } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import { Spinner } from "react-bootstrap";
 import AlertDismissible from "./../components/alerts/AlertDismissible";
 import Breadcrumbs from "../components/Breadcrumbs";
+import ChartContainer from "./ChartContainer";
+import CheckBox from "../components/CheckBox";
 
 HC_exporting(Highcharts);
 //Boost(Highcharts);
@@ -19,6 +22,8 @@ function Stacked(props) {
     chart: {
       type: "column", // column / bar
       zoomType: "xy",
+      displayErrors: false, //TODO set for prod and dev
+      panKey: "ctrl",
     },
     title: {
       text: "PET Timings", // graph title
@@ -49,7 +54,8 @@ function Stacked(props) {
         stacking: "normal",
         //boostThreshold: 1,
         events: {
-          click: function () {
+          click: function (e) {
+            e.preventDefault();
             clickLevel(this.name);
           },
         },
