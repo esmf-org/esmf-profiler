@@ -6,7 +6,6 @@ Subprocess convenience module for interacting with Git
 author: Ryan Long <ryan.long@noaa.gov>
 """
 
-import glob
 import os
 import subprocess
 import logging
@@ -37,7 +36,7 @@ def _command_safe(cmd, cwd=os.getcwd()) -> subprocess.CompletedProcess:
         return subprocess.CompletedProcess(returncode=0, args="", stdout=error.stdout)
 
 
-def add(_path, repopath=os.getcwd()):
+def add(repopath=os.getcwd()):
     """git_add
 
     Args:
@@ -47,7 +46,7 @@ def add(_path, repopath=os.getcwd()):
     Returns:
         CompletedProcess:
     """
-    cmd = ["git", "add"] + glob.glob(_path + "/*")
+    cmd = ["git", "add", "--all"]
     return _command_safe(cmd, repopath)
 
 
@@ -62,8 +61,20 @@ def commit(message, repopath=os.getcwd()):
     Returns:
         CompletedProcess:
     """
-    cmd = ["git", "commit", "-a", "-m", f"'{message}'"]
+    cmd = ["git", "commit", "-m", f"'{message}'"]
     return _command_safe(cmd, repopath)
+
+
+def status(repopath=os.getcwd()):
+    """status returns the output from git status
+
+    Args:
+        repopath (str, optional): The root path of the repo. Defaults to os.getcwd().
+
+    Returns:
+        _command_safe
+    """
+    return _command_safe(["git", "status"], repopath)
 
 
 def pull(destination="origin", repopath=os.getcwd()):
