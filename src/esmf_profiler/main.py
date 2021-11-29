@@ -39,7 +39,7 @@ def _copy_path(src, dst, ignore=[]):  # pylint: disable=dangerous-default-value
                 if os.path.samefile(src_file, dst_file):
                     continue
                 os.remove(dst_file)
-            shutil.move(src_file, dst_dir)
+            shutil.copy(src_file, dst_dir)
 
 
 def _write_json_to_file(data, _path):
