@@ -7,15 +7,17 @@ import json
 import logging
 import os
 import shutil
+import signal
+import subprocess
+import sys
 import tempfile
+import webbrowser
+from subprocess import PIPE
 
-from esmf_profiler.analyses import LoadBalance, Analysis
 from esmf_profiler import git
+from esmf_profiler.analyses import LoadBalance
 from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
-from subprocess import PIPE
-import subprocess
-import webbrowser
 
 import time
 #import cProfile, pstats
@@ -24,21 +26,23 @@ import time
 
 logger = logging.getLogger(__name__)
 
-def _copy_path(src, dst, symlinks=False, ignore=None):
+def _copy_path(src, dst, ignore=[]):  # pylint: disable=dangerous-default-value
     """Safe copytree replacement"""
-    for item in os.listdir(src):
-        s = os.path.join(src, item)
-        d = os.path.join(dst, item)
-        try:
-            if os.path.isdir(s):
-                #logger.debug(f"copytree {s} -> {d}")
-                shutil.copytree(s, d, symlinks, ignore)
-            else:
-                #logger.debug(f"copy2 {s} -> {d}")
-                shutil.copy2(s, d)
-        except FileExistsError as _:  # We don't get this flag until Python 3.8
-            #logger.debug(f"FileExistsError: {_}")
-            continue
+    for src_dir, _, files in os.walk(src):
+        dst_dir = src_dir.replace(src, dst, 1)
+        if not os.path.exists(dst_dir):
+            os.makedirs(dst_dir)
+        for file_ in files:
+            if file_ in ignore:
+                continue
+            src_file = os.path.join(src_dir, file_)
+            dst_file = os.path.join(dst_dir, file_)
+            if os.path.exists(dst_file):
+                # in case of the src and dst are the same file
+                if os.path.samefile(src_file, dst_file):
+                    continue
+                os.remove(dst_file)
+            shutil.move(src_file, dst_dir)
 
 
 def _write_json_to_file(data, _path):
@@ -51,6 +55,7 @@ def _write_json_to_file(data, _path):
 
 def _whoami():
     """Returns the "whoami" command stdout"""
+    # TODO _command_safe should be copy/paste to eliminate the dependency
     return git._command_safe(["whoami"]).stdout.strip()
 
 
@@ -75,7 +80,7 @@ def _commit_profile(username, name, repopath=os.getcwd()):
     Returns:
         CompletedProcess:
     """
-    return git.commit(f"'Commit profile {username}/{name}'", repopath)
+    return git.commit(f"'Commit profilee {username}/{name}'", repopath)
 
 
 def push_profile_to_repo(input_path, name, url):
@@ -101,10 +106,18 @@ def push_profile_to_repo(input_path, name, url):
 
         username = _whoami()
         profilepath = safe_create_directory([_temp, username, name])
+        logger.debug(
+            "push_profile_to_repo: input_path: %s  profilepath: %s _temp: %s url: %s",
+            input_path,
+            profilepath,
+            _temp,
+            url,
+        )
 
         _copy_path(input_path, profilepath)
 
-        git.add(profilepath, _temp)
+        git.add(_temp)
+        logger.debug(git.status(_temp).stdout)
         _commit_profile(username, name, _temp)
         git.push(url, _temp)
 
@@ -138,7 +151,9 @@ def safe_create_directory(paths):
     return _path
 
 
-def copy_gui_template(output_path, input_path="./web/app/build", _ignore="/data"):
+def copy_gui_template(  # pylint: disable=dangerous-default-value
+    output_path, input_path="./web/app/build", _ignore=["site.json", "data.json"]
+):
     """copy_gui_template copies the Web GUI template files
 
     Ignores any existing /data file in input_path
@@ -146,14 +161,14 @@ def copy_gui_template(output_path, input_path="./web/app/build", _ignore="/data"
     Args:
         output_path (str):
         input_path (str, optional): Defaults to "./web/app/build".
-        _ignore (str || [str] , optional): Patterns to ignore. Defaults to "/data".
+        _ignore (str || [str] , optional): Patterns to ignore.
 
     Raises:
         FileNotFoundError: if input_path not found
     """
     if not os.path.exists(input_path):
         raise FileNotFoundError()
-    _copy_path(input_path, output_path, ignore=shutil.ignore_patterns(_ignore))
+    _copy_path(input_path, output_path, ignore=_ignore)
 
 
 def create_site_file(name, output_path, site_file_name="site.json"):
@@ -188,7 +203,6 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
     Returns:
         str: path off the output file
     """
-    # the only requested analysis is a load balance at the root level
 
     chunksize = Trace.DEFAULT_CHUNK_SIZE
     analysis_threads = Analysis.DEFAULT_NUM_THREADS
@@ -206,6 +220,7 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
             except ValueError:
                 logger.info(f"Invalid analysis_threads: {xopts['analysis_threads']} - using default value of {analysis_threads}")
 
+    # for now, the only supported analysis is load balance
     analyses = [LoadBalance(num_threads=analysis_threads)]
     #profiler = cProfile.Profile()
 
@@ -239,8 +254,14 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
 def main():
     """main execution"""
 
-    SITE_FILE_NAME = "site.json"
-    DATA_FILE_NAME = "load_balance.json"
+    def signal_handler(sig, frame):  # pylint: disable=unused-argument
+        logger.info("Closing local server")
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    SITE_FILE_NAME = "site.json"  # pylint: disable=invalid-name
+    DATA_FILE_NAME = "load_balance.json"  # pylint: disable=invalid-name
 
     # collect user args
     args = handle_args()

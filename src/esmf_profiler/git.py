@@ -6,7 +6,6 @@ Subprocess convenience module for interacting with Git
 author: Ryan Long <ryan.long@noaa.gov>
 """
 
-import glob
 import os
 import subprocess
 import logging
@@ -14,7 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def _command_safe(cmd, cwd=os.getcwd()):
+def _command_safe(cmd, cwd=os.getcwd()) -> subprocess.CompletedProcess:
     """_command_safe ensures commands are run safely and raise exceptions
     on error
 
@@ -25,7 +24,8 @@ def _command_safe(cmd, cwd=os.getcwd()):
         return subprocess.run(
             cmd,
             cwd=cwd,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             check=True,
             encoding="utf-8",
         )
@@ -34,10 +34,10 @@ def _command_safe(cmd, cwd=os.getcwd()):
         if error.stderr:
             logger.error(error.stderr)
             raise
-        return
+        return subprocess.CompletedProcess(returncode=0, args="", stdout=error.stdout)
 
 
-def add(_path, repopath=os.getcwd()):
+def add(repopath=os.getcwd()):
     """git_add
 
     Args:
@@ -47,7 +47,7 @@ def add(_path, repopath=os.getcwd()):
     Returns:
         CompletedProcess:
     """
-    cmd = ["git", "add"] + glob.glob(_path + "/*")
+    cmd = ["git", "add", "--all"]
     return _command_safe(cmd, repopath)
 
 
@@ -62,8 +62,20 @@ def commit(message, repopath=os.getcwd()):
     Returns:
         CompletedProcess:
     """
-    cmd = ["git", "commit", "-a", "-m", f"'{message}'"]
+    cmd = ["git", "commit", "-m", f"'{message}'"]
     return _command_safe(cmd, repopath)
+
+
+def status(repopath=os.getcwd()):
+    """status returns the output from git status
+
+    Args:
+        repopath (str, optional): The root path of the repo. Defaults to os.getcwd().
+
+    Returns:
+        _command_safe
+    """
+    return _command_safe(["git", "status"], repopath)
 
 
 def pull(destination="origin", repopath=os.getcwd()):

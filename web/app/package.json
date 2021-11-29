@@ -1,6 +1,6 @@
 {
-  "name": "temp",
-  "version": "0.1.0",
+  "name": "esmf-profiler-gui",
+  "version": "0.1.1",
   "private": true,
   "homepage": ".",
   "dependencies": {
@@ -12,9 +12,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
-    "axios": "^0.24.0",
     "bootstrap": "5.0.2",
-    "gh-pages": "^3.2.3",
     "highcharts": "^9.2.2",
     "highcharts-react-official": "^3.0.0",
     "install": "^0.13.0",
@@ -58,6 +56,7 @@
     ]
   },
   "devDependencies": {
-    "eslint-plugin-react-hooks": "^4.2.0"
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "react-test-renderer": "^17.0.2"
   }
 }
