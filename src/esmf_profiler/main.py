@@ -15,7 +15,7 @@ import webbrowser
 from subprocess import PIPE
 
 from esmf_profiler import git
-from esmf_profiler.analyses import LoadBalance
+from esmf_profiler.analyses import LoadBalance, Analysis
 from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
 
