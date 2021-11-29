@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def _command_safe(cmd, cwd=os.getcwd()):
+def _command_safe(cmd, cwd=os.getcwd()) -> subprocess.CompletedProcess:
     """_command_safe ensures commands are run safely and raise exceptions
     on error
 
@@ -34,7 +34,7 @@ def _command_safe(cmd, cwd=os.getcwd()):
         if error.stderr:
             logger.error(error.stderr)
             raise
-    return
+        return subprocess.CompletedProcess(returncode=0, args="", stdout=error.stdout)
 
 
 def add(_path, repopath=os.getcwd()):
