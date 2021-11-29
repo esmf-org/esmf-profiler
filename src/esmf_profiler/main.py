@@ -23,7 +23,7 @@ from esmf_profiler.view import handle_args
 logger = logging.getLogger(__name__)
 
 
-def _copy_path(src, dst, ignore=[]):
+def _copy_path(src, dst, ignore=[]):  # pylint: disable=dangerous-default-value
     """Safe copytree replacement"""
     for src_dir, _, files in os.walk(src):
         dst_dir = src_dir.replace(src, dst, 1)
