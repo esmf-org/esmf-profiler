@@ -87,6 +87,7 @@ function Stacked(props) {
   const prevLevel = useRef(["/TOP"]);
   const [options, setOptions] = useState(chartOptions);
   const chartComponent = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (prevLevel.current !== level) {
@@ -113,10 +114,12 @@ function Stacked(props) {
         return { ...prevOptions, ..._new };
       });
     }
+    setIsLoading(false);
   }, [level, props]);
 
   const toggleLogarithimic = () => {
     console.debug("toggleLogarithimic");
+    setIsLoading(true);
     const chart = chartComponent.current.chart;
     const currentChartType = chart.yAxis[0].userOptions.type;
     if (currentChartType === "logarithmic") {
@@ -128,15 +131,18 @@ function Stacked(props) {
         type: "logarithmic",
       });
     }
+    setIsLoading(false);
   };
 
-  const toggle = (show) => {
+  const toggleAllSeries = (show) => {
+    setIsLoading(true);
     const chart = chartComponent.current.chart;
     if (show) {
       chart.series.map((s) => s.setVisible(true, false));
     } else {
       chart.series.map((s) => s.setVisible(false, false));
     }
+    setIsLoading(false);
   };
 
   const hasData = (check) => {
@@ -149,24 +155,27 @@ function Stacked(props) {
 
   const clickLevel = (_level) => {
     console.debug(`clickLevel(${_level})`);
-
     if (!hasData([...prevLevel.current, _level])) {
       setError(`No detail timing data for ${_level}`);
     } else {
+      setIsLoading(true);
       setLevel((current) => [...current, _level]);
     }
   };
 
   const clickCrumb = (idx, _level) => {
+    setIsLoading(true);
     console.debug(`clickCrumb(${idx}, ${_level})`);
     setLevel((prev) => prev.slice(0, idx + 1));
   };
 
   return (
-    <React.Fragment>
+    <ChartContainer>
       {error && <AlertDismissible message={error} />}
-
       <Breadcrumbs click={clickCrumb} level={level} />
+      <div className="d-flex justify-content-center m-2">
+        {isLoading && <Spinner animation="border" role="status" />}
+      </div>
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
@@ -175,20 +184,19 @@ function Stacked(props) {
 
       <div className="d-flex justify-content-center">
         <ButtonGroup size="sm" className="me-2">
-          <Button onClick={() => toggle(true)} className="m-1">
+          <Button onClick={() => toggleAllSeries(true)} className="m-1">
             Select All
           </Button>
-          <Button onClick={() => toggle(false)} className="m-1">
+          <Button onClick={() => toggleAllSeries(false)} className="m-1">
             Select None
           </Button>
         </ButtonGroup>
         <CheckBox
           label="Logarithmic Y-Axis"
           handleChange={() => toggleLogarithimic()}
-          clicked
         />
       </div>
-    </React.Fragment>
+    </ChartContainer>
   );
 }
 
