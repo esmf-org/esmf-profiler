@@ -3,8 +3,7 @@ import styled from "styled-components";
 
 const StyledContainer = styled.div`
   overflow: auto;
-  min-height: 75vh;
-  margin: 10px;
+  margin: 0px;
 `;
 
 const StyledTitle = styled.h6`
