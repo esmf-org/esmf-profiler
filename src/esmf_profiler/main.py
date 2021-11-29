@@ -175,7 +175,7 @@ def create_site_file(name, output_path, site_file_name="site.json"):
     return output_file_path
 
 
-def run_analysis(output_path, tracedir, data_file_name, xopts):
+def run_analysis(output_path, tracedir, data_file_name, xopts=None):
     """run_analysis runs an analysis on a directory containing binary traces files and outputs
     the results to data_file_name
 
