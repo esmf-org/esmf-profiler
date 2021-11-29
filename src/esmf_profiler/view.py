@@ -10,13 +10,13 @@ args.name // access args as named properties
 """
 import argparse
 import os
+import re
 
 
-def _alphanumberic(value):
-    if not value.isalnum():
-        raise ValueError(
-            f"name argument must contain only letters and numbers: {value}"
-        )
+def _allowed_chars(value):
+    search_regex = re.compile(r"^[\w\-. ]+$")
+    if not bool(search_regex.search(value)):
+        raise ValueError(f"{value} contains invalid characters.")
     return value
 
 
@@ -50,7 +50,7 @@ def handle_args():
         "--name",
         help="name to use for the generated profile",
         required=True,
-        type=_alphanumberic,
+        type=_allowed_chars,
     )
     parser.add_argument(
         "-o", "--outdir", help="path to output directory", required=True
