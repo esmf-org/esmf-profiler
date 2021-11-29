@@ -8,11 +8,9 @@ import HC_exporting from "highcharts/modules/exporting";
 import { useState, useEffect, useRef } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { Spinner } from "react-bootstrap";
+
 import AlertDismissible from "./../components/alerts/AlertDismissible";
 import Breadcrumbs from "../components/Breadcrumbs";
-import ChartContainer from "./ChartContainer";
-import CheckBox from "../components/CheckBox";
 
 HC_exporting(Highcharts);
 //Boost(Highcharts);
