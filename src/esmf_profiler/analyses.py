@@ -245,6 +245,9 @@ class MultiPETTimingNode:
 # an abstract class that all analyses will extend
 # examples include LoadBalance, MemoryProfile, etc.
 class Analysis(ABC):
+
+    DEFAULT_NUM_THREADS = 1  # default number of threads for analysis processing
+
     def __init__(self):
         pass
 
@@ -263,65 +266,88 @@ class LoadBalance(Analysis):
 
     # Number of messages to buffer from the trace
     # before handling them in a batch
-    MESSAGE_BUFFER_SIZE = 2500
+    MESSAGE_BUFFER_SIZE = 100
 
     # Maximum number of outstanding batches of
     # messages allowed.  When reached, the trace
     # read will block until the queue has open slots.
     MESSAGE_QUEUE_MAXSIZE = 100
 
-    def __init__(self):
-        self._event_queue = queue.Queue(maxsize=LoadBalance.MESSAGE_QUEUE_MAXSIZE)
-        self._thread = None
-        self._msg_buffer = []
+    def __init__(self, num_threads: int = Analysis.DEFAULT_NUM_THREADS):
+        self._num_threads = num_threads
+        self._queues = []
+        self._threads = []
+        self._msg_buffers = []
 
         self._regionIdToNameMap = {}  # { pet -> { region_id -> region name } }
         self._timingTrees = {}        # { pet -> root of timing tree }
 
-        # start thread that listens for events
-        self._start()
+        # start listener threads
+        for i in range(num_threads):
+            t, q = self._start()
+            self._queues.append(q)
+            self._threads.append(t)
+            self._msg_buffers.append([])
+            logger.debug(f"{self.__class__.__name__}: Started listener thread {i}")
 
     def _start(self):
 
+        q = queue.Queue(maxsize=LoadBalance.MESSAGE_QUEUE_MAXSIZE)
+
         def _listen_buffer():
             while True:
-                msg_buffer = self._event_queue.get(block=True)
+                msg_buffer = q.get(block=True)
+                if msg_buffer is None:
+                    q.task_done()
+                    return
                 for msg in msg_buffer:
-                    if msg is None:
-                        self._event_queue.task_done()
-                        return
                     self._handle_event(msg)
-
-                self._event_queue.task_done()
+                q.task_done()
 
         # this implementation is for single messages instead of batches
         # def _listen():
         #    while True:
-        #        msg = self._event_queue.get(block=True)
+        #        msg = q.get(block=True)
         #        if msg is None:
-        #            self._event_queue.task_done()
+        #            q.task_done()
         #            return
         #        self._handle_event(msg)
-        #        self._event_queue.task_done()
+        #        q.task_done()
 
-        self._thread = threading.Thread(target=_listen_buffer, daemon=True)
-        self._thread.start()
+        t = threading.Thread(target=_listen_buffer, daemon=True)
+        t.start()
+        return t, q
 
     def _join(self):
-        logger.debug(f"{self.__class__.__name__}: Waiting for queue to join")
-        self.process_event(None)  # signal we are done
-        self._event_queue.join()
-        self._thread.join()
-        logger.debug(f"{self.__class__.__name__}: Queue join complete")
+        for i in range(self._num_threads):
+            logger.debug(f"{self.__class__.__name__}: Waiting for thread {i} to join")
 
-    def queue_size(self):
-        return self._event_queue.qsize()
+            # queue up any remaining messages in the buffer
+            self._queues[i].put(self._msg_buffers[i], block=True)
+            # signal we are done
+            self._queues[i].put(None, block=True)
+
+            self._queues[i].join()
+            self._threads[i].join()
+            logger.debug(f"{self.__class__.__name__}: Thread {i} join complete")
+
+    def debug_log_queues(self):
+        for i in range(self._num_threads):
+            logger.debug(f"{self.__class__.__name__} \tQueue for thread {i} size is {self._queues[i].qsize()}")
 
     def process_event(self, msg: bt2._EventMessageConst):
-        self._msg_buffer.append(msg)
-        if len(self._msg_buffer) == LoadBalance.MESSAGE_BUFFER_SIZE or msg is None:
-            self._event_queue.put(self._msg_buffer, block=True)
-            self._msg_buffer = []
+
+        # determine which thread
+        if self._num_threads > 1:
+            pet = int(msg.event.packet.context_field["pet"])
+            i = pet % self._num_threads
+        else:
+            i = 0
+
+        self._msg_buffers[i].append(msg)
+        if len(self._msg_buffers[i]) == LoadBalance.MESSAGE_BUFFER_SIZE:
+            self._queues[i].put(self._msg_buffers[i], block=True)
+            self._msg_buffers[i] = []
 
     # this implementation for handling single messages instead of batches
     # def process_event(self, msg: bt2._EventMessageConst):

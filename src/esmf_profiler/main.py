@@ -9,7 +9,7 @@ import os
 import shutil
 import tempfile
 
-from esmf_profiler.analyses import LoadBalance
+from esmf_profiler.analyses import LoadBalance, Analysis
 from esmf_profiler import git
 from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
@@ -189,16 +189,24 @@ def run_analysis(output_path, tracedir, data_file_name, xopts):
         str: path off the output file
     """
     # the only requested analysis is a load balance at the root level
-    analyses = [LoadBalance()]
 
     chunksize = Trace.DEFAULT_CHUNK_SIZE
-    if xopts is not None and "chunksize" in xopts:
-        try:
-            chunksize = int(xopts["chunksize"])
-            logger.info(f"Using custom chunksize of {chunksize}")
-        except ValueError:
-            logger.info(f"Invalid chunksize: {xopts['chunksize']} - using default value of {chunksize}")
+    analysis_threads = Analysis.DEFAULT_NUM_THREADS
+    if xopts is not None:
+        if "chunksize" in xopts:
+            try:
+                chunksize = int(xopts["chunksize"])
+                logger.info(f"Using custom chunksize of {chunksize}")
+            except ValueError:
+                logger.info(f"Invalid chunksize: {xopts['chunksize']} - using default value of {chunksize}")
+        if "analysis_threads" in xopts:
+            try:
+                analysis_threads = int(xopts["analysis_threads"])
+                logger.info(f"Using custom analysis_threads of {analysis_threads}")
+            except ValueError:
+                logger.info(f"Invalid analysis_threads: {xopts['analysis_threads']} - using default value of {analysis_threads}")
 
+    analyses = [LoadBalance(num_threads=analysis_threads)]
     #profiler = cProfile.Profile()
 
     logger.info("Processing trace: %s", tracedir)

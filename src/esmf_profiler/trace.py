@@ -53,8 +53,9 @@ class Trace:
                 if _msg_count % 50000 == 0:
                     logger.info(f"Processed {_msg_count} events")
 
-                    # for analysis in analyses:
-                    #    logger.debug(f"  ==> Q size = {analysis.queue_size()}")
+                    for analysis in analyses:
+                        analysis.debug_log_queues()
+                        #logger.debug(f"  ==> Q size = {analysis.queue_size()}")
 
                 if type(msg) is bt2._EventMessageConst:
                     event_name = msg.event.name
