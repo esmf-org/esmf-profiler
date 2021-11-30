@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Form } from "react-bootstrap";
 
 export default function CheckBox(props) {
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(props.checked);
 
   const handleChange = (e) => {
     console.debug(`handleChange(${e})`);
@@ -12,13 +12,13 @@ export default function CheckBox(props) {
   };
 
   return (
-    <React.Fragment>
-      <Form.Check
-        checked={isChecked}
-        onChange={handleChange}
-        type="checkbox"
-        label={props.label}
-      />
-    </React.Fragment>
+    <Form.Check
+      inline
+      checked={isChecked}
+      onChange={handleChange}
+      type="checkbox"
+      label={props.label}
+      name="optionsGroup"
+    />
   );
 }
