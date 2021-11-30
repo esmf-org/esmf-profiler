@@ -2,7 +2,6 @@
 
 """
 
-
 import datetime
 import json
 import logging
@@ -16,12 +15,16 @@ import webbrowser
 from subprocess import PIPE
 
 from esmf_profiler import git
-from esmf_profiler.analyses import LoadBalance
+from esmf_profiler.analyses import LoadBalance, Analysis
 from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
 
-logger = logging.getLogger(__name__)
+import time
+#import cProfile, pstats
+#from pycallgraph import PyCallGraph
+#from pycallgraph.output import GraphvizOutput
 
+logger = logging.getLogger(__name__)
 
 def _copy_path(src, dst, ignore=[]):  # pylint: disable=dangerous-default-value
     """Safe copytree replacement"""
@@ -187,32 +190,64 @@ def create_site_file(name, output_path, site_file_name="site.json"):
     return output_file_path
 
 
-def run_analsysis(output_path, tracedir, data_file_name):
-    """run_analsysis runs an analysis on a directory containing binary traces files and outputs
+def run_analysis(output_path, tracedir, data_file_name, xopts=None):
+    """run_analysis runs an analysis on a directory containing binary traces files and outputs
     the results to data_file_name
 
     Args:
         output_path (str): path
         tracedir (str): path containing the binary traces
         data_file_name (str): name to give the output file
+        xopts (dict): extra options from the user to customize behavior
 
     Returns:
         str: path off the output file
     """
-    # the only requested analysis is a load balance at the root level
-    analyses = [LoadBalance(None, output_path)]
+
+    chunksize = Trace.DEFAULT_CHUNK_SIZE
+    analysis_threads = Analysis.DEFAULT_NUM_THREADS
+    if xopts is not None:
+        if "chunksize" in xopts:
+            try:
+                chunksize = int(xopts["chunksize"])
+                logger.info(f"Using custom chunksize of {chunksize}")
+            except ValueError:
+                logger.info(f"Invalid chunksize: {xopts['chunksize']} - using default value of {chunksize}")
+        if "analysis_threads" in xopts:
+            try:
+                analysis_threads = int(xopts["analysis_threads"])
+                logger.info(f"Using custom analysis_threads of {analysis_threads}")
+            except ValueError:
+                logger.info(f"Invalid analysis_threads: {xopts['analysis_threads']} - using default value of {analysis_threads}")
+
+    # for now, the only supported analysis is load balance
+    analyses = [LoadBalance(num_threads=analysis_threads)]
+    #profiler = cProfile.Profile()
 
     logger.info("Processing trace: %s", tracedir)
-    Trace.from_path(tracedir, analyses)
-    logger.debug("Processing trace complete")
+
+    start = time.time()
+    #profiler.enable()
+    #with PyCallGraph(output=GraphvizOutput()):
+
+    Trace.from_path(tracedir, analyses=analyses, chunksize=chunksize)
 
     # indicate to the analyses that all events have been processed
-    logger.info("Generating %s profiles", len(analyses))
+    logger.info("Generating profile")
     output_file_path = os.path.join(output_path, data_file_name)
     for analysis in analyses:
         data = analysis.finish()
         _write_json_to_file(data, output_file_path)
     logger.debug("Finishing analyses complete")
+
+    #profiler.disable()
+
+    end = time.time()
+    logger.info(f"Trace processing time: {round(end - start, 2)}s")
+
+    #stats = pstats.Stats(profiler).sort_stats('tottime')
+    #stats.print_stats()
+
     return output_file_path
 
 
@@ -234,6 +269,16 @@ def main():
     # setup logging based on args.verbose
     handle_logging(args.verbose)
 
+    # TODO: this section should probably be in handle_args()
+    xopts = None
+    if args.xopts is not None:
+        # format:  key1=value1:key2=value2:key3=value3
+        try:
+            xopts = dict(x.split("=") for x in args.xopts.split(":"))
+        except ValueError:
+            logger.error("Incorrect format for -x/--xopts command line argument")
+            return
+
     output_path = safe_create_directory([args.outdir])
     output_data_path = safe_create_directory([output_path, "data"])
 
@@ -241,14 +286,13 @@ def main():
     create_site_file(args.name, output_data_path, SITE_FILE_NAME)
 
     # the only requested analysis is a load balance at the root level
-    run_analsysis(output_data_path, args.tracedir, DATA_FILE_NAME)
+    run_analysis(output_data_path, args.tracedir, DATA_FILE_NAME, xopts)
 
     # inject web gui files
     copy_gui_template(output_path)
 
     if args.push is not None:
         push_profile_to_repo(input_path=output_path, name=args.name, url=args.push)
-        logger.info("Succesfully pushed %s to %s", output_path, args.push)
 
     if args.serve:
         _start_server(output_path)

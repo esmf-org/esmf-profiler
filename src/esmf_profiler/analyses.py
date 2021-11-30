@@ -1,24 +1,25 @@
-from esmf_profiler.event import TraceEvent, DefineRegion, RegionProfile
-from typing import Dict
-from abc import ABC, abstractproperty
-import logging
-import sys
+#pylint: disable=invalid-name
+
 import collections
-import json
-import pprint
-import os
+import logging
+import queue
+import sys
+import threading
+from abc import ABC, abstractmethod
+from typing import Dict
+
+import bt2
 
 logger = logging.getLogger(__name__)
-# _format = "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
-# logging.basicConfig(level=logging.DEBUG, format=_format)
+
 
 # class to represent as a tree the timing
 # information in the RegionProfile events
 # for now just deal with total times, since that
 # is all we need for the initial chart
 class SinglePETTimingNode:
-    def __init__(self, id, pet, name):
-        self._id = id
+    def __init__(self, _id, pet, name):
+        self._id = _id
         self._pet = pet
         self._name = name
         self._total = 0
@@ -27,6 +28,11 @@ class SinglePETTimingNode:
         self._mean = 0
         self._count = 0
         self._children = []  # List[SinglePETTimingTreeNode]
+
+        # only the root maintains a cache (self._id = 0)
+        self._child_cache = {}  # id -> SinglePetTimingTreeNode
+        if self._id == 0:
+            self._child_cache[self._id] = self
 
     @property
     def name(self):
@@ -85,15 +91,13 @@ class SinglePETTimingNode:
         return self._children
 
     # add child node to the node with give parentid
-    def add_child(self, parentid, child: "SinglePETTimingNode"):
-        if self._id == parentid:
-            self._children.append(child)
-            return True
-        else:
-            for c in self._children:
-                if c.add_child(parentid, child):
-                    return True
-        return False
+    # must be called only from root SinglePETTimingNode
+    def add_child(
+        self, parentid, child: "SinglePETTimingNode"
+    ):  # pylint: disable=protected-access
+        self._child_cache[parentid]._children.append(child)
+        self._child_cache[child._id] = child
+        return True
 
 
 class MultiPETTimingNode:
@@ -133,7 +137,7 @@ class MultiPETTimingNode:
 
     @property
     def total_sum_s(self):
-        return nano_to_sec(self._total_sum())
+        return nano_to_sec(self._total_sum)
 
     @property
     def total_mean(self):
@@ -171,6 +175,19 @@ class MultiPETTimingNode:
     def children(self):
         return self._children
 
+    # sort children by total time
+    # works recursively down the tree
+    def sort_children(self):
+        sd = collections.OrderedDict(
+            sorted(
+                self._children.items(), key=lambda item: item[1].total_sum, reverse=True
+            )
+        )
+        self._children = sd
+
+        for c in self._children:
+            self._children[c].sort_children()
+
     # Returns a list of the SinglePETTimingNodes that were
     # used to create the timing statistics in this node.
     @property
@@ -179,7 +196,9 @@ class MultiPETTimingNode:
         return self._contributing_nodes
         # return collections.OrderedDict(sorted(self._contributing_nodes.items()))
 
-    def _merge_children(self, other: SinglePETTimingNode):
+    def _merge_children(
+        self, other: SinglePETTimingNode
+    ):  # pytlint: disable=invalid-name
         for c in other.children:
             rs = self._children.setdefault(c.name, MultiPETTimingNode())
             rs.merge(c)
@@ -235,67 +254,149 @@ class MultiPETTimingNode:
 # an abstract class that all analyses will extend
 # examples include LoadBalance, MemoryProfile, etc.
 class Analysis(ABC):
+
+    DEFAULT_NUM_THREADS = 1  # default number of threads for analysis processing
+
     def __init__(self):
         pass
 
-    @abstractproperty
-    def process_event(self):
+    @abstractmethod
+    def process_event(self, msg: bt2._EventMessageConst):
         raise NotImplementedError(
             f"{self.__class__.__name__} requires a process_event method"
         )
 
-    @abstractproperty
+    @abstractmethod
     def finish(self):
         raise NotImplementedError(f"{self.__class__.__name__} requires a finish method")
 
 
 class LoadBalance(Analysis):
 
-    # rootRegionName is the name of the region to be used as
-    # the root for the load balance plot
-    # if None, then use the top level
-    # outdir = output location  TODO:  consider moving outdir to Analysis class since it is a common param
-    def __init__(self, rootRegionName, outdir):
-        self._rootRegionName = rootRegionName
-        self._outdir = outdir
-        # two level mapping
-        # { pet -> { region_id -> region name } }
-        self._regionIdToNameMap = {}
+    # Number of messages to buffer from the trace
+    # before handling them in a batch
+    MESSAGE_BUFFER_SIZE = 100
 
-        # map pet -> root of timing tree
-        self._timingTrees = {}
+    # Maximum number of outstanding batches of
+    # messages allowed.  When reached, the trace
+    # read will block until the queue has open slots.
+    MESSAGE_QUEUE_MAXSIZE = 100
 
-    def process_event(self, event: TraceEvent):
+    def __init__(self, num_threads: int = Analysis.DEFAULT_NUM_THREADS):
+        super().__init__()
+        self._num_threads = num_threads
+        self._queues = []
+        self._threads = []
+        self._msg_buffers = []
 
-        if isinstance(event, DefineRegion):
-            pet = event.pet
-            regionid = event.get("id")
-            name = event.get("name")
-            # logger.debug(f"found DefineRegion pet = {pet}, id = {regionid}, name = {name}")
-            self._regionIdToNameMap.setdefault(pet, {})[regionid] = name
+        self._region_id_to_name_map = {}  # { pet -> { region_id -> region name } }
+        self._timing_trees = {}  # { pet -> root of timing tree }
 
-        if isinstance(event, RegionProfile):
-            pet = event.pet
-            regionid = event.get("id")
-            parentid = event.get("parentid")
+        # start listener threads
+        for i in range(num_threads):
+            t, q = self._start()
+            self._queues.append(q)
+            self._threads.append(t)
+            self._msg_buffers.append([])
+            logger.debug("%s: Started listener thread %s", self.__class__.__name__, i)
+
+    def _start(self):
+
+        q = queue.Queue(maxsize=LoadBalance.MESSAGE_QUEUE_MAXSIZE)
+
+        def _listen_buffer():
+            while True:
+                msg_buffer = q.get(block=True)
+                if msg_buffer is None:
+                    q.task_done()
+                    return
+                for msg in msg_buffer:
+                    self._handle_event(msg)
+                q.task_done()
+
+        # this implementation is for single messages instead of batches
+        # def _listen():
+        #    while True:
+        #        msg = q.get(block=True)
+        #        if msg is None:
+        #            q.task_done()
+        #            return
+        #        self._handle_event(msg)
+        #        q.task_done()
+
+        t = threading.Thread(target=_listen_buffer, daemon=True)
+        t.start()
+        return t, q
+
+    def _join(self):
+        for i in range(self._num_threads):
+            logger.debug(
+                "%s: Waiting for thread %s to join", self.__class__.__name__, i
+            )
+
+            # queue up any remaining messages in the buffer
+            self._queues[i].put(self._msg_buffers[i], block=True)
+            # signal we are done
+            self._queues[i].put(None, block=True)
+
+            self._queues[i].join()
+            self._threads[i].join()
+            logger.debug("%s: Thread %s join complete", self.__class__.__name__, i)
+
+    def debug_log_queues(self):
+        for i in range(self._num_threads):
+            logger.debug(
+                "%s \tQueue for thread %s size is {self._queues[i].qsize()}",
+                self.__class__.__name__,
+                self._queues[i].qsize(),
+            )
+
+    def process_event(self, msg: bt2._EventMessageConst):
+
+        # determine which thread
+        if self._num_threads > 1:
+            pet = int(msg.event.packet.context_field["pet"])
+            i = pet % self._num_threads
+        else:
+            i = 0
+
+        self._msg_buffers[i].append(msg)
+        if len(self._msg_buffers[i]) == LoadBalance.MESSAGE_BUFFER_SIZE:
+            self._queues[i].put(self._msg_buffers[i], block=True)
+            self._msg_buffers[i] = []
+
+    # this implementation for handling single messages instead of batches
+    # def process_event(self, msg: bt2._EventMessageConst):
+    #    self._event_queue.put(msg, block=True)
+
+    def _handle_event(self, msg: bt2._EventMessageConst):
+
+        if msg.event.name == "define_region":
+            pet = int(msg.event.packet.context_field["pet"])
+            regionid = int(msg.event.payload_field["id"])
+            name = str(msg.event.payload_field["name"])
+            self._region_id_to_name_map.setdefault(pet, {})[regionid] = name
+
+        elif msg.event.name == "region_profile":
+            pet = int(msg.event.packet.context_field["pet"])
+            regionid = int(msg.event.payload_field["id"])
+            parentid = int(msg.event.payload_field["parentid"])
 
             if regionid == 1:
                 # special case for outermost timed region
                 name = "TOP"
             else:
-                map = self._regionIdToNameMap[pet]
-                name = map[regionid]  # should already be there
-
-            # logger.debug(f"found RegionProfile pet = {pet}, id = {regionid}, parentid = {parentid}, name = {name}")
+                _map = self._region_id_to_name_map[pet]
+                name = _map[regionid]  # should already be there
 
             node = SinglePETTimingNode(regionid, pet, name)
-            node.total = event.get("total")
-            node.count = event.get("count")
-            node.min = event.get("min")
-            node.max = event.get("max")
+            node.total = int(msg.event.payload_field["total"])
+            node.count = int(msg.event.payload_field["count"])
+            node.min = int(msg.event.payload_field["min"])
+            node.max = int(msg.event.payload_field["max"])
 
             # add child to the timing tree for the given pet
-            root = self._timingTrees.setdefault(
+            root = self._timing_trees.setdefault(
                 pet, SinglePETTimingNode(0, pet, "TOP_LEVEL")
             )
             if not root.add_child(parentid, node):
@@ -304,13 +405,21 @@ class LoadBalance(Analysis):
                 )
 
     def finish(self):
+
+        # wait for message handling thread to complete
+        self._join()
+
         # all events have been processed, so now we have a complete
         # list of timing trees, one per PET in self._timingTrees
 
+        logger.info("Completing analysis: %s", self.__class__.__name__)
+
         # merge all the SinglePETTimingNodes into a single tree
         multiPETTree = MultiPETTimingNode()
-        for pet, t in self._timingTrees.items():
+        for _, t in self._timing_trees.items():
             multiPETTree.merge(t)
+
+        multiPETTree.sort_children()
 
         # collect load balance timing results for all levels of the full tree
         results = {}
