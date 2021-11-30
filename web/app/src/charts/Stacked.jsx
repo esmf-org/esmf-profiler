@@ -8,7 +8,7 @@ import HC_exporting from "highcharts/modules/exporting";
 import { useState, useEffect, useRef } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-
+import { Form } from "react-bootstrap";
 import AlertDismissible from "./../components/alerts/AlertDismissible";
 import Breadcrumbs from "../components/Breadcrumbs";
 import CheckBoxOption from "./CheckBoxOption";
@@ -17,6 +17,26 @@ import { toggleAxisInvert } from "./Utils";
 
 HC_exporting(Highcharts);
 //Boost(Highcharts);
+
+function CheckBox(props) {
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleChange = (e) => {
+    setIsChecked(!isChecked);
+    props.handleChange(isChecked);
+  };
+
+  return (
+    <React.Fragment>
+      <Form.Check
+        checked={isChecked}
+        onChange={handleChange}
+        type="checkbox"
+        label={props.label}
+      />
+    </React.Fragment>
+  );
+}
 
 function Stacked(props) {
   const chartOptions = {
@@ -45,9 +65,6 @@ function Stacked(props) {
       },
     },
     yAxis: {
-      min: 0,
-      allowDecimals: true,
-      tickInterval: 300,
       title: {
         text: "Total Time (s)",
       },
@@ -114,6 +131,21 @@ function Stacked(props) {
     }
   }, [level, props]);
 
+  const toggleLogarithimic = () => {
+    console.debug("toggleLogarithimic");
+    const chart = chartComponent.current.chart;
+    const currentChartType = chart.yAxis[0].userOptions.type;
+    if (currentChartType === "logarithmic") {
+      chart.yAxis[0].update({
+        type: "linear",
+      });
+    } else {
+      chart.yAxis[0].update({
+        type: "logarithmic",
+      });
+    }
+  };
+
   const toggle = (show) => {
     const chart = chartComponent.current.chart;
     if (show) {
@@ -121,7 +153,6 @@ function Stacked(props) {
     } else {
       chart.series.map((s) => s.setVisible(false, false));
     }
-    chart.redraw();
   };
 
   const hasData = (check) => {
@@ -173,6 +204,11 @@ function Stacked(props) {
             Select None
           </Button>
         </ButtonGroup>
+        <CheckBox
+          label="Logarithmic Y-Axis"
+          handleChange={() => toggleLogarithimic()}
+          clicked
+        />
       </div>
     </React.Fragment>
   );
