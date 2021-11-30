@@ -1,4 +1,4 @@
-#pylint: disable=invalid-name
+# pylint: disable=invalid-name
 
 import collections
 import logging
@@ -346,8 +346,9 @@ class LoadBalance(Analysis):
     def debug_log_queues(self):
         for i in range(self._num_threads):
             logger.debug(
-                "%s \tQueue for thread %s size is {self._queues[i].qsize()}",
+                "%s \tQueue for thread %s size is %s",
                 self.__class__.__name__,
+                i,
                 self._queues[i].qsize(),
             )
 
