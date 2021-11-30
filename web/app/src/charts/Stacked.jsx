@@ -30,6 +30,9 @@ function Stacked(props) {
     },
     title: {
       text: "PET Timings", // graph title
+      style: {
+        fontSize: "14px",
+      },
     },
     credits: {
       enabled: false,
