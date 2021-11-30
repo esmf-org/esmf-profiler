@@ -11,6 +11,9 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 import AlertDismissible from "./../components/alerts/AlertDismissible";
 import Breadcrumbs from "../components/Breadcrumbs";
+import CheckBoxOption from "./CheckBoxOption";
+
+import { toggleAxisInvert } from "./Utils";
 
 HC_exporting(Highcharts);
 //Boost(Highcharts);
@@ -22,6 +25,8 @@ function Stacked(props) {
       zoomType: "xy",
       displayErrors: false, //TODO set for prod and dev
       panKey: "ctrl",
+      height: 50 + "%",
+      spacingBottom: 0,
     },
     title: {
       text: "PET Timings", // graph title
@@ -33,18 +38,25 @@ function Stacked(props) {
       title: {
         text: "PET Number",
       },
+      accessibility: {
+        rangeDescription: "Range: All PETs",
+      },
     },
     yAxis: {
       min: 0,
       allowDecimals: true,
+      tickInterval: 300,
       title: {
         text: "Total Time (s)",
       },
     },
     legend: {
+      layout: "vertical",
+      align: "right",
+      verticalAlign: "middle",
       enabled: true,
       reversed: true,
-      itemStyle: { fontSize: "12pt" },
+      itemStyle: { fontSize: "8pt" },
     },
 
     plotOptions: {
@@ -145,6 +157,12 @@ function Stacked(props) {
       />
 
       <div className="d-flex justify-content-center">
+        <CheckBoxOption
+          label="Invert Axis"
+          handleChange={toggleAxisInvert}
+          chartRef={chartComponent}
+        />
+
         <ButtonGroup size="sm" className="me-2">
           <Button onClick={() => toggle(true)} className="m-1">
             Select All
