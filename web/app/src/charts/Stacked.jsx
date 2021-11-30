@@ -26,7 +26,6 @@ function Stacked(props) {
       displayErrors: false, //TODO set for prod and dev
       panKey: "ctrl",
       height: 50 + "%",
-      spacingBottom: 0,
     },
     title: {
       text: "PET Timings", // graph title
