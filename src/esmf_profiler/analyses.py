@@ -1,11 +1,14 @@
-import threading
-from typing import Dict
-from abc import ABC, abstractmethod
-import logging
-import sys
+#pylint: disable=invalid-name
+
 import collections
-import bt2
+import logging
 import queue
+import sys
+import threading
+from abc import ABC, abstractmethod
+from typing import Dict
+
+import bt2
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +18,8 @@ logger = logging.getLogger(__name__)
 # for now just deal with total times, since that
 # is all we need for the initial chart
 class SinglePETTimingNode:
-    def __init__(self, id, pet, name):
-        self._id = id
+    def __init__(self, _id, pet, name):
+        self._id = _id
         self._pet = pet
         self._name = name
         self._total = 0
@@ -89,7 +92,9 @@ class SinglePETTimingNode:
 
     # add child node to the node with give parentid
     # must be called only from root SinglePETTimingNode
-    def add_child(self, parentid, child: "SinglePETTimingNode"):
+    def add_child(
+        self, parentid, child: "SinglePETTimingNode"
+    ):  # pylint: disable=protected-access
         self._child_cache[parentid]._children.append(child)
         self._child_cache[child._id] = child
         return True
@@ -132,7 +137,7 @@ class MultiPETTimingNode:
 
     @property
     def total_sum_s(self):
-        return nano_to_sec(self._total_sum())
+        return nano_to_sec(self._total_sum)
 
     @property
     def total_mean(self):
@@ -174,7 +179,9 @@ class MultiPETTimingNode:
     # works recursively down the tree
     def sort_children(self):
         sd = collections.OrderedDict(
-            sorted(self._children.items(), key=lambda item: item[1].total_sum, reverse=True)
+            sorted(
+                self._children.items(), key=lambda item: item[1].total_sum, reverse=True
+            )
         )
         self._children = sd
 
@@ -189,7 +196,9 @@ class MultiPETTimingNode:
         return self._contributing_nodes
         # return collections.OrderedDict(sorted(self._contributing_nodes.items()))
 
-    def _merge_children(self, other: SinglePETTimingNode):
+    def _merge_children(
+        self, other: SinglePETTimingNode
+    ):  # pytlint: disable=invalid-name
         for c in other.children:
             rs = self._children.setdefault(c.name, MultiPETTimingNode())
             rs.merge(c)
@@ -274,13 +283,14 @@ class LoadBalance(Analysis):
     MESSAGE_QUEUE_MAXSIZE = 100
 
     def __init__(self, num_threads: int = Analysis.DEFAULT_NUM_THREADS):
+        super().__init__()
         self._num_threads = num_threads
         self._queues = []
         self._threads = []
         self._msg_buffers = []
 
-        self._regionIdToNameMap = {}  # { pet -> { region_id -> region name } }
-        self._timingTrees = {}        # { pet -> root of timing tree }
+        self._region_id_to_name_map = {}  # { pet -> { region_id -> region name } }
+        self._timing_trees = {}  # { pet -> root of timing tree }
 
         # start listener threads
         for i in range(num_threads):
@@ -288,7 +298,7 @@ class LoadBalance(Analysis):
             self._queues.append(q)
             self._threads.append(t)
             self._msg_buffers.append([])
-            logger.debug(f"{self.__class__.__name__}: Started listener thread {i}")
+            logger.debug("%s: Started listener thread %s", self.__class__.__name__, i)
 
     def _start(self):
 
@@ -320,7 +330,9 @@ class LoadBalance(Analysis):
 
     def _join(self):
         for i in range(self._num_threads):
-            logger.debug(f"{self.__class__.__name__}: Waiting for thread {i} to join")
+            logger.debug(
+                "%s: Waiting for thread %s to join", self.__class__.__name__, i
+            )
 
             # queue up any remaining messages in the buffer
             self._queues[i].put(self._msg_buffers[i], block=True)
@@ -329,11 +341,15 @@ class LoadBalance(Analysis):
 
             self._queues[i].join()
             self._threads[i].join()
-            logger.debug(f"{self.__class__.__name__}: Thread {i} join complete")
+            logger.debug("%s: Thread %s join complete", self.__class__.__name__, i)
 
     def debug_log_queues(self):
         for i in range(self._num_threads):
-            logger.debug(f"{self.__class__.__name__} \tQueue for thread {i} size is {self._queues[i].qsize()}")
+            logger.debug(
+                "%s \tQueue for thread %s size is {self._queues[i].qsize()}",
+                self.__class__.__name__,
+                self._queues[i].qsize(),
+            )
 
     def process_event(self, msg: bt2._EventMessageConst):
 
@@ -359,7 +375,7 @@ class LoadBalance(Analysis):
             pet = int(msg.event.packet.context_field["pet"])
             regionid = int(msg.event.payload_field["id"])
             name = str(msg.event.payload_field["name"])
-            self._regionIdToNameMap.setdefault(pet, {})[regionid] = name
+            self._region_id_to_name_map.setdefault(pet, {})[regionid] = name
 
         elif msg.event.name == "region_profile":
             pet = int(msg.event.packet.context_field["pet"])
@@ -370,8 +386,8 @@ class LoadBalance(Analysis):
                 # special case for outermost timed region
                 name = "TOP"
             else:
-                map = self._regionIdToNameMap[pet]
-                name = map[regionid]  # should already be there
+                _map = self._region_id_to_name_map[pet]
+                name = _map[regionid]  # should already be there
 
             node = SinglePETTimingNode(regionid, pet, name)
             node.total = int(msg.event.payload_field["total"])
@@ -380,7 +396,7 @@ class LoadBalance(Analysis):
             node.max = int(msg.event.payload_field["max"])
 
             # add child to the timing tree for the given pet
-            root = self._timingTrees.setdefault(
+            root = self._timing_trees.setdefault(
                 pet, SinglePETTimingNode(0, pet, "TOP_LEVEL")
             )
             if not root.add_child(parentid, node):
@@ -396,11 +412,11 @@ class LoadBalance(Analysis):
         # all events have been processed, so now we have a complete
         # list of timing trees, one per PET in self._timingTrees
 
-        logger.info(f"Completing analysis: {self.__class__.__name__}")
+        logger.info("Completing analysis: %s", self.__class__.__name__)
 
         # merge all the SinglePETTimingNodes into a single tree
         multiPETTree = MultiPETTimingNode()
-        for pet, t in self._timingTrees.items():
+        for _, t in self._timing_trees.items():
             multiPETTree.merge(t)
 
         multiPETTree.sort_children()
