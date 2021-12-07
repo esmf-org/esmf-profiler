@@ -16,7 +16,7 @@
     "highcharts": "^9.2.2",
     "highcharts-react-official": "^3.0.0",
     "install": "^0.13.0",
-    "node-sass": "^6.0.1",
+    "node-sass": "^7.0.0",
     "npm": "^7.24.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-rc.0",
