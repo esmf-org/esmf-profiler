@@ -66,7 +66,6 @@ def _start_server(build_path, url="localhost:8000"):
         stdout=PIPE,
         stderr=PIPE,
     )
-    webbrowser.open(url, new=2, autoraise=True)
 
 
 def _commit_profile(username, name, repopath=os.getcwd()):
