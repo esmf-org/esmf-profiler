@@ -132,7 +132,7 @@ function Brand() {
           <div>
             {/* TODO Add JS to dynamically update version based on tag */}
             <img
-              src="https://img.shields.io/badge/version-0.1.1-success"
+              src="https://img.shields.io/badge/version-0.2.0-success"
               alt="shield"
             ></img>
           </div>
