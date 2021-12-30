@@ -13,7 +13,7 @@ import AlertDismissible from "./../components/alerts/AlertDismissible";
 import Breadcrumbs from "../components/Breadcrumbs";
 import CheckBoxOption from "./CheckBoxOption";
 
-import { toggleAxisInvert, toggleLogarithimic } from "./Utils";
+import { setSize, toggleAxisInvert, toggleLogarithimic } from "./Utils";
 
 HC_exporting(Highcharts);
 //Boost(Highcharts);
@@ -167,6 +167,11 @@ function Stacked(props) {
         <CheckBoxOption
           label="Logarithmic Y-Axis"
           handleChange={toggleLogarithimic}
+          chartRef={chartComponent}
+        />
+        <CheckBoxOption
+          label="Size"
+          handleChange={setSize}
           chartRef={chartComponent}
         />
       </FormGroup>
