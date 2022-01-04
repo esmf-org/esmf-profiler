@@ -1,4 +1,6 @@
 #!/bin/bash
 docker build -t esmf-profiler-image ..
-
-docker run -it -v $(pwd)/traces:/home/traces esmf-profiler-image esmf-profiler -t /home/traces -n 'automatedtest' -o /home/traces/output
+cd ..
+echo $PWD
+echo "$PWD/traces"
+docker run -it -v $PWD/traces:/home/traces esmf-profiler-image esmf-profiler -t /home/traces -n 'automatedtest' -o /home/traces/output
