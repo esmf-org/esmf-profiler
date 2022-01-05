@@ -29,6 +29,11 @@ test_docker_push: venv
 test_profiler: venv
 	esmf-profiler -v -t ./tests/fixtures/test-traces-large/traceout -n "automated-test-$(timestamp)" -o "test$(timestamp)" -p 'https://github.com/ryanlong1004/automatic-succotash'; \
 
+check_build: 
+	grep version web/app/package.json;\
+	grep version setup.py;\
+	
+
 _reset:
 	-deactivate
 	-rm -rf ./venv
@@ -49,6 +54,7 @@ pytest: venv
 	python -m pytest; \
 
 test_all: 
+	make check_build
 	make test_profiler
 	make test_docker_push
 	make test_docker_profiler
