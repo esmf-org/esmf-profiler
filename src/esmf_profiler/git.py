@@ -93,7 +93,11 @@ def pull(destination="origin", repopath=os.getcwd()):
     return _command_safe(cmd, repopath)
 
 
-def push(destination="origin", repopath=os.getcwd()):
+def sanitize_url(dirty_url):
+    return dirty_url.replace("https://", "git@")
+
+
+def push(destination="origin", repopath=os.getcwd(), dirty_url=False):
     """git_push
 
     Args:
@@ -103,6 +107,7 @@ def push(destination="origin", repopath=os.getcwd()):
     Returns:
         CompletedProcess
     """
+    destination = destination if not dirty_url else sanitize_url(destination)
     cmd = ["git", "push", destination]
     return _command_safe(cmd, repopath)
 

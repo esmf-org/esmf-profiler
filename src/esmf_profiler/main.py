@@ -20,11 +20,13 @@ from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
 
 import time
-#import cProfile, pstats
-#from pycallgraph import PyCallGraph
-#from pycallgraph.output import GraphvizOutput
+
+# import cProfile, pstats
+# from pycallgraph import PyCallGraph
+# from pycallgraph.output import GraphvizOutput
 
 logger = logging.getLogger(__name__)
+
 
 def _copy_path(src, dst, ignore=[]):  # pylint: disable=dangerous-default-value
     """Safe copytree replacement"""
@@ -118,7 +120,7 @@ def push_profile_to_repo(input_path, name, url):
         git.add(_temp)
         logger.debug(git.status(_temp).stdout)
         _commit_profile(username, name, _temp)
-        git.push(url, _temp)
+        git.push(url, _temp, dirty_url=True)
 
 
 def handle_logging(verbosity=0):
@@ -211,23 +213,27 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
                 chunksize = int(xopts["chunksize"])
                 logger.info(f"Using custom chunksize of {chunksize}")
             except ValueError:
-                logger.info(f"Invalid chunksize: {xopts['chunksize']} - using default value of {chunksize}")
+                logger.info(
+                    f"Invalid chunksize: {xopts['chunksize']} - using default value of {chunksize}"
+                )
         if "analysis_threads" in xopts:
             try:
                 analysis_threads = int(xopts["analysis_threads"])
                 logger.info(f"Using custom analysis_threads of {analysis_threads}")
             except ValueError:
-                logger.info(f"Invalid analysis_threads: {xopts['analysis_threads']} - using default value of {analysis_threads}")
+                logger.info(
+                    f"Invalid analysis_threads: {xopts['analysis_threads']} - using default value of {analysis_threads}"
+                )
 
     # for now, the only supported analysis is load balance
     analyses = [LoadBalance(num_threads=analysis_threads)]
-    #profiler = cProfile.Profile()
+    # profiler = cProfile.Profile()
 
     logger.info("Processing trace: %s", tracedir)
 
     start = time.time()
-    #profiler.enable()
-    #with PyCallGraph(output=GraphvizOutput()):
+    # profiler.enable()
+    # with PyCallGraph(output=GraphvizOutput()):
 
     Trace.from_path(tracedir, analyses=analyses, chunksize=chunksize)
 
@@ -239,13 +245,13 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
         _write_json_to_file(data, output_file_path)
     logger.debug("Finishing analyses complete")
 
-    #profiler.disable()
+    # profiler.disable()
 
     end = time.time()
     logger.info(f"Trace processing time: {round(end - start, 2)}s")
 
-    #stats = pstats.Stats(profiler).sort_stats('tottime')
-    #stats.print_stats()
+    # stats = pstats.Stats(profiler).sort_stats('tottime')
+    # stats.print_stats()
 
     return output_file_path
 
