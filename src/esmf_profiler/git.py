@@ -33,7 +33,7 @@ def _command_safe(cmd, cwd=os.getcwd()) -> subprocess.CompletedProcess:
         logger.info(error.stdout)
         if error.stderr:
             logger.error(error.stderr)
-            raise
+            raise RuntimeError from error
         return subprocess.CompletedProcess(returncode=0, args="", stdout=error.stdout)
 
 
@@ -93,11 +93,7 @@ def pull(destination="origin", repopath=os.getcwd()):
     return _command_safe(cmd, repopath)
 
 
-def sanitize_url(dirty_url):
-    return dirty_url.replace("https://", "git@")
-
-
-def push(destination="origin", repopath=os.getcwd(), dirty_url=False):
+def push(destination="origin", repopath=os.getcwd()):
     """git_push
 
     Args:
@@ -107,7 +103,6 @@ def push(destination="origin", repopath=os.getcwd(), dirty_url=False):
     Returns:
         CompletedProcess
     """
-    destination = destination if not dirty_url else sanitize_url(destination)
     cmd = ["git", "push", destination]
     return _command_safe(cmd, repopath)
 
