@@ -33,7 +33,7 @@ def _command_safe(cmd, cwd=os.getcwd()) -> subprocess.CompletedProcess:
         logger.info(error.stdout)
         if error.stderr:
             logger.error(error.stderr)
-            raise RuntimeError from error
+            raise
         return subprocess.CompletedProcess(returncode=0, args="", stdout=error.stdout)
 
 
