@@ -297,6 +297,7 @@ def main():
     copy_gui_template(output_path)
 
     if args.push is not None:
+        logger.info(f"Pushing profile in {output_path} to {args.push}")
         push_profile_to_repo(input_path=output_path, name=args.name, url=args.push)
 
     if args.serve:
