@@ -153,7 +153,7 @@ def safe_create_directory(paths):
 
 
 def copy_gui_template(  # pylint: disable=dangerous-default-value
-    output_path, input_path="./web/app/build", _ignore=["site.json", "data.json"]
+    output_path, input_path="./web/app/build", _ignore=["site.json", "load_balance.json"]
 ):
     """copy_gui_template copies the Web GUI template files
 
