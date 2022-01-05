@@ -2,7 +2,10 @@
 
 .PHONY : _reset clean test_docker_push test_profiler bootstrap pytest install_dependencies venv install
 
-timestamp=$(`date +sourY%m%d`)
+timestamp=$(`date +Y%m%d`)
+
+venv:
+	. venv/bin/activate
 
 clean:
 	find . -name '*.pyc' -delete
@@ -13,18 +16,18 @@ docs:
 	$(MAKE) -C docs html
 	pandoc README.md --from markdown --to rst -s -o README.rst
 
-test_docker_push:
-	-deactivate
-	source ./venv/bin/activate; \
-	cp -r "$(PWD)/tests/fixtures/test-traces/atm-ocn" "$(PWD)/traces"
-	docker build -t esmf-profiler-image .
-	docker run -it -v "$(PWD)/traces:/home/traces" esmf-profiler-image esmf-profiler -t /home/traces -n "testdockerpush" -o /home/traces/output
+test_docker_profile: venv
+	cp -r "$(PWD)/tests/fixtures/test-traces/atm-ocn" "$(PWD)/traces"; \
+	docker build -t esmf-profiler-image . ;\
+	docker run -it -v "$(PWD)/traces:/home/traces" esmf-profiler-image esmf-profiler -t /home/traces -n "testdockerpush$(timestamp)" -o /home/traces/output -s;\
 
-venv:
-	. venv/bin/activate
+test_docker_push: venv
+	cp -r "$(PWD)/tests/fixtures/test-traces/atm-ocn" "$(PWD)/traces"; \
+	docker build -t esmf-profiler-image . ;\
+	docker run -it -v "$(PWD)/traces:/home/traces" esmf-profiler-image esmf-profiler -t /home/traces -n "testdockerprofile$(timestamp)" -o /home/traces/output;\
 
 test_profiler: venv
-	esmf-profiler -v -t ./tests/fixtures/test-traces-large/traceout -n "test-_-20211122" -o "test20211122" -p 'https://github.com/ryanlong1004/automatic-succotash'; \
+	esmf-profiler -v -t ./tests/fixtures/test-traces-large/traceout -n "automated-test-$(timestamp)" -o "test$(timestamp)" -p 'https://github.com/ryanlong1004/automatic-succotash'; \
 
 _reset:
 	-deactivate
@@ -42,10 +45,11 @@ install: bootstrap
 	. ./venv/bin/activate && pip install -e . ; \
 
 pytest: venv
-	./install_dependencies.sh && ./install.sh && source ./venv/bin/activate && pip install -e .[test]; \
+	pip install -e .[test]; \
 	python -m pytest; \
 
-test_all: install
-	test_profiler
-	test_docker_push
-	pytest
+test_all: 
+	make test_profiler
+	make test_docker_push
+	make test_docker_profiler
+	make pytest
