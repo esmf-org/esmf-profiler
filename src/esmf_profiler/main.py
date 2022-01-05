@@ -120,7 +120,7 @@ def push_profile_to_repo(input_path, name, url):
         git.add(_temp)
         logger.debug(git.status(_temp).stdout)
         _commit_profile(username, name, _temp)
-        git.push(url, _temp, dirty_url=True)
+        git.push(url, _temp)
 
 
 def handle_logging(verbosity=0):
