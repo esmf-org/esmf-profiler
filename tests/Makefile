@@ -22,7 +22,7 @@ test_docker_profiler: venv
 	timestamp=$(date +%Y%m%d);\
 	cd ..;\
 	cp -r "$(PWD)/fixtures/test-traces/atm-ocn" "$(PWD)/traces"; \
-	docker build -t esmf-profiler-image . ;\
+	docker build --build-arg SOURCE_BRANCH_NAME=main -t esmf-profiler-image . ;\
 	docker run -it -v "$(PWD)/traces:/home/traces" esmf-profiler-image esmf-profiler -t /home/traces -n "testdockerpush$(timestamp)" -o /home/traces/output;\
 
 test_profiler: venv
