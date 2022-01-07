@@ -13,6 +13,7 @@ import sys
 import tempfile
 import webbrowser
 from subprocess import PIPE
+import pkg_resources
 
 from esmf_profiler import git
 from esmf_profiler.analyses import LoadBalance, Analysis
@@ -273,6 +274,9 @@ def main():
 
     # setup logging based on args.verbose
     handle_logging(args.verbose)
+
+    my_version = pkg_resources.get_distribution('esmf-profiler').version
+    logger.info(f"esmf-profiler version {my_version}")
 
     # TODO: this section should probably be in handle_args()
     xopts = None
