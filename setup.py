@@ -163,6 +163,7 @@ setup(
             "pytest",
             "pytest-cov",
             "pytest-xdist",
+            "bump2version",
         ],
         "test": ["pytest", "pytest-cov", "pytest-forked", "pytest-xdist"],
     },
