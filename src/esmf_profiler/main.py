@@ -13,6 +13,7 @@ import sys
 import tempfile
 import webbrowser
 from subprocess import PIPE
+import pkg_resources
 
 from esmf_profiler import git
 from esmf_profiler.analyses import LoadBalance, Analysis
@@ -30,21 +31,26 @@ logger = logging.getLogger(__name__)
 
 def _copy_path(src, dst, ignore=[]):  # pylint: disable=dangerous-default-value
     """Safe copytree replacement"""
+    logger.debug(f"Copy files from {src} to {dst}")
     for src_dir, _, files in os.walk(src):
         dst_dir = src_dir.replace(src, dst, 1)
         if not os.path.exists(dst_dir):
             os.makedirs(dst_dir)
+            logger.debug(f"\tCreated directory {dst_dir}")
         for file_ in files:
             if file_ in ignore:
+                logger.debug(f"\tIgnoring file {file_}")
                 continue
             src_file = os.path.join(src_dir, file_)
             dst_file = os.path.join(dst_dir, file_)
             if os.path.exists(dst_file):
                 # in case of the src and dst are the same file
                 if os.path.samefile(src_file, dst_file):
+                    logger.debug(f"\tSkipping file {src_file}")
                     continue
                 os.remove(dst_file)
             shutil.copy(src_file, dst_dir)
+            logger.debug(f"\tCopied file {src_file} to {dst_dir}")
 
 
 def _write_json_to_file(data, _path):
@@ -273,6 +279,9 @@ def main():
 
     # setup logging based on args.verbose
     handle_logging(args.verbose)
+
+    my_version = pkg_resources.get_distribution('esmf-profiler').version
+    logger.info(f"esmf-profiler version {my_version}")
 
     # TODO: this section should probably be in handle_args()
     xopts = None
