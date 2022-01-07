@@ -31,21 +31,26 @@ logger = logging.getLogger(__name__)
 
 def _copy_path(src, dst, ignore=[]):  # pylint: disable=dangerous-default-value
     """Safe copytree replacement"""
+    logger.debug(f"Copy files from {src} to {dst}")
     for src_dir, _, files in os.walk(src):
         dst_dir = src_dir.replace(src, dst, 1)
         if not os.path.exists(dst_dir):
             os.makedirs(dst_dir)
+            logger.debug(f"\tCreated directory {dst_dir}")
         for file_ in files:
             if file_ in ignore:
+                logger.debug(f"\tIgnoring file {file_}")
                 continue
             src_file = os.path.join(src_dir, file_)
             dst_file = os.path.join(dst_dir, file_)
             if os.path.exists(dst_file):
                 # in case of the src and dst are the same file
                 if os.path.samefile(src_file, dst_file):
+                    logger.debug(f"\tSkipping file {src_file}")
                     continue
                 os.remove(dst_file)
             shutil.copy(src_file, dst_dir)
+            logger.debug(f"\tCopied file {src_file} to {dst_dir}")
 
 
 def _write_json_to_file(data, _path):
