@@ -159,7 +159,9 @@ def safe_create_directory(paths):
 
 
 def copy_gui_template(  # pylint: disable=dangerous-default-value
-    output_path, input_path="./web/app/build", _ignore=["site.json", "load_balance.json"]
+    output_path,
+    input_path,
+    _ignore=["site.json", "load_balance.json"],
 ):
     """copy_gui_template copies the Web GUI template files
 
@@ -265,6 +267,9 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
 def main():
     """main execution"""
 
+    root = os.path.dirname(os.path.realpath(__file__))
+    web_build = os.path.abspath(os.path.join(root, "../../web/app/build"))
+
     def signal_handler(sig, frame):  # pylint: disable=unused-argument
         logger.info("Closing local server")
         sys.exit(0)
@@ -293,8 +298,8 @@ def main():
             logger.error("Incorrect format for -x/--xopts command line argument")
             return
 
-    output_path = safe_create_directory([args.outdir])
-    output_data_path = safe_create_directory([output_path, "data"])
+    output_path = safe_create_directory([os.path.join(root, args.outdir)])
+    output_data_path = safe_create_directory([os.path.join(root, output_path, "data")])
 
     # write site.json
     create_site_file(args.name, output_data_path, SITE_FILE_NAME)
@@ -303,7 +308,7 @@ def main():
     run_analysis(output_data_path, args.tracedir, DATA_FILE_NAME, xopts)
 
     # inject web gui files
-    copy_gui_template(output_path)
+    copy_gui_template(output_path, web_build)
 
     if args.push is not None:
         logger.info(f"Pushing profile in {output_path} to {args.push}")
