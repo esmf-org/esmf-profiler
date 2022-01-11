@@ -267,8 +267,9 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
 def main():
     """main execution"""
 
-    root = os.path.dirname(os.path.realpath(__file__))
-    web_build = os.path.abspath(os.path.join(root, "../../web/app/build"))
+    current_working_directory = os.path.abspath(os.getcwd())
+    main_directory = os.path.dirname(os.path.realpath(__file__))
+    web_build = os.path.abspath(os.path.join(main_directory, "../../web/app/build"))
 
     def signal_handler(sig, frame):  # pylint: disable=unused-argument
         logger.info("Closing local server")
@@ -298,8 +299,12 @@ def main():
             logger.error("Incorrect format for -x/--xopts command line argument")
             return
 
-    output_path = safe_create_directory([os.path.join(root, args.outdir)])
-    output_data_path = safe_create_directory([os.path.join(root, output_path, "data")])
+    output_path = safe_create_directory(
+        [os.path.join(current_working_directory, args.outdir)]
+    )
+    output_data_path = safe_create_directory(
+        [os.path.join(current_working_directory, output_path, "data")]
+    )
 
     # write site.json
     create_site_file(args.name, output_data_path, SITE_FILE_NAME)
