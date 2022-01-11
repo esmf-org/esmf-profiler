@@ -11,16 +11,15 @@ import signal
 import subprocess
 import sys
 import tempfile
-import webbrowser
+import time
 from subprocess import PIPE
+
 import pkg_resources
 
 from esmf_profiler import git
-from esmf_profiler.analyses import LoadBalance, Analysis
+from esmf_profiler.analyses import Analysis, LoadBalance
 from esmf_profiler.trace import Trace
 from esmf_profiler.view import handle_args
-
-import time
 
 # import cProfile, pstats
 # from pycallgraph import PyCallGraph
@@ -31,26 +30,26 @@ logger = logging.getLogger(__name__)
 
 def _copy_path(src, dst, ignore=[]):  # pylint: disable=dangerous-default-value
     """Safe copytree replacement"""
-    logger.debug(f"Copy files from {src} to {dst}")
+    logger.debug("Copy files from %s to %s", src, dst)
     for src_dir, _, files in os.walk(src):
         dst_dir = src_dir.replace(src, dst, 1)
         if not os.path.exists(dst_dir):
             os.makedirs(dst_dir)
-            logger.debug(f"\tCreated directory {dst_dir}")
+            logger.debug("\tCreated directory %s", dst_dir)
         for file_ in files:
             if file_ in ignore:
-                logger.debug(f"\tIgnoring file {file_}")
+                logger.debug("\tIgnoring file %s", file_)
                 continue
             src_file = os.path.join(src_dir, file_)
             dst_file = os.path.join(dst_dir, file_)
             if os.path.exists(dst_file):
                 # in case of the src and dst are the same file
                 if os.path.samefile(src_file, dst_file):
-                    logger.debug(f"\tSkipping file {src_file}")
+                    logger.debug("\tSkipping file %s", src_file)
                     continue
                 os.remove(dst_file)
             shutil.copy(src_file, dst_dir)
-            logger.debug(f"\tCopied file {src_file} to {dst_dir}")
+            logger.debug("\tCopied file %s to %s", src_file, dst_dir)
 
 
 def _write_json_to_file(data, _path):
@@ -67,7 +66,7 @@ def _whoami():
     return git._command_safe(["whoami"]).stdout.strip()
 
 
-def _start_server(build_path, url="localhost:8000"):
+def _start_server(build_path):
     logger.info("Starting local server port 8000 (CTRL+C to close)")
     subprocess.call(
         ["python", "-m", "http.server", "--directory", build_path],
@@ -219,18 +218,24 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
         if "chunksize" in xopts:
             try:
                 chunksize = int(xopts["chunksize"])
-                logger.info(f"Using custom chunksize of {chunksize}")
+                logger.info("Using custom chunksize of %s", chunksize)
             except ValueError:
                 logger.info(
-                    f"Invalid chunksize: {xopts['chunksize']} - using default value of {chunksize}"
+                    "Invalid chunksize: {xopts['chunksize']} - using default value of %s",
+                    chunksize,
                 )
         if "analysis_threads" in xopts:
             try:
                 analysis_threads = int(xopts["analysis_threads"])
-                logger.info(f"Using custom analysis_threads of {analysis_threads}")
+                logger.info(
+                    "Using custom analysis_threads of %s",
+                    analysis_threads,
+                )
             except ValueError:
                 logger.info(
-                    f"Invalid analysis_threads: {xopts['analysis_threads']} - using default value of {analysis_threads}"
+                    "Invalid analysis_threads: %s - using default value of %s",
+                    xopts["analysis_threads"],
+                    analysis_threads,
                 )
 
     # for now, the only supported analysis is load balance
@@ -256,7 +261,7 @@ def run_analysis(output_path, tracedir, data_file_name, xopts=None):
     # profiler.disable()
 
     end = time.time()
-    logger.info(f"Trace processing time: {round(end - start, 2)}s")
+    logger.info("Trace processing time: %ss", round(end - start, 2))
 
     # stats = pstats.Stats(profiler).sort_stats('tottime')
     # stats.print_stats()
@@ -286,8 +291,8 @@ def main():
     # setup logging based on args.verbose
     handle_logging(args.verbose)
 
-    my_version = pkg_resources.get_distribution('esmf-profiler').version
-    logger.info(f"esmf-profiler version {my_version}")
+    my_version = pkg_resources.get_distribution("esmf-profiler").version
+    logger.info("esmf-profiler version %s", my_version)
 
     # TODO: this section should probably be in handle_args()
     xopts = None
@@ -316,7 +321,7 @@ def main():
     copy_gui_template(output_path, web_build)
 
     if args.push is not None:
-        logger.info(f"Pushing profile in {output_path} to {args.push}")
+        logger.info("Pushing profile in %s to %s", output_path, args.push)
         push_profile_to_repo(input_path=output_path, name=args.name, url=args.push)
 
     if args.serve:
