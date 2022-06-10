@@ -134,7 +134,7 @@ esmf-profiler -t ./fresh_traces -n "build_abc123" -o "output" -p 'git@github.com
 ```
 This example will run the processing work locally as the first example, but then publish the results to the repository at ```git@github.com:user_name/repo_name.git```.
 
-Refer to the [Quickstart for Github Pages]("https://docs.github.com/en/pages/quickstart") to learn about using github to automatically publish your results into a public, viewable page on github.io.
+To view the profile on GitHub.io, you need to explicitly turn on "GitHub Pages" within the target repository.  Refer to the [Quickstart for Github Pages](https://docs.github.com/en/pages/quickstart) for details on how to turn on "Pages" within your repository.
 
 ```bash
 docker build -t esmf-profiler-image .
