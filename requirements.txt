@@ -26,4 +26,4 @@ regex==2021.11.2
 rope==0.22.0
 toml==0.10.2
 tomli==1.2.2
-typing-extensions==3.10.0.2
+typing-extensions==4.5.0
